@@ -30,6 +30,8 @@ Each folder's README explains its naming conventions.
 
 ## Goal: autopilot
 
+A scheduled run every 24 hours (9:17 pm Central) starts with the Analyst in the Observatory, who decides which agents run that day. See `.claude/agents/analyst.md`.
+
 The owner wants the agents to run the business on their own once it's set up (`rules/working-with-me.md`, rule 5). Whenever a task is done by hand, also automate it for next time, and keep `decisions/automation-plan.md` up to date.
 
 ## Business plan
