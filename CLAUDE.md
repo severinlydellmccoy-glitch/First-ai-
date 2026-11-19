@@ -31,7 +31,7 @@ Each folder's README explains its naming conventions.
 
 ## Station
 
-`station/` holds a 3D visual map of the business, also published at https://claude.ai/artifact/FX7jK2pgAyh9GkJi99JLAh. Whenever a folder, module or agent changes, update the `MODULES` and `AGENTS` lists in the page, republish it to that same link, and copy it back into `station/index.html`.
+`station/` holds a 3D visual map of the business, also published at https://claude.ai/artifact/FX7jK2pgAyh9GkJi99JLAh. Whenever a folder, module or agent changes, update the `MODULES`, `AGENTS` and `COUNTS` lists in the page (`COUNTS` sets how many items ride each conveyor belt), republish it to that same link, and copy it back into `station/index.html`.
 
 ## Still to decide
 

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: full-screen 3D station, a small status readout top-left, and a control panel docked right (bottom sheet on phones). */
+/* Layout: full-screen 3D station with rooms you fly into, a status readout top-left, and a control panel docked right (bottom sheet on phones). */
 :root {
   --space: #060a12;
   --hull: rgba(12, 19, 33, 0.88);
@@ -31,6 +31,8 @@ body {
 }
 #scene { position: fixed; inset: 0; }
 #scene canvas { display: block; touch-action: none; }
+#fade { position: fixed; inset: 0; z-index: 5; background: #02040a; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+#fade.on { opacity: 1; }
 
 .hud {
   position: fixed; z-index: 3;
@@ -88,8 +90,10 @@ body {
 .room-btn small { color: var(--muted); font-size: 12px; }
 
 .agent { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 8px 10px; border-radius: 6px; border: 1px dashed color-mix(in srgb, var(--plan) 35%, transparent); }
+.agent.ready { border: 1px solid color-mix(in srgb, var(--live) 40%, transparent); }
 .agent strong { font-weight: 600; }
 .agent span { color: var(--plan); font-size: 12px; align-self: center; }
+.agent.ready span { color: var(--live); }
 .agent p { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
 
 .legend { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
@@ -101,6 +105,11 @@ body {
 .foot { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
 a { color: var(--live); }
 .hint { font-size: 13px; color: var(--muted); }
+.enter {
+  margin-top: 12px; width: 100%; font: inherit; font-weight: 600; cursor: pointer;
+  padding: 9px 12px; border-radius: 6px; border: 1px solid var(--live); color: var(--space); background: var(--live);
+}
+.enter.planned { border-color: var(--plan); background: var(--plan); }
 
 #labels { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
 .label {
@@ -113,6 +122,9 @@ a { color: var(--live); }
 .label.planned { color: var(--plan); border-style: dashed; border-color: color-mix(in srgb, var(--plan) 55%, transparent); }
 .label.selected { background: var(--live); color: var(--space); border-color: var(--live); }
 .label.planned.selected { background: var(--plan); border-color: var(--plan); }
+.label.tag { cursor: default; pointer-events: none; font-family: var(--font-body); font-size: 12px; letter-spacing: 0; }
+.label.tag.worker { color: var(--live); border-color: color-mix(in srgb, var(--live) 50%, transparent); }
+.label.tag.off { color: var(--plan); border-style: dashed; border-color: color-mix(in srgb, var(--plan) 55%, transparent); }
 
 @media (max-width: 700px) {
   .hud h1 { font-size: 18px; }
@@ -124,11 +136,13 @@ a { color: var(--live); }
     max-height: 44%;
     padding: 14px;
   }
+  .label.tag { font-size: 11px; }
 }
 </style>
 
 <div id="scene" aria-hidden="true"></div>
 <div id="labels"></div>
+<div id="fade"></div>
 <header class="hud">
   <h1>FIRST-AI STATION</h1>
   <p>Merchandise sold on Etsy and Amazon, with the profits invested in stocks. Each module is one part of the business.</p>
@@ -142,85 +156,102 @@ a { color: var(--live); }
 const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
 const SNAPSHOT = "19 Nov 2026";
 
+// Real counts from the repository. Conveyor belts carry one item per real file.
+const COUNTS = { reports: 0, drafts: 0, finals: 0, mediaDrafts: 0, mediaFinals: 0 };
+
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
 const MODULES = [
   { id: "core", name: "Command Core", status: "active", folder: "",
     purpose: "The station's brain. It holds the instructions every Claude session reads before doing any work.",
-    contents: [["CLAUDE.md", "Explains the business and the folders, and tells Claude to follow everything in the Rules Deck"], ["README.md", "Short description of the repository"]],
+    contents: [["CLAUDE.md", "Explains the business plan and the folders, and tells Claude to follow everything in the Rules Deck"], ["README.md", "Short description of the repository"], ["station/", "Backup copy of this space station"]],
+    inside: "A control room with a hologram of the whole station and the console that holds CLAUDE.md.",
     agent: null,
-    next: "Record the plan here: merchandise sold on Etsy and Amazon, with profits invested in stocks." },
+    next: "Still to decide: the print-on-demand service and what share of profit to invest." },
   { id: "rules", name: "Rules Deck", status: "active", folder: "rules",
     purpose: "The rules every agent and every Claude session must follow.",
     contents: [["general.md", "Original art only, cite and date research, keep finished work apart from drafts, never store passwords or keys"], ["working-with-me.md", "Your rules: three questions first, check the work, thorough but readable, no tech-speak"], ["README.md", "Index of the rule files"]],
+    inside: "An archive with one glowing tablet for each rule file.",
     agent: null,
     next: "Add any rules of your own, such as a budget, a style, or products to avoid." },
   { id: "research", name: "Research Lab", status: "empty", folder: "research",
-    purpose: "Market research: niches, trends, competitors, prices and demand. Decides what the station makes.",
-    contents: [["README.md", "How to name and write research notes"]],
-    emptyNote: "No research notes yet.",
+    purpose: "Market research: what merchandise is selling on Etsy, Amazon and Temu. Decides what the station makes.",
+    contents: [["README.md", "How to name and write research notes"], ["scout/", "The Scout's weekly reports (0 so far)"]],
+    emptyNote: "No reports yet.",
+    inside: "The Scout works at a wall of market screens. Its findings pass through a scanner onto the report belt. The belt is empty until the first report exists.",
     agent: "scout",
-    next: "Write the first note: which merchandise niches are selling well on Etsy and Amazon right now." },
+    next: "The Scout's first test report runs at 9 pm Central. If the data is good, it switches to a weekly schedule." },
   { id: "art", name: "Art Studio", status: "empty", folder: "art",
     purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
     contents: [["README.md", "How drafts and finished designs are stored"], ["drafts/", "0 files"], ["final/", "0 files"]],
     emptyNote: "No designs yet.",
+    inside: "Easels with blank canvases, a workbench, and two bins: drafts and final. The Artist is powered down until it has a design to make.",
     agent: "artist",
     next: "Waiting on the Research Lab to pick what to make." },
   { id: "media", name: "Media Bay", status: "empty", folder: "media",
     purpose: "Mockups, product photos, video, social posts and listing text that sell the products.",
     contents: [["README.md", "How media files are stored and named"], ["drafts/", "0 files"], ["final/", "0 files"]],
     emptyNote: "No media yet.",
+    inside: "A photo stage with lights and a camera, and a mockup belt. The lights are off and the Producer is powered down.",
     agent: "producer",
     next: "Waiting on the first finished designs from the Art Studio." },
   { id: "sales", name: "Sales Dock", status: "planned", folder: null,
     purpose: "Lists merchandise on Etsy and Amazon, sets prices, and keeps track of orders.",
     contents: [],
     emptyNote: "Not built yet. There is no folder for it.",
+    inside: "A blueprint: a packing line that will send orders out to shipping pods for Etsy and Amazon.",
     agent: "seller",
     next: "To build it: open seller accounts on Etsy and Amazon, and pick a print-on-demand service that makes and ships the products." },
   { id: "observatory", name: "Observatory", status: "planned", folder: null,
     purpose: "Watches what sells and sends the results back to the Research Lab, so the next round of products is better.",
     contents: [],
     emptyNote: "Not built yet. There is no folder for it.",
+    inside: "A blueprint: a telescope pointed at the marketplaces and wall charts of sales.",
     agent: "analyst",
     next: "To build it: the Sales Dock needs products listed first." },
   { id: "vault", name: "Investment Vault", status: "planned", folder: null,
     purpose: "Moves a share of the merchandise profits into stocks and keeps a record of every investment.",
     contents: [],
     emptyNote: "Not built yet. There is no folder for it.",
+    inside: "A blueprint: a safe and a profit counter.",
     agent: "treasurer",
     next: "To build it: the business needs profits first. Then decide what share of profit to invest and which brokerage account to use." },
 ];
 
+// status: ready = set up but hasn't done any work yet, running = has produced work, planned = not set up
 const AGENTS = {
-  scout:    { name: "Scout",    home: "research",    job: "Finds niches, trends, competitors and prices." },
-  artist:   { name: "Artist",   home: "art",         job: "Creates original designs." },
-  producer: { name: "Producer", home: "media",       job: "Makes mockups, photos, posts and listing text." },
-  seller:   { name: "Seller",   home: "sales",       job: "Lists products and keeps prices up to date." },
-  analyst:  { name: "Analyst",  home: "observatory", job: "Reads the sales numbers and suggests what to make next." },
-  treasurer:{ name: "Treasurer", home: "vault",      job: "Tracks profits and keeps the investment record. You make the final call on every investment." },
+  scout:     { name: "Scout",     status: "ready",   home: "research",    job: "Finds which merchandise sells best on Amazon, Etsy and Temu.", note: "Set up and waiting for its first run." },
+  artist:    { name: "Artist",    status: "planned", home: "art",         job: "Creates original designs." },
+  producer:  { name: "Producer",  status: "planned", home: "media",       job: "Makes mockups, photos, posts and listing text." },
+  seller:    { name: "Seller",    status: "planned", home: "sales",       job: "Lists products and keeps prices up to date." },
+  analyst:   { name: "Analyst",   status: "planned", home: "observatory", job: "Reads the sales numbers and suggests what to make next." },
+  treasurer: { name: "Treasurer", status: "planned", home: "vault",       job: "Tracks profits and keeps the investment record. You make the final call on every investment." },
 };
 
 const STATUS_TEXT = { active: "Built, with work inside", empty: "Built, nothing made yet", planned: "Under construction" };
+const AGENT_STATUS = { ready: "Ready", running: "Running", planned: "Planned" };
 const byId = Object.fromEntries(MODULES.map(m => [m.id, m]));
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- Panel ---------- */
 const panel = document.getElementById("panel");
 const built = MODULES.filter(m => m.status !== "planned").length;
+const agentList = Object.values(AGENTS);
+const ready = agentList.filter(a => a.status !== "planned").length;
 document.getElementById("counts").innerHTML =
   `<span class="chip live">${built} of ${MODULES.length} modules built</span>` +
-  `<span class="chip plan">0 of ${Object.keys(AGENTS).length} agents running</span>`;
+  `<span class="chip live">${ready} of ${agentList.length} agents ready</span>` +
+  `<span class="chip plan">${agentList.filter(a => a.status === "running").length} running</span>`;
 
 function agentCard(key) {
   const a = AGENTS[key];
-  return `<div class="agent"><strong>${a.name}</strong><span>Planned</span><p>${a.job} Not running yet.</p></div>`;
+  const note = a.status === "planned" ? "Not set up yet." : a.note;
+  return `<div class="agent ${a.status}"><strong>${a.name}</strong><span>${AGENT_STATUS[a.status]}</span><p>${a.job} ${note}</p></div>`;
 }
 
 function renderOverview() {
   panel.innerHTML = `
     <h2>Station overview</h2>
-    <p class="lede">Lit modules exist in your GitHub repository. Orange outlines are parts of the business that are planned but not built yet.</p>
+    <p class="lede">Lit modules exist in your GitHub repository. Orange outlines are parts of the business that are planned but not built yet. Every module has a room inside.</p>
     <h3>Modules</h3>
     <div class="rooms">${MODULES.map(m => `
       <button class="room-btn" type="button" data-room="${m.id}">
@@ -228,7 +259,7 @@ function renderOverview() {
       </button>`).join("")}
     </div>
     <h3>Agents</h3>
-    <p class="hint" style="margin-bottom:8px">The orange drones are the AI helpers this business will use. None of them are running yet; they start once their module has work to do.</p>
+    <p class="hint" style="margin-bottom:8px">The robot workers are the AI helpers. A worker lights up once its agent is set up, and its conveyor fills as real work gets saved.</p>
     <div class="rooms">${Object.keys(AGENTS).map(agentCard).join("")}</div>
     <h3>Key</h3>
     <div class="legend">
@@ -237,11 +268,11 @@ function renderOverview() {
       <div><span class="dot planned"></span>Planned, not built yet</div>
     </div>
     <h3>Getting around</h3>
-    <p class="hint">Drag to look around. Scroll or pinch to zoom. Tap a module, or its name tag, to go inside.</p>
+    <p class="hint">Drag to look around. Scroll or pinch to zoom. Tap a module, or its name tag, to fly inside its room.</p>
     <p class="foot">Snapshot of the repository on ${SNAPSHOT}. Claude updates the station as the business grows.</p>`;
 }
 
-function renderRoom(m) {
+function renderRoom(m, insideRoom) {
   const contents = m.contents.length
     ? `<ul class="list">${m.contents.map(([f, n]) => `<li><span class="file">${f}</span><span class="note">${n}</span></li>`).join("")}</ul>`
     : "";
@@ -250,64 +281,102 @@ function renderRoom(m) {
     ? `<a href="${REPO}${m.folder}" target="_blank" rel="noopener">Open ${m.folder ? m.folder + "/" : "the repository"} on GitHub</a>`
     : "";
   panel.innerHTML = `
-    <button class="back" type="button" data-back>&larr; Station overview</button>
+    <button class="back" type="button" data-back>&larr; ${insideRoom ? "Leave room" : "Station overview"}</button>
     <h2>${m.name}</h2>
     <span class="pill ${m.status}">${STATUS_TEXT[m.status]}</span>
     <p class="lede">${m.purpose}</p>
+    <h3>In this room</h3>
+    <p class="hint">${m.inside}</p>
     <h3>What's inside now</h3>
     ${contents}${empty}
     ${where ? `<p style="margin-top:10px;font-size:13px">${where}</p>` : ""}
-    <h3>Agent</h3>
-    ${m.agent ? agentCard(m.agent) : `<p class="hint">No agent works here. Every agent reads this module before starting.</p>`}
+    <h3>Worker</h3>
+    ${m.agent ? agentCard(m.agent) : `<p class="hint">No worker here. Every agent reads this module before starting.</p>`}
     <h3>Next step</h3>
     <p class="next ${m.status === "planned" ? "planned" : ""}">${m.next}</p>`;
   panel.scrollTop = 0;
 }
 
+let select = () => {}, leaveRoom = () => {};
 panel.addEventListener("click", e => {
   const room = e.target.closest("[data-room]");
   if (room) return select(room.dataset.room);
-  if (e.target.closest("[data-back]")) select(null);
+  if (e.target.closest("[data-back]")) leaveRoom();
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") select(null); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") leaveRoom(); });
 
 renderOverview();
 
-/* ---------- 3D scene ---------- */
-let select = () => {};
+/* ---------- 3D ---------- */
 if (!window.THREE || !THREE.OrbitControls) {
   panel.insertAdjacentHTML("afterbegin", `<p class="next planned" style="margin-bottom:12px">The 3D view couldn't load. Check your connection and reload the page. Everything below still works.</p>`);
 } else {
   const LIVE = 0x62d8ff, PLAN = 0xffb547;
   const host = document.getElementById("scene");
+  const fadeEl = document.getElementById("fade");
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   host.appendChild(renderer.domElement);
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x060a12);
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; controls.dampingFactor = 0.08;
-  controls.minDistance = 5; controls.maxDistance = 70; controls.enablePan = false;
+  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.enablePan = false;
+  const isPhone = () => window.innerWidth < 700;
 
+  function mesh(geo, mat, x = 0, y = 0, z = 0) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); return m; }
+
+  /* 70s palette for the rooms */
+  const RETRO = { orange: 0xe8692c, mustard: 0xe3a72f, avocado: 0x8a9a3b, brown: 0x5a3825, cream: 0xf3e3c3, magenta: 0xd94f8a, teal: 0x2f9c95 };
+  function canvasTex(w, h, draw) {
+    const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d"), w, h);
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+  }
+  let texCache;
+  function retroTextures() {
+    if (texCache) return texCache;
+    const shag = canvasTex(256, 256, (g, w, h) => {
+      g.fillStyle = "#8a4a22"; g.fillRect(0, 0, w, h);
+      const shades = ["#a85a28", "#6e3a1c", "#c46a2e", "#7d4420", "#b8642c"];
+      g.lineWidth = 2;
+      for (let i = 0; i < 5000; i++) {
+        g.strokeStyle = shades[i % shades.length];
+        const x = Math.random() * w, y = Math.random() * h;
+        g.beginPath(); g.moveTo(x, y); g.lineTo(x + (Math.random() - 0.5) * 6, y + (Math.random() - 0.5) * 6); g.stroke();
+      }
+    });
+    shag.repeat.set(6, 6);
+    const rug = canvasTex(512, 512, (g, w) => {
+      const cols = ["#e8692c", "#e3a72f", "#f3e3c3", "#8a9a3b", "#5a3825", "#d94f8a"];
+      for (let i = 12; i > 0; i--) { g.fillStyle = cols[i % cols.length]; g.beginPath(); g.arc(w / 2, w / 2, (i / 12) * w / 2, 0, Math.PI * 2); g.fill(); }
+    });
+    rug.wrapS = rug.wrapT = THREE.ClampToEdgeWrapping;
+    const wall = canvasTex(64, 256, (g, w, h) => {
+      const bands = [["#3b2418", 0.3], ["#5a3825", 0.1], ["#e8692c", 0.09], ["#e3a72f", 0.09], ["#f3e3c3", 0.09], ["#8a9a3b", 0.09], ["#d94f8a", 0.04], ["#3b2418", 0.2]];
+      let y = 0; bands.forEach(([c, f]) => { g.fillStyle = c; g.fillRect(0, y, w, f * h + 1); y += f * h; });
+    });
+    wall.repeat.set(1, 1);
+    texCache = { shag, rug, wall };
+    return texCache;
+  }
+
+  /* ===== Station (outside) ===== */
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x060a12);
   scene.add(new THREE.AmbientLight(0x6070a0, 0.7));
   const sun = new THREE.DirectionalLight(0xfff4e6, 1.2); sun.position.set(25, 30, 15); scene.add(sun);
   const rim = new THREE.DirectionalLight(0x4f7cff, 0.5); rim.position.set(-20, -10, -20); scene.add(rim);
 
-  // Stars
   const starGeo = new THREE.BufferGeometry(), sp = [];
   for (let i = 0; i < 2000; i++) {
-    const v = new THREE.Vector3().randomDirection ? new THREE.Vector3().randomDirection() : new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize();
+    const v = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
     v.multiplyScalar(250 + Math.random() * 200); sp.push(v.x, v.y, v.z);
   }
   starGeo.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3));
   scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xcfd8ff, size: 1.6, sizeAttenuation: false })));
 
-  // Planet
-  const planet = new THREE.Mesh(new THREE.SphereGeometry(32, 64, 48), new THREE.MeshStandardMaterial({ color: 0x1f3d68, roughness: 1 }));
-  planet.position.set(-70, -40, -110); scene.add(planet);
-  const atmo = new THREE.Mesh(new THREE.SphereGeometry(34, 64, 48), new THREE.MeshBasicMaterial({ color: 0x4f9dff, transparent: true, opacity: 0.12, side: THREE.BackSide }));
+  const planet = mesh(new THREE.SphereGeometry(32, 64, 48), new THREE.MeshStandardMaterial({ color: 0x1f3d68, roughness: 1 }), -70, -40, -110);
+  scene.add(planet);
+  const atmo = mesh(new THREE.SphereGeometry(34, 64, 48), new THREE.MeshBasicMaterial({ color: 0x4f9dff, transparent: true, opacity: 0.12, side: THREE.BackSide }));
   atmo.position.copy(planet.position); scene.add(atmo);
 
   const station = new THREE.Group(); scene.add(station);
@@ -320,18 +389,16 @@ if (!window.THREE || !THREE.OrbitControls) {
       new THREE.MeshStandardMaterial({ color: 0x07121d, emissive: LIVE, emissiveIntensity: intensity, side: THREE.DoubleSide }));
   }
 
-  // Core
   const core = new THREE.Group();
-  core.add(new THREE.Mesh(new THREE.SphereGeometry(2.4, 40, 28), hullMat));
-  const coreBand = glowBand(2.45, 0.5, 1.3); core.add(coreBand);
+  core.add(mesh(new THREE.SphereGeometry(2.4, 40, 28), hullMat));
+  core.add(glowBand(2.45, 0.5, 1.3));
   const coreRing = new THREE.Mesh(new THREE.TorusGeometry(3.3, 0.18, 12, 80), darkMat); coreRing.rotation.x = Math.PI / 2; core.add(coreRing);
-  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 7, 8), darkMat); core.add(mast);
-  const tip = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 12), new THREE.MeshBasicMaterial({ color: LIVE })); tip.position.y = 3.6; core.add(tip);
+  core.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 7, 8), darkMat));
+  const tip = mesh(new THREE.SphereGeometry(0.22, 16, 12), new THREE.MeshBasicMaterial({ color: LIVE }), 0, 3.6, 0); core.add(tip);
   station.add(core);
   byId.core.group = core; byId.core.labelHeight = 4.4;
   addHit(core, 3.4, "core");
 
-  // Ring
   const ring = new THREE.Mesh(new THREE.TorusGeometry(R, 0.14, 8, 160), darkMat); ring.rotation.x = Math.PI / 2; station.add(ring);
 
   const outer = MODULES.filter(m => m.id !== "core");
@@ -342,24 +409,22 @@ if (!window.THREE || !THREE.OrbitControls) {
     m.group = g; m.labelHeight = 2.9;
 
     if (m.status !== "planned") {
-      g.add(new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 36), hullMat));
-      const dome = new THREE.Mesh(new THREE.SphereGeometry(1.5, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2), darkMat); dome.position.y = 1.1; g.add(dome);
-      const base = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 0.8, 0.6, 36), darkMat); base.position.y = -1.4; g.add(base);
+      g.add(mesh(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 36), hullMat));
+      g.add(mesh(new THREE.SphereGeometry(1.5, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2), darkMat, 0, 1.1, 0));
+      g.add(mesh(new THREE.CylinderGeometry(1.5, 0.8, 0.6, 36), darkMat, 0, -1.4, 0));
       g.add(glowBand(1.53, 0.35, m.status === "active" ? 1.4 : 0.35));
       if (m.status === "active") { const b2 = glowBand(1.53, 0.12, 0.9); b2.position.y = 0.55; g.add(b2); }
     } else {
-      const frameMat = new THREE.LineBasicMaterial({ color: PLAN, transparent: true, opacity: 0.85 });
-      g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 10)), frameMat));
+      g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 10)), new THREE.LineBasicMaterial({ color: PLAN, transparent: true, opacity: 0.85 })));
       g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.6, 3.2, 3.6)), new THREE.LineBasicMaterial({ color: PLAN, transparent: true, opacity: 0.25 })));
-      const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), new THREE.MeshBasicMaterial({ color: PLAN, transparent: true }));
-      beacon.position.y = 1.9; g.add(beacon); beacons.push(beacon);
+      const beacon = mesh(new THREE.SphereGeometry(0.2, 16, 12), new THREE.MeshBasicMaterial({ color: PLAN, transparent: true }), 0, 1.9, 0);
+      g.add(beacon); beacons.push(beacon);
     }
 
-    // Spoke from core to module
     const start = pos.clone().normalize().multiplyScalar(3.4), end = pos.clone().normalize().multiplyScalar(R - 1.6);
     if (m.status !== "planned") {
       const len = start.distanceTo(end);
-      const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, len, 10), darkMat);
+      const spoke = mesh(new THREE.CylinderGeometry(0.16, 0.16, len, 10), darkMat);
       spoke.position.copy(start.clone().add(end).multiplyScalar(0.5));
       spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), end.clone().sub(start).normalize());
       station.add(spoke);
@@ -368,22 +433,21 @@ if (!window.THREE || !THREE.OrbitControls) {
       line.computeLineDistances(); station.add(line);
     }
 
-    // Planned agent drone circling its module
     if (m.agent) {
+      const ag = AGENTS[m.agent], color = ag.status === "planned" ? PLAN : LIVE;
       const drone = new THREE.Group();
-      drone.add(new THREE.Mesh(new THREE.OctahedronGeometry(0.32), new THREE.MeshBasicMaterial({ color: PLAN, wireframe: true, transparent: true, opacity: 0.95 })));
-      drone.add(new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), new THREE.MeshBasicMaterial({ color: PLAN })));
+      drone.add(mesh(new THREE.OctahedronGeometry(0.32), new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.95 })));
+      drone.add(mesh(new THREE.SphereGeometry(0.09, 10, 8), new THREE.MeshBasicMaterial({ color })));
       g.add(drone); drones.push({ obj: drone, phase: i * 1.3 });
     }
     addHit(g, 2.5, m.id);
   });
 
   function addHit(group, radius, id) {
-    const s = new THREE.Mesh(new THREE.SphereGeometry(radius, 12, 8), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
+    const s = mesh(new THREE.SphereGeometry(radius, 12, 8), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
     s.userData.id = id; group.add(s); hits.push(s);
   }
 
-  // Labels
   const labelLayer = document.getElementById("labels");
   MODULES.forEach(m => {
     const b = document.createElement("button");
@@ -392,35 +456,374 @@ if (!window.THREE || !THREE.OrbitControls) {
     labelLayer.appendChild(b); m.label = b;
   });
 
-  // Camera views
-  const isPhone = () => window.innerWidth < 700;
+  /* ===== Rooms (inside) ===== */
+  const WIRE = new THREE.MeshBasicMaterial({ color: PLAN, wireframe: true, transparent: true, opacity: 0.5 });
+  function mats(bp) {
+    if (bp) return new Proxy({}, { get: () => WIRE });
+    const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, metalness: 0.35, roughness: 0.55, ...o });
+    return {
+      metal: std(0xc9ced6, { metalness: 0.8, roughness: 0.25 }), dark: std(0x6b3f22, { metalness: 0.05, roughness: 0.7 }), light: std(RETRO.cream, { metalness: 0.1 }),
+      belt: std(0x3b2418, { roughness: 0.9, metalness: 0.1 }), wood: std(0x8a5a32, { metalness: 0, roughness: 0.8 }),
+      canvas: std(0xf2f0ea, { metalness: 0, roughness: 0.95 }), item: std(RETRO.mustard, { emissive: RETRO.orange, emissiveIntensity: 0.25 }),
+      screen: std(0x08180c, { emissive: 0x6dff8e, emissiveIntensity: 0.9 }), dimScreen: std(0x0a1018, { emissive: 0x6dff8e, emissiveIntensity: 0.12 }),
+      glow: new THREE.MeshBasicMaterial({ color: RETRO.magenta, transparent: true, opacity: 0.6 }),
+      lampOff: std(0xdde3ea, { emissive: 0xffffff, emissiveIntensity: 0.05 }),
+    };
+  }
+
+  function robot(powered, bp, color = RETRO.mustard) {
+    const body = bp ? WIRE : new THREE.MeshStandardMaterial({ color, metalness: 0.25, roughness: 0.35 });
+    const dome = bp ? WIRE : new THREE.MeshStandardMaterial({ color: RETRO.cream, metalness: 0.2, roughness: 0.3 });
+    const trim = bp ? WIRE : new THREE.MeshStandardMaterial({ color: 0xc9ced6, metalness: 0.85, roughness: 0.25 });
+    const visor = bp ? WIRE : new THREE.MeshStandardMaterial({ color: 0x0b1220, emissive: powered ? LIVE : 0x000000, emissiveIntensity: powered ? 1.6 : 0 });
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.CylinderGeometry(0.3, 0.52, 0.3, 20), trim, 0, 0.15, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.36, 0.32, 0.75, 20), body, 0, 0.65, 0));
+    const head = new THREE.Group(); head.position.y = 1.05;
+    head.add(mesh(new THREE.SphereGeometry(0.34, 24, 16), dome, 0, 0.3, 0));
+    head.add(mesh(new THREE.BoxGeometry(0.5, 0.15, 0.12), visor, 0, 0.32, 0.27));
+    [-1, 1].forEach(sd => { const ear = mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.1, 16), body, sd * 0.36, 0.3, 0); ear.rotation.z = Math.PI / 2; head.add(ear); });
+    head.add(mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.25, 6), trim, 0, 0.7, 0));
+    head.add(mesh(new THREE.SphereGeometry(0.055, 10, 8), bp ? WIRE : new THREE.MeshBasicMaterial({ color: powered ? LIVE : 0x3a4458 }), 0, 0.84, 0));
+    g.add(head);
+    const armGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.55, 8);
+    const armL = mesh(armGeo, trim, -0.43, 0.68, 0.05), armR = mesh(armGeo, trim, 0.43, 0.68, 0.05);
+    armL.rotation.z = -0.2; armR.rotation.z = 0.2; g.add(armL, armR);
+    if (!powered) head.rotation.x = 0.45;
+    g.userData = { head, armR, powered };
+    return g;
+  }
+
+  function conveyor(len, n, moving, M) {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.BoxGeometry(len, 0.12, 0.9), M.belt, 0, 0.7, 0));
+    [-1, 1].forEach(s => g.add(mesh(new THREE.BoxGeometry(len, 0.1, 0.06), M.metal, 0, 0.8, s * 0.48)));
+    [-len / 2 + 0.3, 0, len / 2 - 0.3].forEach(x => g.add(mesh(new THREE.BoxGeometry(0.12, 0.65, 0.8), M.dark, x, 0.32, 0)));
+    const items = [];
+    for (let i = 0; i < n; i++) { const it = mesh(new THREE.BoxGeometry(0.42, 0.3, 0.5), M.item, 0, 0.92, 0); g.add(it); items.push(it); }
+    const place = t => items.forEach((it, i) => { const p = ((moving ? t * 0.12 : 0) + i / n) % 1; it.position.x = -len / 2 + 0.3 + p * (len - 0.6); });
+    place(0);
+    g.userData.update = moving ? place : null;
+    return g;
+  }
+
+  function bin(w, M) {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.BoxGeometry(w, 0.08, 1), M.dark, 0, 0.04, 0));
+    [[0, 0.5], [0, -0.5]].forEach(([x, z]) => g.add(mesh(new THREE.BoxGeometry(w, 0.7, 0.06), M.metal, x, 0.35, z)));
+    [-1, 1].forEach(s => g.add(mesh(new THREE.BoxGeometry(0.06, 0.7, 1), M.metal, s * w / 2, 0.35, 0)));
+    return g;
+  }
+
+  function desk(w, M) {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.BoxGeometry(w, 0.1, 0.9), M.metal, 0, 0.9, 0));
+    g.add(mesh(new THREE.BoxGeometry(w - 0.2, 0.85, 0.7), M.dark, 0, 0.43, -0.05));
+    return g;
+  }
+
+  function lavaLamp(room, x, z, glass, blob) {
+    const g = new THREE.Group(); g.position.set(x, 0, z);
+    const chrome = new THREE.MeshStandardMaterial({ color: 0xc9ced6, metalness: 0.85, roughness: 0.25 });
+    g.add(mesh(new THREE.CylinderGeometry(0.18, 0.45, 0.7, 24), chrome, 0, 0.35, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.2, 0.33, 1.3, 24), new THREE.MeshStandardMaterial({ color: glass, transparent: true, opacity: 0.45, emissive: glass, emissiveIntensity: 0.5 }), 0, 1.35, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.06, 0.2, 0.35, 24), chrome, 0, 2.17, 0));
+    const bm = new THREE.MeshStandardMaterial({ color: blob, emissive: blob, emissiveIntensity: 0.9 });
+    const blobs = [0, 1, 2].map(i => { const b = mesh(new THREE.SphereGeometry(0.1 + i * 0.03, 16, 12), bm, 0, 1.0 + i * 0.35, 0); g.add(b); return b; });
+    room.tick(t => blobs.forEach((b, i) => { b.position.y = 1.35 + Math.sin(t * 0.6 + i * 2.1) * 0.45; b.scale.y = 1 + 0.3 * Math.sin(t * 1.3 + i); }));
+    const glow = new THREE.PointLight(glass, 0.6, 5); glow.position.y = 1.4; g.add(glow);
+    room.add(g);
+  }
+
+  function eggChair(room, x, z, ry, color) {
+    const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry;
+    const chrome = new THREE.MeshStandardMaterial({ color: 0xc9ced6, metalness: 0.85, roughness: 0.25 });
+    g.add(mesh(new THREE.CylinderGeometry(0.5, 0.6, 0.08, 24), chrome, 0, 0.04, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.6, 10), chrome, 0, 0.35, 0));
+    g.add(mesh(new THREE.SphereGeometry(0.95, 32, 20, Math.PI * 0.3, Math.PI * 1.4), new THREE.MeshStandardMaterial({ color: 0xf6f1e7, roughness: 0.3, side: THREE.DoubleSide }), 0, 1.45, 0));
+    const cushion = mesh(new THREE.SphereGeometry(0.72, 24, 16), new THREE.MeshStandardMaterial({ color, roughness: 0.9 }), 0.12, 1.3, 0); cushion.scale.set(0.8, 1, 1); g.add(cushion);
+    room.add(g);
+  }
+
+  function shell(room, bp) {
+    const s = room.scene;
+    if (bp) {
+      s.background = new THREE.Color(0x0a0f1a);
+      s.add(new THREE.AmbientLight(0x8090b0, 0.55));
+      s.add(new THREE.HemisphereLight(0xbfd8ff, 0x1a2233, 0.55));
+      const p = new THREE.PointLight(0xffffff, 0.9, 30); p.position.set(0, 7, 2); s.add(p);
+      s.add(mesh(new THREE.CylinderGeometry(9, 9, 0.2, 64), new THREE.MeshStandardMaterial({ color: 0x121a29, metalness: 0.3, roughness: 0.8 }), 0, -0.1, 0));
+      const ringM = new THREE.MeshBasicMaterial({ color: PLAN, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
+      [3, 6.5].forEach(r => { const rg = mesh(new THREE.RingGeometry(r, r + 0.05, 96), ringM, 0, 0.01, 0); rg.rotation.x = -Math.PI / 2; s.add(rg); });
+      const grid = new THREE.GridHelper(18, 18, PLAN, PLAN); grid.material.transparent = true; grid.material.opacity = 0.15; grid.position.y = 0.02; s.add(grid);
+      for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; s.add(mesh(new THREE.BoxGeometry(0.15, 3.4, 0.15), WIRE, Math.cos(a) * 9, 1.7, Math.sin(a) * 9)); }
+      const top = mesh(new THREE.TorusGeometry(9, 0.05, 6, 96), WIRE, 0, 3.4, 0); top.rotation.x = Math.PI / 2; s.add(top);
+      return;
+    }
+    const T = retroTextures();
+    s.background = new THREE.Color(0x1a0f0a);
+    s.add(new THREE.AmbientLight(0xffd9b0, 0.5));
+    s.add(new THREE.HemisphereLight(0xffe0b8, 0x3b2418, 0.45));
+    const top = new THREE.PointLight(0xfff0dd, 0.8, 30); top.position.set(0, 7, 2); s.add(top);
+    const d = new THREE.DirectionalLight(0xffffff, 0.35); d.position.set(5, 10, 8); s.add(d);
+    const pink = new THREE.PointLight(RETRO.magenta, 1.3, 14), orange = new THREE.PointLight(RETRO.orange, 1.3, 14);
+    const swirl = t => { pink.position.set(Math.cos(t * 0.5) * 5, 3, Math.sin(t * 0.5) * 5); orange.position.set(-Math.cos(t * 0.5) * 5, 3, -Math.sin(t * 0.5) * 5); };
+    swirl(0); s.add(pink, orange); room.tick(swirl);
+    s.add(mesh(new THREE.CylinderGeometry(9, 9, 0.2, 64), new THREE.MeshStandardMaterial({ map: T.shag, roughness: 1, metalness: 0 }), 0, -0.1, 0));
+    const rug = mesh(new THREE.CircleGeometry(3.6, 64), new THREE.MeshStandardMaterial({ map: T.rug, roughness: 1, metalness: 0 }), 0, 0.015, 0);
+    rug.rotation.x = -Math.PI / 2; s.add(rug);
+    s.add(mesh(new THREE.CylinderGeometry(9, 9, 3.4, 64, 1, true), new THREE.MeshStandardMaterial({ map: T.wall, roughness: 0.9, side: THREE.BackSide }), 0, 1.7, 0));
+    const trim = mesh(new THREE.TorusGeometry(8.95, 0.09, 10, 128), new THREE.MeshStandardMaterial({ color: RETRO.orange, metalness: 0.4, roughness: 0.4 }), 0, 3.42, 0);
+    trim.rotation.x = Math.PI / 2; s.add(trim);
+    lavaLamp(room, Math.cos(-Math.PI * 0.82) * 7.8, Math.sin(-Math.PI * 0.82) * 7.8, RETRO.magenta, RETRO.orange);
+    lavaLamp(room, Math.cos(-Math.PI * 0.18) * 7.8, Math.sin(-Math.PI * 0.18) * 7.8, RETRO.teal, RETRO.mustard);
+    eggChair(room, 7.2, 1.6, 0, RETRO.orange);
+  }
+
+  function workerTag(agentKey) {
+    const a = AGENTS[agentKey];
+    const text = a.status === "planned" ? `${a.name}: planned, powered down` : a.status === "ready" ? `${a.name}: ready, first run pending` : `${a.name}: working`;
+    return { text, cls: a.status === "planned" ? "off" : "worker" };
+  }
+
+  const ROOM_BUILDERS = {
+    core(r, M) {
+      r.add(mesh(new THREE.CylinderGeometry(1.4, 1.1, 0.9, 40), M.metal, 0, 0.45, 0));
+      r.add(mesh(new THREE.CylinderGeometry(1.35, 1.35, 0.04, 40), M.glow, 0, 0.92, 0));
+      const holo = new THREE.Group(); holo.position.y = 1.9;
+      const hm = new THREE.MeshBasicMaterial({ color: LIVE, transparent: true, opacity: 0.6, wireframe: true });
+      const t = mesh(new THREE.TorusGeometry(0.85, 0.04, 6, 48), hm); t.rotation.x = Math.PI / 2; holo.add(t);
+      holo.add(mesh(new THREE.SphereGeometry(0.25, 12, 8), hm));
+      for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; holo.add(mesh(new THREE.SphereGeometry(0.1, 8, 6), hm, Math.cos(a) * 0.85, 0, Math.sin(a) * 0.85)); }
+      r.add(holo);
+      const disco = mesh(new THREE.IcosahedronGeometry(0.6, 2), new THREE.MeshStandardMaterial({ color: 0xdfe4ea, metalness: 0.45, roughness: 0.15, emissive: 0x6a6f78, emissiveIntensity: 0.6, flatShading: true }), 0, 4.6, 0);
+      r.add(disco); r.add(mesh(new THREE.CylinderGeometry(0.015, 0.015, 1.5, 4), new THREE.MeshBasicMaterial({ color: 0xaaaaaa }), 0, 5.9, 0));
+      r.tick(t2 => { holo.rotation.y = t2 * 0.4; disco.rotation.y = t2 * 0.8; });
+      [-0.6, 0, 0.6].forEach((a, i) => {
+        const g = desk(2.2, M); const ang = Math.PI / 2 + a + Math.PI;
+        g.position.set(Math.cos(ang) * 5.2, 0, Math.sin(ang) * 5.2); g.lookAt(0, 0, 0);
+        const sc = mesh(new THREE.BoxGeometry(1.9, 0.95, 0.06), M.screen, 0, 1.6, -0.3); sc.rotation.x = -0.25; g.add(sc);
+        r.add(g);
+      });
+      r.label("Station hologram", 0, 3.1, 0);
+      r.label("CLAUDE.md console", 0, 2.7, -5.2);
+    },
+    rules(r, M) {
+      const files = ["general.md", "working-with-me.md", "README.md"];
+      files.forEach((f, i) => {
+        const x = (i - 1) * 3.2;
+        r.add(mesh(new THREE.CylinderGeometry(0.5, 0.65, 1, 24), M.metal, x, 0.5, -1));
+        const tab = mesh(new THREE.BoxGeometry(1, 1.3, 0.08), M.screen, x, 1.9, -1); r.add(tab);
+        r.tick(t => { tab.position.y = 1.9 + Math.sin(t * 1.2 + i) * 0.08; tab.rotation.y = Math.sin(t * 0.5 + i) * 0.25; });
+        r.label(f, x, 2.95, -1);
+      });
+      for (let i = -2; i <= 2; i++) {
+        const sh = new THREE.Group(); sh.position.set(i * 2.6, 0, -7.2);
+        sh.add(mesh(new THREE.BoxGeometry(2.3, 2.6, 0.5), M.dark, 0, 1.3, 0));
+        [0.7, 1.4, 2.1].forEach(y => sh.add(mesh(new THREE.BoxGeometry(2.1, 0.05, 0.45), M.metal, 0, y, 0.05)));
+        r.add(sh);
+      }
+      r.label("One tablet per rule file", 0, 0.2, 2.2);
+    },
+    research(r, M) {
+      const d = desk(3.2, M); d.position.set(-3.6, 0, -3.4); r.add(d);
+      const screens = [];
+      [-1.05, 0, 1.05].forEach((x, i) => {
+        const sc = mesh(new THREE.BoxGeometry(0.95, 0.65, 0.06), M.screen, -3.6 + x, 1.65 + (i === 1 ? 0.15 : 0), -3.75);
+        sc.rotation.y = -x * 0.25; r.add(sc); screens.push(sc);
+      });
+      const scout = robot(AGENTS.scout.status !== "planned", false, RETRO.mustard); scout.position.set(-3.6, 0, -2.1); scout.rotation.y = Math.PI; r.add(scout); r.worker(scout);
+      const n = COUNTS.reports, moving = n > 0;
+      const belt = conveyor(6.5, n, moving, M); belt.position.set(1.2, 0, 2.4); r.add(belt);
+      const arch = mesh(new THREE.TorusGeometry(1.05, 0.11, 10, 40), M.metal, -1.3, 0.9, 2.4); arch.rotation.y = Math.PI / 2; r.add(arch);
+      const scanGlow = mesh(new THREE.TorusGeometry(0.92, 0.035, 6, 40), M.glow, -1.3, 0.9, 2.4); scanGlow.rotation.y = Math.PI / 2; r.add(scanGlow);
+      r.tick(t => { scanGlow.material.opacity = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(t * 2.5)); screens.forEach((s, i) => s.material.emissiveIntensity = 0.75 + 0.2 * Math.sin(t * 3 + i * 2)); });
+      const b = bin(1.5, M); b.position.set(5.4, 0, 2.4); r.add(b);
+      if (belt.userData.update) r.tick(belt.userData.update);
+      const w = workerTag("scout");
+      r.label(w.text, -3.6, 2.35, -2.1, w.cls);
+      r.label("Market scanner", -1.3, 2.25, 2.4);
+      r.label(`Report belt: ${n} report${n === 1 ? "" : "s"}`, 2.2, 1.35, 2.4);
+      r.label("Report bin", 5.4, 1.1, 2.4);
+    },
+    art(r, M) {
+      [[-3.2, -2.4, 0.35], [-0.4, -3.4, 0]].forEach(([x, z, ry]) => {
+        const e = new THREE.Group(); e.position.set(x, 0, z); e.rotation.y = ry;
+        [[-0.45, 0.15], [0.45, 0.15], [0, -0.35]].forEach(([lx, lz]) => {
+          const leg = mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.1, 6), M.wood, lx, 1.05, lz); leg.rotation.x = lz < 0 ? -0.18 : 0.05; e.add(leg);
+        });
+        e.add(mesh(new THREE.BoxGeometry(1.3, 1.0, 0.05), M.canvas, 0, 1.55, 0.2));
+        r.add(e);
+      });
+      const bench = new THREE.Group(); bench.position.set(3.4, 0, -2.6);
+      bench.add(mesh(new THREE.BoxGeometry(2.6, 0.1, 1.1), M.wood, 0, 0.9, 0));
+      [-1.1, 1.1].forEach(x => bench.add(mesh(new THREE.BoxGeometry(0.1, 0.9, 1), M.dark, x, 0.45, 0)));
+      bench.add(mesh(new THREE.BoxGeometry(0.5, 0.12, 0.35), M.metal, -0.6, 1.01, 0));
+      bench.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.3, 12), M.light, 0.5, 1.1, 0.1));
+      r.add(bench);
+      const artist = robot(AGENTS.artist.status !== "planned", false, RETRO.orange); artist.position.set(-1.8, 0, -1.1); artist.rotation.y = Math.PI * 0.85; r.add(artist); r.worker(artist);
+      const bd = bin(1.4, M); bd.position.set(-2.2, 0, 3); r.add(bd);
+      const bf = bin(1.4, M); bf.position.set(2.2, 0, 3); r.add(bf);
+      const w = workerTag("artist");
+      r.label(w.text, -1.8, 2.35, -1.1, w.cls);
+      r.label("Blank canvases", -1.8, 2.45, -3.6);
+      r.label(`Drafts: ${COUNTS.drafts}`, -2.2, 1.1, 3);
+      r.label(`Final: ${COUNTS.finals}`, 2.2, 1.1, 3);
+    },
+    media(r, M) {
+      r.add(mesh(new THREE.BoxGeometry(4.4, 3, 0.1), M.light, 0, 1.5, -5.2));
+      r.add(mesh(new THREE.BoxGeometry(4.4, 0.04, 2.2), M.light, 0, 0.02, -4.1));
+      const mug = new THREE.Group(); mug.position.set(0, 0.05, -4.2);
+      mug.add(mesh(new THREE.CylinderGeometry(0.26, 0.24, 0.48, 24), M.canvas, 0, 0.24, 0));
+      const handle = mesh(new THREE.TorusGeometry(0.13, 0.035, 8, 20), M.canvas, 0.3, 0.26, 0); mug.add(handle);
+      r.add(mug);
+      [-2.6, 2.6].forEach(x => {
+        const st = new THREE.Group(); st.position.set(x, 0, -2.8);
+        st.add(mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), M.dark, 0, 1.1, 0));
+        const box = mesh(new THREE.BoxGeometry(0.9, 0.9, 0.3), M.lampOff, 0, 2.3, 0); box.lookAt(-x * 0.4, 0.5, -4.2 + 2.8); st.add(box);
+        r.add(st);
+      });
+      const cam = new THREE.Group(); cam.position.set(0, 0, -0.2);
+      [-0.3, 0.3].forEach(x => { const l = mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4, 6), M.dark, x, 0.7, 0.15); l.rotation.z = x * 0.6; cam.add(l); });
+      const back = mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4, 6), M.dark, 0, 0.7, -0.2); back.rotation.x = -0.3; cam.add(back);
+      cam.add(mesh(new THREE.BoxGeometry(0.55, 0.38, 0.32), M.dark, 0, 1.5, 0));
+      const lens = mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.3, 16), M.metal, 0, 1.5, -0.3); lens.rotation.x = Math.PI / 2; cam.add(lens);
+      r.add(cam);
+      const prod = robot(AGENTS.producer.status !== "planned", false, RETRO.teal); prod.position.set(1.2, 0, 0.5); prod.rotation.y = Math.PI * 1.15; r.add(prod); r.worker(prod);
+      const n = COUNTS.mediaDrafts + COUNTS.mediaFinals;
+      const belt = conveyor(5.5, n, n > 0, M); belt.position.set(0, 0, 3.6); r.add(belt);
+      if (belt.userData.update) r.tick(belt.userData.update);
+      const w = workerTag("producer");
+      r.label(w.text, 1.2, 2.35, 0.5, w.cls);
+      r.label("Photo stage (lights off)", 0, 3.3, -5.2);
+      r.label(`Mockup belt: ${n} item${n === 1 ? "" : "s"}`, 0, 1.35, 3.6);
+    },
+    sales(r, M) {
+      const belt = conveyor(7, 0, false, M); belt.position.set(0, 0, 0.6); r.add(belt);
+      for (let i = 0; i < 4; i++) r.add(mesh(new THREE.BoxGeometry(0.9, 0.7, 0.9), M.wood, -5 + (i % 2) * 1, 0.35 + Math.floor(i / 2) * 0.72, -2.6));
+      const pod = new THREE.Group(); pod.position.set(5.4, 0, -2.4);
+      pod.add(mesh(new THREE.CylinderGeometry(0.9, 0.9, 1.8, 16), M.metal, 0, 1.2, 0));
+      pod.add(mesh(new THREE.SphereGeometry(0.9, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), M.metal, 0, 2.1, 0));
+      pod.add(mesh(new THREE.ConeGeometry(0.9, 0.5, 16), M.metal, 0, 0.05, 0));
+      r.add(pod);
+      const seller = robot(false, true, RETRO.avocado); seller.position.set(0, 0, 2.2); seller.rotation.y = Math.PI; r.add(seller); r.worker(seller);
+      r.label("Seller: planned, powered down", 0, 2.35, 2.2, "off");
+      r.label("Packing line (not built)", 0, 1.35, 0.6, "off");
+      r.label("Shipping pod: Etsy and Amazon", 5.4, 3.4, -2.4, "off");
+      r.label("Under construction", 0, 3.6, -5, "off");
+    },
+    observatory(r, M) {
+      const ts = new THREE.Group(); ts.position.set(0, 0, -2.4);
+      ts.add(mesh(new THREE.CylinderGeometry(0.5, 0.8, 1.2, 16), M.metal, 0, 0.6, 0));
+      const tube = mesh(new THREE.CylinderGeometry(0.35, 0.45, 3.4, 16), M.metal, 0, 2.2, -0.6); tube.rotation.x = -0.75; ts.add(tube);
+      r.add(ts);
+      [-4, 4].forEach(x => {
+        const board = mesh(new THREE.BoxGeometry(2.6, 1.6, 0.08), M.metal, x, 1.8, -5.6); board.lookAt(0, 1.8, 0); r.add(board);
+      });
+      const an = robot(false, true, RETRO.magenta); an.position.set(2, 0, 0.4); an.rotation.y = -Math.PI * 0.8; r.add(an); r.worker(an);
+      r.label("Analyst: planned, powered down", 2, 2.35, 0.4, "off");
+      r.label("Market telescope", 0, 4.3, -3.4, "off");
+      r.label("Sales charts", -4, 3, -5.6, "off");
+      r.label("Under construction", 0, 0.3, 3.6, "off");
+    },
+    vault(r, M) {
+      r.add(mesh(new THREE.BoxGeometry(2.8, 2.8, 2), M.metal, 0, 1.4, -4));
+      const door = mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.12, 24), M.metal, 0, 1.4, -2.95); door.rotation.x = Math.PI / 2; r.add(door);
+      for (let i = 0; i < 5; i++) r.add(mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.2 + i * 0.12, 16), M.metal, 3 + (i % 3) * 0.6, (0.2 + i * 0.12) / 2, -0.8 + Math.floor(i / 3) * 0.6));
+      const tr = robot(false, true, RETRO.brown); tr.position.set(-2.2, 0, -0.4); tr.rotation.y = Math.PI * 0.8; r.add(tr); r.worker(tr);
+      r.label("Treasurer: planned, powered down", -2.2, 2.35, -0.4, "off");
+      r.label("Investment safe", 0, 3.3, -4, "off");
+      r.label("Profit counter", 3.6, 1.4, -0.5, "off");
+      r.label("Under construction", 0, 0.3, 3.6, "off");
+    },
+  };
+
+  const rooms = {};
+  function buildRoom(id) {
+    if (rooms[id]) return rooms[id];
+    const m = byId[id], bp = m.status === "planned";
+    const room = { scene: new THREE.Scene(), ticks: [], workers: [], labels: [] };
+    room.add = (...o) => room.scene.add(...o);
+    room.tick = f => room.ticks.push(f);
+    room.worker = w => room.workers.push(w);
+    room.label = (text, x, y, z, cls = "") => {
+      const el = document.createElement("div"); el.className = `label tag ${cls}`; el.textContent = text; el.hidden = true;
+      labelLayer.appendChild(el); room.labels.push({ el, pos: new THREE.Vector3(x, y, z) });
+    };
+    shell(room, bp);
+    ROOM_BUILDERS[id](room, mats(bp));
+    rooms[id] = room;
+    return room;
+  }
+
+  /* ===== Navigation ===== */
+  let current = null; // room object when inside, null when outside
+  let fly = null, selected = null;
+  const stationLimits = () => { controls.minDistance = 5; controls.maxDistance = 70; controls.maxPolarAngle = Math.PI; };
+  const roomLimits = () => { controls.minDistance = 3; controls.maxDistance = isPhone() ? 18 : 14; controls.maxPolarAngle = 1.45; };
+  stationLimits();
+
   function overviewView() {
     return isPhone() ? { target: new THREE.Vector3(0, -7, 0), cam: new THREE.Vector3(0, 24, 44) } : { target: new THREE.Vector3(6, 0, 0), cam: new THREE.Vector3(6, 17, 31) };
   }
-  let fly = null, selected = null;
-  function flyTo(view) {
-    if (reduceMotion) { controls.target.copy(view.target); camera.position.copy(view.cam); return; }
-    fly = { t: 0, fromT: controls.target.clone(), toT: view.target, fromC: camera.position.clone(), toC: view.cam };
+  function roomView() {
+    return isPhone() ? { target: new THREE.Vector3(0, -2.5, 0), cam: new THREE.Vector3(0, 9, 14) } : { target: new THREE.Vector3(2.2, 0.8, 0), cam: new THREE.Vector3(2.2, 6, 10.5) };
   }
+  function flyTo(view, done) {
+    if (reduceMotion) { controls.target.copy(view.target); camera.position.copy(view.cam); done && done(); return; }
+    fly = { t: 0, fromT: controls.target.clone(), toT: view.target, fromC: camera.position.clone(), toC: view.cam, done };
+  }
+  function fadeSwap(fn) {
+    if (reduceMotion) { fn(); return; }
+    fadeEl.classList.add("on");
+    setTimeout(() => { fn(); requestAnimationFrame(() => fadeEl.classList.remove("on")); }, 360);
+  }
+  function showRoomLabels(room, on) { if (room) room.labels.forEach(l => { l.el.hidden = !on; }); }
+
+  function enterRoom(id) {
+    const room = buildRoom(id);
+    fadeSwap(() => {
+      current = room; fly = null;
+      MODULES.forEach(m => { m.label.hidden = true; });
+      roomLimits();
+      const v = roomView(); controls.target.copy(v.target); camera.position.copy(v.cam);
+      showRoomLabels(room, true);
+      renderRoom(byId[id], true);
+    });
+  }
+
   select = id => {
+    if (current) return;
     if (selected) selected.label.classList.remove("selected");
-    selected = id ? byId[id] : null;
-    if (!selected) { renderOverview(); flyTo(overviewView()); return; }
+    selected = byId[id];
     selected.label.classList.add("selected");
-    renderRoom(selected);
+    renderRoom(selected, false);
     const w = new THREE.Vector3(); selected.group.getWorldPosition(w);
     const out = id === "core" ? new THREE.Vector3(0, 0, 1) : w.clone().setY(0).normalize();
-    const dist = id === "core" ? 14 : 13;
-    const target = w.clone(); if (isPhone()) target.y -= 3.5;
-    flyTo({ target, cam: w.clone().add(out.multiplyScalar(dist)).add(new THREE.Vector3(0, 3.5, 0)) });
+    flyTo({ target: w.clone(), cam: w.clone().add(out.multiplyScalar(id === "core" ? 6 : 4.5)).add(new THREE.Vector3(0, 1.5, 0)) }, () => enterRoom(id));
+  };
+
+  leaveRoom = () => {
+    if (!current) {
+      if (selected) { selected.label.classList.remove("selected"); selected = null; }
+      renderOverview(); flyTo(overviewView()); return;
+    }
+    const leaving = current;
+    fadeSwap(() => {
+      showRoomLabels(leaving, false);
+      current = null; stationLimits();
+      if (selected) { selected.label.classList.remove("selected"); selected = null; }
+      const v = overviewView(); controls.target.copy(v.target); camera.position.copy(v.cam);
+      renderOverview();
+    });
   };
 
   const start = overviewView(); controls.target.copy(start.target); camera.position.copy(start.cam);
 
-  // Picking: a tap selects, a drag only rotates
   const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
   let downAt = null;
   function pick(e) {
+    if (current) return null;
     const r = renderer.domElement.getBoundingClientRect();
     ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ptr, camera);
@@ -445,36 +848,51 @@ if (!window.THREE || !THREE.OrbitControls) {
 
   const clock = new THREE.Clock(), tmp = new THREE.Vector3();
   const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function placeLabel(el, v, w, h) {
+    tmp.copy(v).project(camera);
+    if (tmp.z > 1) { el.hidden = true; return; }
+    el.hidden = false;
+    el.style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * h}px) translate(-50%, -100%)`;
+  }
   function frame() {
     const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
     if (!reduceMotion) {
-      if (!selected && !fly) station.rotation.y += dt * 0.04;
-      coreRing.rotation.z += dt * 0.25;
-      drones.forEach(d => {
-        const a = t * 0.7 + d.phase;
-        d.obj.position.set(Math.cos(a) * 2.7, 1.3 + Math.sin(t * 1.6 + d.phase) * 0.35, Math.sin(a) * 2.7);
-        d.obj.rotation.y = t * 1.5;
-      });
-      beacons.forEach((b, i) => { b.material.opacity = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 3 + i)); });
-      tip.material.color.setHex(Math.sin(t * 2) > 0 ? LIVE : 0x2c6a80);
-    } else {
+      if (!current) {
+        if (!selected && !fly) station.rotation.y += dt * 0.04;
+        coreRing.rotation.z += dt * 0.25;
+        drones.forEach(d => {
+          const a = t * 0.7 + d.phase;
+          d.obj.position.set(Math.cos(a) * 2.7, 1.3 + Math.sin(t * 1.6 + d.phase) * 0.35, Math.sin(a) * 2.7);
+          d.obj.rotation.y = t * 1.5;
+        });
+        beacons.forEach((b, i) => { b.material.opacity = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 3 + i)); });
+        tip.material.color.setHex(Math.sin(t * 2) > 0 ? LIVE : 0x2c6a80);
+      } else {
+        current.ticks.forEach(f => f(t));
+        current.workers.forEach((wk, i) => {
+          if (!wk.userData.powered) return;
+          wk.position.y = Math.sin(t * 2 + i) * 0.04;
+          wk.userData.head.rotation.y = Math.sin(t * 0.7 + i) * 0.35;
+          wk.userData.armR.rotation.x = Math.sin(t * 3 + i) * 0.35;
+        });
+      }
+    } else if (!current) {
       drones.forEach(d => d.obj.position.set(Math.cos(d.phase) * 2.7, 1.3, Math.sin(d.phase) * 2.7));
     }
     if (fly) {
-      fly.t = Math.min(1, fly.t + dt / 1.2); const e = ease(fly.t);
+      fly.t = Math.min(1, fly.t + dt / 1.1); const e = ease(fly.t);
       controls.target.lerpVectors(fly.fromT, fly.toT, e);
       camera.position.lerpVectors(fly.fromC, fly.toC, e);
-      if (fly.t === 1) fly = null;
+      if (fly.t === 1) { const done = fly.done; fly = null; done && done(); }
     }
     controls.update();
-    renderer.render(scene, camera);
+    renderer.render(current ? current.scene : scene, camera);
 
     const w = window.innerWidth, h = window.innerHeight;
-    MODULES.forEach(m => {
-      m.group.getWorldPosition(tmp); tmp.y += m.labelHeight; tmp.project(camera);
-      if (tmp.z > 1) { m.label.hidden = true; return; }
-      m.label.hidden = false;
-      m.label.style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * h}px) translate(-50%, -100%)`;
+    if (current) current.labels.forEach(l => placeLabel(l.el, l.pos, w, h));
+    else MODULES.forEach(m => {
+      m.group.getWorldPosition(tmp); tmp.y += m.labelHeight;
+      placeLabel(m.label, tmp.clone(), w, h);
     });
     requestAnimationFrame(frame);
   }
