@@ -149,17 +149,17 @@ const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/"
 const SNAPSHOT = "18 Nov 2026, after the first test run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { conveyor: 4, lessons: 5, reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 6 };
+const COUNTS = { conveyor: 3, lessons: 7, reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 6 };
 
 // The Boss's to-do list for the owner (from decisions/owner-todo.md).
 const TODO = {
   updated: "18 Nov 2026",
   next: [
-    ["Deactivate the sticker, tote and candle until the Profit judge checks them", "now"],
-    ["Swap in the light-shirts design on the 3 main shirts", "now"],
-    ["Fix titles and prices; send Claude the profits", "by Nov 25"],
+    ["Save the free FMP key (stock reports need it)", "now"],
+    ["Check the fixed listings on Etsy", "today"],
+    ["Decide: keep Printify's prices or go to $34.99", "this week"],
   ],
-  done: ["LiquidLav is live on Etsy", "6 listings up", "Duplicate removed"],
+  done: ["Printify connected to Claude", "All listings fixed", "Sticker hidden"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
@@ -211,11 +211,11 @@ const MODULES = [
     next: "Listing text is ready to copy into Etsy. Real product photos come from Printify mockups, or from samples if Etsy requires them." },
   { id: "sales", name: "Sales Dock", status: "active", folder: "sales", x: 20, y: 26, w: 10, h: 7,
     purpose: "Lists merchandise on Etsy and Amazon, sets prices, and keeps track of orders.",
-    contents: [["Printify → Etsy", "Connected on 18 Nov"], ["etsy.com/shop/LiquidLav", "Live since 18 Nov. 6 listings: cat sweatshirt, book sweatshirt, book hoodie, tote, candle and sticker. 0 sales so far."], ["setup-checklist.md", "The store setup steps"]],
+    contents: [["Printify → Etsy", "Connected on 18 Nov"], ["etsy.com/shop/LiquidLav", "Live since 18 Nov. 5 live listings, fixed by Claude through Printify on 18 Nov (right design per color, our titles and tags). Sticker hidden. 0 sales so far."], ["setup-checklist.md", "The store setup steps"]],
     emptyNote: "No sales yet.",
     inside: "The packing line is built and connected to Etsy through Printify. Orders will ride the belt to the shipping pod. The Seller robot isn't set up yet, so you publish listings yourself.",
     agent: "seller",
-    next: "Fix the listings: the light-shirts design on white items, remove the duplicate, check profits, and use our titles and tags." },
+    next: "Listings fixed. Next: the Seller robot takes over listing work, and Etsy Ads start once you're happy with the listings." },
   { id: "observatory", name: "Observatory", status: "empty", folder: "finance", x: 5, y: 27, w: 9, h: 6,
     purpose: "Watches the money and what sells: sales reports, profit, budget, and how much could be invested. Sends the results back to the Research Lab.",
     contents: [["ledger.csv", "Every sale, cost, fee and ad dollar. Empty until the first sale."], ["README.md", "How the finance records work"]],
