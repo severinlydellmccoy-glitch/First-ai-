@@ -12,7 +12,7 @@ How close the business is to running itself. Update this whenever something gets
 - [x] Designs drawn and rendered print-ready (Artist, `art/source/build.js`)
 - [x] **Daily cycle (every 24 hours, 9:17 pm Central):** the Analyst (Observatory) decides each day which agents need to run (`decisions/YYYY-MM-DD-dispatch.md`), then the chosen ones run in order, with a phone notification. Replaced the 72-hour cycle on 2026-11-18 at the owner's request.
 - [x] **Conveyor:** agents pass hand-offs, problems and lessons to each other through `conveyor/` every run
-- [x] **Market Watcher:** daily stock report on market days at 7:45 am Central, plus a Sunday-night week-ahead report. **Needs the free FMP key.**
+- [x] **Market Watcher:** daily stock report on market days at 7:45 am Central, plus a Sunday-night week-ahead report. FMP free key working since 2026-11-18, but the free plan covers only about 44 of 240 companies (problem raised with the Problem Solver 2026-11-19). The screen now also saves an overheated list.
 - [x] **Problem Solving Division:** the Problem Solver automates one or two manual jobs per cycle, under the owner's standing permission (`rules/working-with-me.md`, rule 6)
 
 ## Still manual: next to automate

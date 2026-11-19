@@ -112,9 +112,10 @@ def main():
     day = max((r["date"] for r in results), default=dt.date.today().isoformat())
     passing = sorted([r for r in results if r["passes_all"]], key=lambda r: -r["vol_ratio"])
     watch = sorted([r for r in results if r["high_volume"] and not r["passes_all"]], key=lambda r: -r["vol_ratio"])
+    hot = sorted([r for r in results if r["rsi_overheated"]], key=lambda r: -r["rsi"])
     with open(os.path.join(a.out, f"{day}-screen.json"), "w") as f:
         json.dump({"data_date": day, "checked": len(results), "universe": len(uni), "errors": errors,
-                   "passes_all": passing, "high_volume_other": watch}, f, indent=1)
+                   "passes_all": passing, "high_volume_other": watch, "overheated": hot}, f, indent=1)
     def row(r):
         return (f"| {r['symbol']} | {r['name']} | ${r['market_cap']/1e9:,.0f}B | ${r['close']:,} | {r['change_pct']:+}% | "
                 f"{r['vol_ratio']}× | {r['rsi_prev']} → {r['rsi']}{' ⚠️' if r['rsi_overheated'] else ''} | "
@@ -122,7 +123,8 @@ def main():
     head = "| Ticker | Company | Size | Close | Day | Volume vs 20-day | RSI | Price > 50-day > 200-day |\n|---|---|---|---|---|---|---|---|"
     md = [f"Data date: {day}. Checked {len(results)} of {len(uni)} companies over ${a.min_cap/1e9:.0f}B.",
           "", "### Passed all three tests", head, *([row(r) for r in passing] or ["| none today | | | | | | | |"]),
-          "", "### High volume only (didn't pass every test)", head, *([row(r) for r in watch[:15]] or ["| none | | | | | | | |"])]
+          "", "### High volume only (didn't pass every test)", head, *([row(r) for r in watch[:15]] or ["| none | | | | | | | |"]),
+          "", "### Overheated (RSI above 70)", ", ".join(f"{r['symbol']} ({r['rsi']})" for r in hot) or "none"]
     if errors: md += ["", f"Couldn't check: {', '.join(errors[:20])}{' …' if len(errors) > 20 else ''}"]
     with open(os.path.join(a.out, f"{day}-screen.md"), "w") as f:
         f.write("\n".join(md) + "\n")
