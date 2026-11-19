@@ -108,6 +108,11 @@ body {
 .crew-card small { display: block; color: var(--muted); font-size: 12px; }
 .crew-card em { font-style: normal; font-family: var(--font-mono); font-size: 11.5px; color: var(--plan); }
 .crew-card.on em { color: var(--live); }
+.todo { border: 1px solid color-mix(in srgb, #f2c230 45%, transparent); background: color-mix(in srgb, #f2c230 7%, transparent); border-radius: 8px; padding: 12px 14px; margin-top: 14px; }
+.todo h3 { margin: 0 0 8px !important; color: #f2c230 !important; }
+.todo ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.todo li span { color: var(--muted); font-size: 12px; margin-left: 6px; font-family: var(--font-mono); }
+.todo p { margin-top: 8px !important; font-size: 12.5px; color: var(--muted); }
 .legend { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
 .legend div { display: flex; align-items: center; gap: 8px; }
 .back { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 0; margin-bottom: 12px; cursor: pointer; }
@@ -144,7 +149,18 @@ const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/"
 const SNAPSHOT = "18 Nov 2026, after the first test run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 0, finals: 0, mediaDrafts: 0, mediaFinals: 0 };
+const COUNTS = { reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 6 };
+
+// The Boss's to-do list for the owner (from decisions/owner-todo.md).
+const TODO = {
+  updated: "18 Nov 2026",
+  next: [
+    ["Choose the shop name", "today"],
+    ["Finish signing up to Printify (free plan)", "by Nov 21"],
+    ["Open the Etsy shop", "by Nov 23"],
+  ],
+  goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
+};
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
 // x, y, w, h = the room's place on the map, in floor tiles
@@ -173,20 +189,18 @@ const MODULES = [
     inside: "A lounge with a wall of TVs showing what people talk about on YouTube and Instagram. The Prospector pins ideas to the board, and a tube carries each one down to the judges in the Research Lab.",
     agent: "prospector",
     next: "The Boss put the service ideas on hold until January. They need a Fiverr or Upwork account only you can open." },
-  { id: "art", name: "Art Studio", status: "empty", folder: "art", x: 35, y: 9, w: 10, h: 8,
+  { id: "art", name: "Art Studio", status: "active", folder: "art", x: 35, y: 9, w: 10, h: 8,
     purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
-    contents: [["README.md", "How drafts and finished designs are stored"], ["drafts/", "0 files"], ["final/", "0 files"]],
-    emptyNote: "No designs yet.",
-    inside: "Easels with blank canvases, a workbench, and two bins: drafts and final. The Artist is powered down until it has a design to make.",
+    contents: [["final/holiday-cat-ornament-remover", "\"Professional Ornament Remover\": our orange cat swatting an ornament off the tree. Light- and dark-shirt versions, print-ready."], ["final/book-lover-snowed-in", "\"Snowed in with a good book\": cocoa on a stack of books under falling snow. Light- and dark-shirt versions."], ["drafts/", "4 designs, 8 print files (includes \"Head of Tree Inspection\" and \"Blanket. Cocoa. Chapter twelve.\")"]],
+    inside: "Easels, a workbench, and two bins: drafts and final. The Artist walks between the easels and the bins.",
     agent: "artist",
-    next: "The Boss picked two designs to make by 24 Nov: a funny holiday cat sweatshirt (our own cat) and a cozy book-lover sweatshirt. The Artist isn't set up yet." },
-  { id: "media", name: "Media Bay", status: "empty", folder: "media", x: 35, y: 21, w: 10, h: 8,
+    next: "Both designs are done, ahead of the 24 Nov deadline. Next: you create the products in Printify (see the Boss's to-do list)." },
+  { id: "media", name: "Media Bay", status: "active", folder: "media", x: 35, y: 21, w: 10, h: 8,
     purpose: "Mockups, product photos, video, social posts and listing text that sell the products.",
-    contents: [["README.md", "How media files are stored and named"], ["drafts/", "0 files"], ["final/", "0 files"]],
-    emptyNote: "No media yet.",
-    inside: "A photo stage with lights and a camera, and a mockup belt. The Producer is powered down.",
+    contents: [["final/holiday-cat-ornament-remover-listing.md", "Etsy title, 13 tags, description and Amazon Merch text, with price and colors"], ["final/book-lover-snowed-in-listing.md", "The same for the book-lover sweatshirt"], ["final/mockups/", "4 sweatshirt previews"]],
+    inside: "A photo stage with lights and a camera, and a mockup belt. The first listing text and previews were made by a Claude session; the Producer robot itself isn't set up yet.",
     agent: "producer",
-    next: "Waiting on the first finished designs from the Art Studio." },
+    next: "Listing text is ready to copy into Etsy. Real product photos come from Printify mockups, or from samples if Etsy requires them." },
   { id: "sales", name: "Sales Dock", status: "planned", folder: null, x: 20, y: 26, w: 10, h: 7,
     purpose: "Lists merchandise on Etsy and Amazon, sets prices, and keeps track of orders.",
     contents: [], emptyNote: "Not built yet. There is no folder for it.",
@@ -225,7 +239,7 @@ const AGENTS = {
   underboss:  { name: "Underboss", status: "running", color: "#5b7fbf", job: "Second in command. Checks every report for sources, judge votes and made-up numbers, sends weak work back, and briefs the Boss.", note: "First briefing done 18 Nov: passed 5 ideas, sent 1 back." },
   scout:      { name: "Scout", status: "running", color: "#e3a72f", job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "First report 18 Nov: 2 approved, 8 denied." },
   prospector: { name: "Prospector", status: "running", color: "#8b5cf6", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "First report 18 Nov: 3 approved, 8 denied." },
-  artist:     { name: "Artist", status: "planned", color: "#e8692c", job: "Creates original designs." },
+  artist:     { name: "Artist", status: "running", color: "#e8692c", job: "Creates original designs, drawn in code and rendered print-ready for light and dark shirts.", note: "First designs 18 Nov: holiday cat and book lover." },
   producer:   { name: "Producer", status: "planned", color: "#2f9c95", job: "Makes mockups, photos, posts and listing text." },
   seller:     { name: "Seller", status: "planned", color: "#8a9a3b", job: "Lists products and keeps prices up to date." },
   analyst:    { name: "Analyst", status: "planned", color: "#d94f8a", job: "Reads the sales numbers and suggests what to make next." },
@@ -315,6 +329,11 @@ function renderOverview() {
   panel.innerHTML = `
     <h2>Station overview</h2>
     <p class="lede">Lit rooms exist in your GitHub repository. Orange outlines are parts of the business that are planned but not built yet.</p>
+    <div class="todo">
+      <h3>&#9819; The Boss's to-do list for you</h3>
+      <ol>${TODO.next.map(([t, d]) => `<li>${t}<span>${d}</span></li>`).join("")}</ol>
+      <p>${TODO.goal} <a href="https://github.com/severinlydellmccoy-glitch/First-ai-/blob/main/decisions/owner-todo.md" target="_blank" rel="noopener">Full list</a> &middot; updated ${TODO.updated}</p>
+    </div>
     ${crewList()}
     <p class="hint" style="margin-top:8px">A lit visor means the robot is set up. "Off" robots are planned but not set up yet. Tap anyone to find them on the map.</p>
     <h3>Rooms</h3>
@@ -716,7 +735,7 @@ addBot(byId.research, null, "Demand", "#8a9a3b", on("scout"), [[5.2, 8.9]], { bo
 addBot(byId.research, null, "Safety", "#d94f8a", on("scout"), [[7, 8.9]], { bob: true });
 addBot(byId.research, null, "Profit", "#2f9c95", on("scout"), [[8.8, 8.9]], { bob: true });
 addBot(byId.prospecting, "prospector", "Prospector", AGENTS.prospector.color, on("prospector"), [[2, 2.1], [4.6, 2.1], [6.6, 2.9], [6.6, 4.3], [4.6, 2.1]]);
-addBot(byId.art, "artist", "Artist", AGENTS.artist.color, on("artist"), [[2.4, 3]]);
+addBot(byId.art, "artist", "Artist", AGENTS.artist.color, on("artist"), [[2.4, 2.8], [4.2, 2.6], [2.2, 5.4], [7.8, 5.4], [6.6, 2.4]]);
 addBot(byId.media, "producer", "Producer", AGENTS.producer.color, on("producer"), [[5.9, 3.6]]);
 addBot(byId.sales, "seller", "Seller", AGENTS.seller.color, on("seller"), [[4.2, 5]]);
 addBot(byId.observatory, "analyst", "Analyst", AGENTS.analyst.color, on("analyst"), [[6.6, 3.6]]);

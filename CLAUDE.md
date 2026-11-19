@@ -39,6 +39,7 @@ Each folder's README explains its naming conventions.
 - `CORRIDORS`: the links between rooms.
 - `AGENTS`: each robot's status (`ready`, `running`, `planned`).
 - `CREW`: the crew roster (every robot, including the three judges), with its role and room.
+- `TODO`: the top three items from the Boss's `decisions/owner-todo.md`, shown at the top of the panel.
 - `COUNTS`: real numbers from the repository; they set the items on the belts, the bins and the idea board.
 
 ## Still to decide
