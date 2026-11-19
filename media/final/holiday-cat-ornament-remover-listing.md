@@ -43,7 +43,7 @@ Care: wash inside out on cold, tumble dry low, and don't iron directly on the pr
 
 ## Amazon Merch on Demand
 
-- **Brand** (up to 50 characters): your shop name
+- **Brand** (up to 50 characters): LiquidLav
 - **Title** (55 of 60 characters): Professional Ornament Remover Funny Christmas Cat Lover
 - **Bullet 1:** Funny Christmas cat design with an original orange tabby swatting an ornament off the tree. A great holiday gift for cat moms, cat dads and cat owners whose tree never stays decorated.
 - **Bullet 2:** Ideal for Christmas parties, ugly sweater days, gift exchanges and cozy nights in with your own little ornament remover.

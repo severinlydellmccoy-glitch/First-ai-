@@ -6,7 +6,7 @@ Your checklist for getting the shop running. Tick a box by changing `[ ]` to `[x
 
 ## Do next
 
-1. **Finish the Etsy shop setup** (by Nov 23): shop name, payments (bank account) and billing (card). Then tell Claude the shop name.
+1. **Finish the Etsy shop setup** (by Nov 23): enter the shop name **LiquidLav**, then payments (bank account) and billing (card).
 2. **Finish signing up to Printify** (by Nov 21). See `sales/setup-checklist.md`, step 1.
 3. **Connect Printify to Etsy** (right after both are done).
 
@@ -14,7 +14,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 
 ## 1. Accounts
 
-- [ ] Choose a shop name. Search it on etsy.com and amazon.com first to check nobody uses it. (`sales/setup-checklist.md`, "Before you start")
+- [x] Choose a shop name: **LiquidLav**. A web search found no shop or trademark using it.
 - [ ] Finish the Printify signup. Stay on the free plan. (`decisions/2026-11-18-decisions.md`, Needs the owner #1)
 - [x] Create the Etsy account (done Nov 18)
 - [ ] Finish the Etsy shop setup: shop name, payments and billing. (`sales/setup-checklist.md`, step 2)
@@ -46,6 +46,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [x] Holiday cat and book lover designs, light and dark versions (`art/final/`), ready before the Nov 24 deadline
 - [x] Etsy and Amazon listing text for both (`media/final/`)
 - [x] Etsy account created (Nov 18)
+- [x] Shop name chosen: LiquidLav (Nov 18)
 
 ## Not now
 

@@ -40,7 +40,7 @@ Care: wash inside out on cold, tumble dry low, and don't iron directly on the pr
 
 ## Amazon Merch on Demand
 
-- **Brand:** your shop name
+- **Brand:** LiquidLav
 - **Title** (57 of 60 characters): Snowed In With A Good Book Cozy Winter Reading Book Lover
 - **Bullet 1:** Cozy winter reading design with an original illustration of hot cocoa on a stack of books under falling snow. A thoughtful gift for book lovers, bookworms and book club friends.
 - **Bullet 2:** Ideal for snow days, reading nights, library volunteers, teachers and anyone who'd rather be home with a good book and a warm drink.
