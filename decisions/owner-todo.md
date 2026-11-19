@@ -6,9 +6,9 @@ Your checklist for getting the shop running. Tick a box by changing `[ ]` to `[x
 
 ## Do next
 
-1. **Swap in the light-shirts design file on every white item** (4 book items and the cat sweatshirt), then republish. The words can't be read right now.
-2. **Delete the duplicate book sweatshirt.** Keep one of "Snowed In With Books and Coffee Swe…" and "Snowed In With Coffee Books Sweatshirt".
-3. **Send Claude the profit Printify shows for each item.** Fix the prices (sweatshirts planned at $34.99) and paste our titles and tags from `media/final/`. The t-shirt ($18.81) and hoodie weren't checked by the Profit judge.
+1. **Deactivate (don't delete) the sticker ($2.36), tote ($16.11) and candle ($22.58)** in Etsy, Shop Manager → Listings, until the Profit judge has checked them. The sticker likely loses money, and the tote was sent back for low profit.
+2. **Swap in the light-shirts design file** on the sand book sweatshirt, the sand hoodie and the white cat sweatshirt. The words can't be read right now.
+3. **Fix titles and prices on those 3:** paste our titles and tags from `media/final/`, and set the sweatshirts to $34.99. Send Claude the profits Printify shows.
 
 Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Christmas: **about Dec 1**.
 
@@ -50,7 +50,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [x] Printify account created (Nov 18)
 - [x] Printify connected to Etsy (Nov 18)
 - [x] **LiquidLav is live on Etsy**, with its first listing: the holiday cat crewneck sweatshirt, white, 6 sizes (Nov 18)
-- [x] Book-lover design listed (Nov 18): 2 sweatshirts at $29.78, a hoodie at $35.96, a t-shirt at $18.81
+- [x] Book-lover design listed (Nov 18). Duplicate sweatshirt and t-shirt removed.
 
 ## Not now
 
