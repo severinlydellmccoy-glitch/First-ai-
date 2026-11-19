@@ -17,7 +17,8 @@ How close the business is to running itself. Update this whenever something gets
 
 ## Still manual: next to automate
 
-- [ ] **Printify connection.** The key is saved; waiting for it to work. This unlocks everything below.
+- [x] **Printify connection** works (Nov 18). Agents can read and update products.
+- [x] **Listing fixer:** `tools/printify/fix_listings.py` puts the right design on each color and our titles and tags, then publishes
 - [ ] **Seller agent:** create products in Printify from `art/final/` and publish to Etsy, as drafts at first and full auto once trusted.
 - [ ] **Producer agent:** listing text (done by hand so far), Pinterest pins, short-video scripts and captions.
 - [x] **Finance Operator agent** (Observatory): weekly sales report, profit breakdown, budget check and investment pool. It needs Printify access for orders and the owner's Etsy numbers.

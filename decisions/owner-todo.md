@@ -6,9 +6,9 @@ Your checklist for getting the shop running. Tick a box by changing `[ ]` to `[x
 
 ## Do next
 
-1. **Deactivate (don't delete) the sticker ($2.36), tote ($16.11) and candle ($22.58)** in Etsy, Shop Manager → Listings, until the Profit judge has checked them. The sticker likely loses money, and the tote was sent back for low profit.
-2. **Swap in the light-shirts design file** on the sand book sweatshirt, the sand hoodie and the white cat sweatshirt. The words can't be read right now.
-3. **Fix titles and prices on those 3:** paste our titles and tags from `media/final/`, and set the sweatshirts to $34.99. Send Claude the profits Printify shows.
+1. **Save the free FMP key** (the form got interrupted). The 7:45 am stock reports need it.
+2. **Check the fixed listings on Etsy:** cat sweatshirt, book sweatshirt, hoodie, tote and candle. Tell Claude if anything looks off.
+3. **Decide on prices:** Printify set the sweatshirts at $37.67 and up (about $16 to $23 profit after fees). Keep them, or go to the planned $34.99?
 
 Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Christmas: **about Dec 1**.
 
@@ -61,6 +61,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [x] Printify connected to Etsy (Nov 18)
 - [x] **LiquidLav is live on Etsy**, with its first listing: the holiday cat crewneck sweatshirt, white, 6 sizes (Nov 18)
 - [x] Book-lover design listed (Nov 18). Duplicate sweatshirt and t-shirt removed.
+- [x] **Printify connected to Claude** (Nov 18). Claude fixed every listing: the right design per color, and our titles, descriptions and tags. Sticker hidden.
 
 ## Not now
 
