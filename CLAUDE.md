@@ -13,17 +13,15 @@ This workspace supports an online business with four connected areas of work:
 
 Work usually moves in that order: research picks what to make, the art and media get made, and sales data feeds the next round of research.
 
-## Status
+## Layout
 
-This is a new workspace. It has no code, tooling or folder layout yet. As those are added, record here:
+- `rules/`: rules that apply to all work. Read every file in it before starting a task, and follow them.
+- `research/`: market research notes, one dated Markdown file per topic.
+- `art/`: original designs. `drafts/` holds work in progress and `final/` holds finished designs.
+- `media/`: mockups, photos, video, social posts and listing copy, split the same way into `drafts/` and `final/`.
 
-- Which marketplaces and platforms are used, and any account- or API-specific rules
-- The folder layout and naming conventions for assets, listings and research notes
-- Commands for any scripts (image processing, listing generation, data analysis)
+Each folder's README explains its naming conventions.
 
-## Working rules
+## Still to decide
 
-- Only create original art and designs. Don't copy or closely imitate other creators' work, trademarks, characters or brand names. Marketplaces remove listings that infringe on intellectual property.
-- Base research on real, cited sources. Note the date of any market or pricing data, because it goes stale quickly.
-- Keep finished assets separate from drafts and source files, so that only final files are uploaded to a marketplace.
-- Never commit or store marketplace credentials, API keys or customer data in this workspace.
+Record here once known: which marketplaces and platforms are used, any account- or API-specific rules, and commands for any scripts that get added.
