@@ -113,6 +113,14 @@ body {
 .todo ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
 .todo li span { color: var(--muted); font-size: 12px; margin-left: 6px; font-family: var(--font-mono); }
 .todo p { margin-top: 8px !important; font-size: 12.5px; color: var(--muted); }
+.report { border: 1px solid color-mix(in srgb, #f2c230 45%, transparent); background: color-mix(in srgb, #f2c230 7%, transparent); border-radius: 8px; padding: 12px 14px; margin: 4px 0 6px; display: grid; gap: 8px; }
+.report header { display: flex; align-items: center; gap: 10px; }
+.report header img { width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--line); }
+.report header b { display: block; font-family: var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; }
+.report header small { color: var(--muted); font-size: 12px; }
+.report dl { margin: 0; display: grid; gap: 6px; }
+.report dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #f2c230; }
+.report dd { margin: 0; font-size: 13.5px; }
 .legend { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
 .legend div { display: flex; align-items: center; gap: 8px; }
 .back { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 0; margin-bottom: 12px; cursor: pointer; }
@@ -149,18 +157,32 @@ const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/"
 const SNAPSHOT = "18 Nov 2026, after the first test run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { conveyor: 3, lessons: 7, reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 6 };
+const COUNTS = { conveyor: 8, lessons: 13, reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 6 };
 
 // The Boss's to-do list for the owner (from decisions/owner-todo.md).
 const TODO = {
   updated: "18 Nov 2026",
   next: [
-    ["Read your first stock report (decide in Robinhood yourself)", "7:45 am Nov 19"],
+    ["Check whether the Etsy shop charges shipping (tote and candle need it)", "this week"],
+    ["Check Offsite Ads: the Finance Chief recommends opting out", "this week"],
     ["Optional: order 2 sample sweatshirts (about $40)", "this week"],
-    ["Optional: Etsy Ads at $3 to $5 a day", "from Nov 23"],
   ],
-  done: ["All listings fixed and checked", "Prices kept", "Stock data connected"],
+  done: ["All listings fixed and verified", "Finance team's first decisions", "Producer set up"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
+};
+
+// Room managers' reports, rewritten by the nightly cycle from what really happened. doing / why / next / updated.
+const REPORTS = {
+  core: { manager: "Boss", doing: "The Boss is waiting on 3 hand-offs from the finance team before tomorrow's decisions: grow the hoodie and sweatshirts, keep the tote and candle without ads, and keep the sticker hidden.", why: "The finance numbers came in tonight, and the Boss makes the final call on what the station makes and promotes next.", next: "Next cycle: the Boss reads the hand-offs, updates the plan and your to-do list.", updated: "Nov 18, 11:30 pm" },
+  rules: { manager: "Rules Keeper", doing: "Holding 6 rules, including your standing permission (rule 6) and autopilot (rule 5). Nothing changed tonight.", why: "Every agent reads these rules before it works.", next: "Only you change the rules. Ask Claude to add any rule, anytime.", updated: "Nov 18, 11:30 pm" },
+  research: { manager: "Lab Manager", doing: "Resting tonight. The Scout and the judges ran this afternoon and approved 2 merch ideas (holiday cat, book lover).", why: "The Analyst skipped research because today's report is still fresh.", next: "The Scout runs again by Nov 20, with TikTok and Instagram trends for Black Friday.", updated: "Nov 18, 11:30 pm" },
+  prospecting: { manager: "Hub Manager", doing: "Resting tonight. This afternoon's 3 service ideas are on hold until January (they need a Fiverr or Upwork account).", why: "The plan is merchandise first; services wait until the shop is selling.", next: "The Prospector runs again by Nov 20.", updated: "Nov 18, 11:30 pm" },
+  art: { manager: "Studio Manager", doing: "Both designs the Boss picked are finished in light and dark versions and live on the shop.", why: "Designs were due Nov 24 and finished early, so nothing is waiting.", next: "The Artist starts again when the Boss picks new designs.", updated: "Nov 18, 11:30 pm" },
+  media: { manager: "Bay Manager", doing: "The Producer robot was set up tonight. Its first job is waiting on the conveyor: Pinterest pins for the two designs.", why: "Pinterest is free and sends gift shoppers to Etsy, and Black Friday is Nov 27.", next: "The Producer writes the pins next cycle. You post them (posting needs a Pinterest business account).", updated: "Nov 18, 11:30 pm" },
+  sales: { manager: "Dock Manager", doing: "5 listings live on Etsy, each checked tonight: our titles, 13 tags, the right design on every color. The sticker stays hidden. 0 orders so far.", why: "A new read-only check now verifies every listing each day, so mistakes get caught early.", next: "Waiting on the first sale. The Seller robot is the next one to build.", updated: "Nov 18, 11:30 pm" },
+  observatory: { manager: "Finance Chief", doing: "First decisions made: grow the hoodie ($18.01 a sale) and sweatshirts ($15.07); keep the tote and candle only if buyers pay shipping, and never advertise them; keep the sticker hidden.", why: "Real Printify costs show the sweatshirts and hoodie are strong, while free shipping or Offsite Ads would cut deeply into profit.", next: "You: check the shipping and Offsite Ads settings. From Nov 23, Etsy Ads at $3 a day on the 3 strong products, only if you approve.", updated: "Nov 18, 11:30 pm" },
+  fixit: { manager: "Division Manager", doing: "Shipped 2 fixes tonight: a daily listing checker (titles, tags and designs) and the new Producer robot.", why: "Both removed manual work: checking Etsy by hand, and writing pins and posts.", next: "Next: build the Seller robot so new designs go live without clicking.", updated: "Nov 18, 11:30 pm" },
+  vault: { manager: "Vault Manager", doing: "Getting ready for the first stock report, tomorrow at 7:45 am Central. Stock data is connected. The safe is locked at $0.", why: "You asked for daily reports on big companies with high volume, rising RSI and positive moving averages. Information only.", next: "After the report you decide everything yourself in Robinhood. No business money is invested until there are profits and you choose a share.", updated: "Nov 18, 11:30 pm" },
 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
@@ -216,7 +238,7 @@ const MODULES = [
     inside: "The packing line is built and connected to Etsy through Printify. Orders will ride the belt to the shipping pod. The Seller robot isn't set up yet, so you publish listings yourself.",
     agent: "seller",
     next: "Listings fixed. Next: the Seller robot takes over listing work, and Etsy Ads start once you're happy with the listings." },
-  { id: "observatory", name: "Observatory", status: "empty", folder: "finance", x: 5, y: 27, w: 9, h: 6,
+  { id: "observatory", name: "Observatory", status: "empty", folder: "finance", x: 3, y: 27, w: 13, h: 7,
     purpose: "Watches the money and what sells: sales reports, profit, budget, and how much could be invested. Sends the results back to the Research Lab.",
     contents: [["ledger.csv", "Every sale, cost, fee and ad dollar. Empty until the first sale."], ["README.md", "How the finance records work"]],
     emptyNote: "No sales reports yet.",
@@ -255,6 +277,8 @@ const AGENTS = {
   producer:   { name: "Producer", status: "ready", color: "#2f9c95", job: "Makes mockups, photos, posts and listing text." },
   seller:     { name: "Seller", status: "planned", color: "#8a9a3b", job: "Lists products and keeps prices up to date." },
   finance:    { name: "Finance Operator", status: "ready", color: "#3cbf7a", job: "Breaks down sales, costs, fees, ad spend and profit, tracks the weekly budget, works out how much could be invested (never picks stocks), and writes a weekly sales report.", note: "Set up and waiting for the first sales." },
+  chief:      { name: "Finance Chief", status: "running", color: "#d4a72c", job: "Manager of the Observatory and head of the financial management team. Decides what to keep, grow, fix or drop and where the weekly budget should go. Money decisions come to you as recommendations.", note: "First decisions Nov 18: grow the hoodie and sweatshirts; no ads on the tote or candle." },
+  profit:     { name: "Profit Analyst", status: "running", color: "#2fbf9f", job: "Works out the real profit per sale of every product from Printify costs, shipping and Etsy fees, and the most it's safe to spend on ads.", note: "First table Nov 18: hoodie $18.01, sweatshirts $15.07 per sale." },
   solver:     { name: "Problem Solver", status: "ready", color: "#b06bff", job: "Finds the jobs you still do by hand and automates them: agent instructions, scripts and scheduled runs. Money, accounts and investments stay with you.", note: "Set up. Runs every 72 hours." },
   analyst:    { name: "Analyst", status: "ready", color: "#d94f8a", job: "The station's daily dispatcher. Every night at 9:17 pm it reads orders, profit, listings and the conveyor, then decides which teams need to work that day. It also finds what's selling and tells the Scout.", note: "Runs every 24 hours, starting Nov 19." },
   watcher:    { name: "Market Watcher", status: "ready", color: "#4fa3ff", job: "Each market-day morning, screens stocks worth over $50B for high volume, rising RSI and positive moving averages, and sums up the good and bad news. Information only, never buy or sell calls.", note: "Scheduled: 7:45 am Central on market days, plus Sunday nights." },
@@ -292,6 +316,8 @@ const CREW = [
   { name: "Artist", agent: "artist", role: "Designer", room: "art" },
   { name: "Producer", agent: "producer", role: "Mockups and posts", room: "media" },
   { name: "Seller", agent: "seller", role: "Etsy and Amazon listings", room: "sales" },
+  { name: "Finance Chief", agent: "chief", role: "Observatory manager: profit decisions", room: "observatory", badge: true },
+  { name: "Profit Analyst", agent: "profit", role: "Profit per product", room: "observatory" },
   { name: "Finance Operator", agent: "finance", role: "Sales reports, profit, investment pool", room: "observatory" },
   { name: "Problem Solver", agent: "solver", role: "Automates manual jobs", room: "fixit" },
   { name: "Analyst", agent: "analyst", role: "Daily dispatcher: decides who works", room: "observatory" },
@@ -375,6 +401,14 @@ function renderOverview() {
     <p class="hint">Drag to move around. Scroll or pinch to zoom. Tap a room to zoom in.</p>
     <p class="foot">Snapshot of the repository on ${SNAPSHOT}. Claude updates the station as the business grows.</p>`;
 }
+const MANAGER_IMG = {};
+function managerCard(m) {
+  const r = REPORTS[m.id]; if (!r) return "";
+  if (!MANAGER_IMG[r.manager]) MANAGER_IMG[r.manager] = portrait(r.manager === "Boss" ? "#d4a72c" : r.manager === "Finance Chief" ? "#d4a72c" : "#2b3a5c", true, false, r.manager === "Boss");
+  const line = (k, v) => v ? `<dt>${k}</dt><dd>${v}</dd>` : "";
+  const body = r.doing ? `<dl>${line("Doing now", r.doing)}${line("Why", r.why)}${line("Next", r.next)}</dl>` : `<p class="hint">No report yet. The manager reports after tonight's run.</p>`;
+  return `<section class="report"><header><img src="${MANAGER_IMG[r.manager]}" alt=""><span><b>${r.manager}</b><small>Manager's report${r.updated ? " &middot; " + r.updated : ""}</small></span></header>${body}</section>`;
+}
 function renderRoom(m) {
   const contents = m.contents.length
     ? `<ul class="list">${m.contents.map(([f, n]) => `<li><span class="file">${f}</span><span class="note">${n}</span></li>`).join("")}</ul>` : "";
@@ -384,6 +418,7 @@ function renderRoom(m) {
     <button class="back" type="button" data-back>&larr; Whole station</button>
     <h2>${m.name}</h2>
     <span class="pill ${m.status}">${STATUS_TEXT[m.status]}</span>
+    ${managerCard(m)}
     <p class="lede">${m.purpose}</p>
     <h3>In this room</h3>
     <p class="hint">${m.inside}</p>
@@ -516,8 +551,18 @@ const bots = [];
 function addBot(room, key, name, color, powered, pts, opts = {}) {
   const bp = room.status === "planned";
   const abs = pts.map(([px, py]) => ({ x: room.x + px, y: room.y + py }));
-  bots.push({ room, key, name, color, powered, bp, pts: abs, i: 0, x: abs[0].x, y: abs[0].y, wait: Math.random() * 1.5, bob: opts.bob, phase: Math.random() * 6, face: 1, size: opts.size || 1, crown: opts.crown });
+  bots.push({ room, key, name, color, powered, bp, pts: abs, i: 0, x: abs[0].x, y: abs[0].y, wait: Math.random() * 1.5, bob: opts.bob, phase: Math.random() * 6, face: 1, size: opts.size || 1, crown: opts.crown, badge: opts.badge });
 }
+// Room managers: navy robots with a gold badge, one per room (the Boss and Finance Chief manage their own rooms).
+const MANAGER_SPOTS = { rules: [[0.9, 1.6], [2.2, 1.6]], research: [[9.6, 9.8], [8.4, 9.8]], prospecting: [[8.2, 4.8], [7.4, 5.2]],
+  art: [[9.0, 6.9], [7.8, 6.9]], media: [[9.0, 6.6], [9.0, 5.4]], sales: [[9.0, 6.0], [7.6, 6.0]], fixit: [[9.2, 3.8], [8.2, 4.6]], vault: [[9.2, 4.8], [8.2, 5.2]] };
+Object.entries(MANAGER_SPOTS).forEach(([id, pts]) => {
+  const room = byId[id], abs = pts.map(([px, py]) => ({ x: room.x + px, y: room.y + py }));
+  bots.push({ room, key: null, name: REPORTS[id].manager, color: "#2b3a5c", powered: true, bp: room.status === "planned", manager: true, badge: true,
+    pts: abs, i: 0, x: abs[0].x, y: abs[0].y, wait: Math.random() * 4, phase: Math.random() * 6, face: 1, size: 1.05 });
+});
+const bossBot = bots.find(b => b.key === "boss"); if (bossBot) bossBot.badge = true;
+
 // Placeholder crew: gray robots holding space for future agents. They walk around but do no work.
 function addPlaceholder(room, pts) {
   const abs = pts.map(([px, py]) => ({ x: room.x + px, y: room.y + py }));
@@ -551,6 +596,12 @@ function drawBot(b, t) {
   ctx.strokeStyle = "#8b949e"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, hy - hr); ctx.lineTo(x, hy - hr * 1.6); ctx.stroke();
   ctx.beginPath(); ctx.arc(x, hy - hr * 1.7, 2.5, 0, Math.PI * 2);
   ctx.fillStyle = b.powered ? (Math.sin(t * 4 + b.phase) > 0 ? C.live : "#2c6a80") : "#3a4458"; ctx.fill();
+  if (b.badge) {
+    ctx.save(); ctx.fillStyle = "#f2c230"; ctx.strokeStyle = "#a07a10"; ctx.lineWidth = 1;
+    const bx = x + r * 0.35, by = y + r * 0.15, br = r * 0.26; ctx.beginPath();
+    for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? br * 0.45 : br; ctx.lineTo(bx + Math.cos(a) * rr, by + Math.sin(a) * rr); }
+    ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+  }
   if (b.crown) {
     const cy = hy - hr * 0.75, cw = hr * 1.1;
     ctx.fillStyle = "#f2c230"; ctx.strokeStyle = "#a07a10"; ctx.lineWidth = 1.2; ctx.beginPath();
@@ -739,8 +790,8 @@ const FURNITURE = {
   },
   observatory(m, bp, t) {
     const ox = m.x, oy = m.y;
-    circle(bp, ox + 7.4, oy + 3.6, 0.8, "#3b4250", "#7b848f");
-    box(bp, ox + 7.15, oy + 1.4, 0.5, 2.2, "#c9ced6", "#8b949e");
+    circle(bp, ox + 7.4, oy + 2.6, 0.7, "#3b4250", "#7b848f");
+    box(bp, ox + 7.15, oy + 0.6, 0.5, 2, "#c9ced6", "#8b949e");
     box(bp, ox + 0.5, oy + 0.4, 2.6, 1.3, "#14171c", "#5b636e"); box(bp, ox + 3.4, oy + 0.4, 2.6, 1.3, "#14171c", "#5b636e");
     if (!bp) {
       ctx.save(); ctx.strokeStyle = "#3cff6a"; ctx.lineWidth = 2.5; ctx.shadowColor = "#3cff6a"; ctx.shadowBlur = 6;
@@ -748,6 +799,11 @@ const FURNITURE = {
       [0.3, 0.55, 0.45, 0.8, 0.65].forEach((h, i) => glow(false, ox + 3.6 + i * 0.45, oy + 1.55 - h, 0.3, h, i % 2 ? C.mustard : "#3cff6a", 0.7));
     }
     desk(bp, ox + 1.2, oy + 3.4, 3.2, 2, "#3cff6a", t);
+    // finance team table and the chief's desk
+    box(bp, ox + 5.4, oy + 4.2, 3.6, 1, "#6b4a2e", "#d4a72c");
+    glow(bp, ox + 5.6, oy + 4.35, 1.4, 0.4, "#2fbf9f", 0.8); glow(bp, ox + 7.4, oy + 4.35, 1.4, 0.4, C.mustard, 0.8);
+    box(bp, ox + 10.0, oy + 1.6, 2.4, 1, "#5b3a22", "#d4a72c");
+    glow(bp, ox + 10.3, oy + 1.75, 0.8, 0.45, "#3cff6a", 0.9);
     if (!bp) { ctx.fillStyle = "#3cff6a"; ctx.font = `700 ${P(0.42)}px Oxanium, sans-serif`; ctx.textAlign = "center"; ctx.fillText("$", P(ox + 2.8), P(oy + 3.38)); }
   },
   fixit(m, bp, t) {
@@ -795,7 +851,8 @@ L(byId.prospecting, `Idea board: ${COUNTS.prospects}`, 7.9, 1.8); L(byId.prospec
 L(byId.art, "Blank canvases", 2.6, 0.6); L(byId.art, `Drafts: ${COUNTS.drafts}`, 2, 5.8); L(byId.art, `Final: ${COUNTS.finals}`, 8, 5.8);
 L(byId.media, "Photo stage (lights off)", 5, 0.25); L(byId.media, `Mockup belt: ${COUNTS.mediaDrafts + COUNTS.mediaFinals}`, 5, 7.3);
 L(byId.sales, "Packing line: 0 orders", 4.25, 2.8); L(byId.sales, "Shipping pod: Etsy (connected)", 8.6, 1.9);
-L(byId.observatory, "Market telescope", 7.4, 4.6); L(byId.observatory, "Sales charts", 3.2, 0.3); L(byId.observatory, "Money desk: $0 so far", 2.8, 4.75);
+L(byId.observatory, "Market telescope", 7.4, 3.55); L(byId.observatory, "Sales charts", 3.2, 0.3); L(byId.observatory, "Money desk: $0 so far", 2.8, 4.75);
+L(byId.observatory, "Profit table", 7.2, 5.45); L(byId.observatory, "Finance Chief's desk", 11.2, 1.4);
 L(byId.fixit, "Automation blueprints", 5, 1.85); L(byId.fixit, "Toolbench", 2, 0.25);
 L(byId.vault, "Ticker wall", 3, 0.25); L(byId.vault, "Safe: locked, $0 invested", 8, 0.3); L(byId.vault, "Trading desk", 2.8, 4.55);
 
@@ -811,8 +868,10 @@ addBot(byId.prospecting, "prospector", "Prospector", AGENTS.prospector.color, on
 addBot(byId.art, "artist", "Artist", AGENTS.artist.color, on("artist"), [[2.4, 2.8], [4.2, 2.6], [2.2, 5.4], [7.8, 5.4], [6.6, 2.4]]);
 addBot(byId.media, "producer", "Producer", AGENTS.producer.color, on("producer"), [[5.9, 3.6]]);
 addBot(byId.sales, "seller", "Seller", AGENTS.seller.color, on("seller"), [[4.2, 5]]);
-addBot(byId.observatory, "finance", "Finance Operator", AGENTS.finance.color, on("finance"), [[2.8, 5.0], [1.6, 2.2], [4.6, 2.2], [2.8, 5.0]]);
-addBot(byId.observatory, "analyst", "Analyst", AGENTS.analyst.color, on("analyst"), [[5.6, 5.0], [7.4, 5.3], [6.6, 2.2], [5.6, 5.0]]);
+addBot(byId.observatory, "finance", "Finance Operator", AGENTS.finance.color, on("finance"), [[2.8, 5.2], [1.6, 2.2], [4.6, 2.2], [2.8, 5.2]]);
+addBot(byId.observatory, "chief", "Finance Chief", AGENTS.chief.color, on("chief"), [[10.4, 5.4], [11.6, 3.0], [9.4, 3.0]], { size: 1.15, badge: true });
+addBot(byId.observatory, "profit", "Profit Analyst", AGENTS.profit.color, on("profit"), [[6.0, 5.6], [8.6, 5.8], [6.0, 5.6]]);
+addBot(byId.observatory, "analyst", "Analyst", AGENTS.analyst.color, on("analyst"), [[5.4, 3.3], [9.2, 3.5], [8.8, 0.9], [5.4, 3.3]]);
 addBot(byId.fixit, "solver", "Problem Solver", AGENTS.solver.color, on("solver"), [[5, 4.7], [2.2, 1.8], [8, 2.9], [5, 4.7]]);
 addBot(byId.vault, "watcher", "Market Watcher", AGENTS.watcher.color, on("watcher"), [[2.8, 4.9], [1.5, 2.2], [4.5, 2.2], [2.8, 4.9]]);
 addBot(byId.vault, "treasurer", "Treasurer", AGENTS.treasurer.color, on("treasurer"), [[6.2, 4.6]]);
@@ -853,6 +912,7 @@ function drawLabels() {
       const s = toScreen(P(b.x), P(b.y + 0.75));
       const a = b.key ? AGENTS[b.key] : null;
       if (b.placeholder) { if (cam.z > 1.4) pill("Placeholder", s.x, s.y, "off", 10); return; }
+      if (b.manager) { pill(`${b.name} (manager)`, s.x, s.y, "worker", 11); return; }
       const text = b.bp ? `${b.name}: planned` : b.powered ? (a ? `${b.name}: ${a.status === "running" ? "working" : "ready"}` : b.name) : `${b.name}: powered down`;
       pill(text, s.x, s.y, b.bp ? "plan" : b.powered ? "worker" : "off", 11);
     });

@@ -50,6 +50,7 @@ The owner wants the agents to run the business on their own once it's set up (`r
 - `AGENTS`: each robot's status (`ready`, `running`, `planned`).
 - `CREW`: the crew roster (every robot, including the three judges), with its role and room.
 - `TODO`: the top three items from the Boss's `decisions/owner-todo.md`, shown at the top of the panel.
+- `REPORTS`: each room manager's report (manager, doing, why, next, updated), shown when the owner clicks into a room. The nightly cycle rewrites them from facts. The Boss manages the Command Core and the Finance Chief manages the Observatory; every other room has a manager robot with a gold badge.
 - `COUNTS.conveyor` and `COUNTS.lessons`: open conveyor items and lessons; the gold boxes moving through the corridors are the open items.
 - `COUNTS`: real numbers from the repository; they set the items on the belts, the bins and the idea board.
 
