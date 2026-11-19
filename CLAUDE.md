@@ -55,7 +55,7 @@ The owner wants the agents to run the business on their own once it's set up (`r
 
 Record here once known: the print-on-demand service, seller account details (never passwords), what share of profit is invested, and commands for any scripts that get added.
 
-- **Stock data:** Financial Modeling Prep (free plan, 250 requests a day) for prices, with the key saved as a network secret (`apikey` header); companiesmarketcap.com for company sizes. Stooq blocks cloud computers.
+- **Stock data:** Financial Modeling Prep (free plan, 250 requests a day; key saved and working since 2026-11-18). The free plan leaves out some tickers (for example GOOG, AVGO), which return 402, and the report lists them as "not in FMP's free plan". FMP is used for prices, with the key saved as a network secret (`apikey` header); companiesmarketcap.com for company sizes. Stooq blocks cloud computers. Robinhood can't be connected: it has no official API for stock accounts, and logging in with the owner's password breaks the rules. The owner checks prices and buys in the Robinhood app.
 - **Budget:** $25 to $50 a week, set by the owner on 2026-11-18. Plan: about $40 on 2 sample sweatshirts once the designs are fixed; then Etsy Ads at $3 to $5 a day, only on fixed listings that convert; plus listing fees ($0.20 each). Check ad spend against sales weekly, and stop ads on listings with no sales after about 2 weeks. The owner approves every purchase.
 - **Shop name:** LiquidLav (chosen 2026-11-18). A web search found no shop, brand or trademark with this name.
 - **Etsy:** account created by the owner on 2026-11-18. Shop setup (payments, billing) not confirmed yet.

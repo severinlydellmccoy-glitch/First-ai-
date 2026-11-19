@@ -24,6 +24,8 @@ def get(url, headers=None, tries=3):
             with urllib.request.urlopen(req, timeout=40) as r:
                 return r.read().decode("utf-8", "replace")
         except urllib.error.HTTPError as e:
+            if e.code == 402:
+                raise LookupError("not in FMP's free plan")
             if e.code in (401, 403):
                 raise SystemExit(f"Data source refused access ({e.code}) for {url.split('?')[0]}. Is the API key saved?")
             if e.code == 429 or i == tries - 1:
@@ -101,6 +103,8 @@ def main():
             if m: results.append({**c, **m})
             else: errors.append(f"{c['symbol']}: not enough price history")
         except SystemExit: raise
+        except LookupError as e:
+            errors.append(f"{c['symbol']} ({e})")
         except Exception as e:
             errors.append(f"{c['symbol']}: {type(e).__name__}")
         time.sleep(0.25)

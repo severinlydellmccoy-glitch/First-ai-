@@ -2,6 +2,9 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-18 (Claude): FMP's free plan leaves out some big tickers (GOOG, AVGO and others return 402). List them as not covered; never guess their numbers.
+- 2026-11-18 (Claude): Keys pasted into the chat don't work. They only work when saved through the secure form, in the value box.
+
 - 2026-11-18 (Claude): Printify API: one product can use different design files for different colors (one `print_areas` entry per color group). Leave out empty placeholders and the neck text layer when updating, or Printify rejects the change. Variants list their options in a different order from the product, so match colors by ID.
 - 2026-11-18 (Claude): Printify's own prices came out above our plan, at about $16 to $23 profit per sweatshirt after Etsy fees. Check the real cost in the API instead of guessing.
 

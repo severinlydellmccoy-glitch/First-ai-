@@ -6,7 +6,7 @@ Your checklist for getting the shop running. Tick a box by changing `[ ]` to `[x
 
 ## Do next
 
-1. **Save the free FMP key.** Say "FMP form" to Claude. The 7:45 am stock reports need it.
+1. **Read your first stock report** at 7:45 am Central (Nov 19). Look up anything interesting in Robinhood yourself; the report never says what to buy.
 2. **Order 2 sample sweatshirts (about $40)** if you want real photos (your money plan). Optional, but it helps buyers trust the shop.
 3. **Turn on Etsy Ads at $3 to $5 a day** from Nov 23 for the sweatshirts and hoodie, if you want more views (your money plan).
 
@@ -61,6 +61,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [x] Printify connected to Etsy (Nov 18)
 - [x] **LiquidLav is live on Etsy**, with its first listing: the holiday cat crewneck sweatshirt, white, 6 sizes (Nov 18)
 - [x] Book-lover design listed (Nov 18). Duplicate sweatshirt and t-shirt removed.
+- [x] FMP stock-data key saved and working (Nov 18)
 - [x] Listings checked by Claude through Printify; prices kept as Printify set them (owner's choice, Nov 18)
 - [x] **Printify connected to Claude** (Nov 18). Claude fixed every listing: the right design per color, and our titles, descriptions and tags. Sticker hidden.
 
