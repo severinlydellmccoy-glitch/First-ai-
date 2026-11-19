@@ -151,10 +151,10 @@ const COUNTS = { reports: 0, approved: 0, denied: 0, prospects: 0, drafts: 0, fi
 const MODULES = [
   { id: "core", name: "Command Core", status: "active", folder: "", x: 20, y: 14, w: 10, h: 7,
     purpose: "The station's brain. It holds the instructions every Claude session reads before doing any work.",
-    contents: [["CLAUDE.md", "Explains the business plan and the folders, and tells Claude to follow everything in the Rules Deck"], ["README.md", "Short description of the repository"], ["station/", "Backup copy of this station map"]],
-    inside: "A control room with a hologram of the station, the CLAUDE.md console, and lava lamps in the corners.",
-    agent: null,
-    next: "Still to decide: the print-on-demand service and what share of profit to invest." },
+    contents: [["CLAUDE.md", "Explains the business plan and the folders, and tells Claude to follow everything in the Rules Deck"], ["decisions/", "The Underboss's briefings and the Boss's decisions (0 so far)"], ["station/", "Backup copy of this station map"]],
+    inside: "The control room. The Boss sits at the big desk and makes the final call on what the station makes next. The Underboss walks between the console, the hologram and the Boss, checking every report first.",
+    agent: "boss",
+    next: "After tonight's test runs, the Underboss checks the reports and the Boss makes its first decisions." },
   { id: "rules", name: "Rules Deck", status: "active", folder: "rules", x: 21, y: 4, w: 8, h: 6,
     purpose: "The rules every agent and every Claude session must follow.",
     contents: [["general.md", "Original art only, cite and date research, keep finished work apart from drafts, never store passwords or keys"], ["working-with-me.md", "Your rules: three questions first, check the work, thorough but readable, no tech-speak"], ["README.md", "Index of the rule files"]],
@@ -223,6 +223,8 @@ const CORRIDORS = [
 
 // status: ready = set up but hasn't done any work yet, running = has produced work, planned = not set up
 const AGENTS = {
+  boss:       { name: "Boss", status: "ready", color: "#d4a72c", job: "Makes the final call on what the station makes next, from the ideas the judges approved. Can't overturn a Safety deny. Money, accounts and investments stay with you.", note: "Set up and waiting for its first decisions." },
+  underboss:  { name: "Underboss", status: "ready", color: "#5b7fbf", job: "Second in command. Checks every report for sources, judge votes and made-up numbers, sends weak work back, and briefs the Boss.", note: "Set up and waiting for its first reports." },
   scout:      { name: "Scout", status: "ready", color: "#e3a72f", job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "Set up and waiting for its first run." },
   prospector: { name: "Prospector", status: "ready", color: "#8b5cf6", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "Set up and waiting for its first run." },
   artist:     { name: "Artist", status: "planned", color: "#e8692c", job: "Creates original designs." },
@@ -253,6 +255,8 @@ function agentCard(key) {
 }
 // Crew roster: every robot on the station. Judges share the Scout's status because they are part of its work.
 const CREW = [
+  { name: "Boss", agent: "boss", role: "Makes the final call", room: "core", crown: true },
+  { name: "Underboss", agent: "underboss", role: "Checks reports, briefs the Boss", room: "core" },
   { name: "Scout", agent: "scout", role: "Market researcher", room: "research" },
   { name: "Demand", agent: "scout", role: "Judge: does it sell?", room: "research", color: "#8a9a3b" },
   { name: "Safety", agent: "scout", role: "Judge: is it original and allowed?", room: "research", color: "#d94f8a" },
@@ -267,7 +271,7 @@ const CREW = [
 CREW.forEach(c => { c.status = AGENTS[c.agent].status; c.color = c.color || AGENTS[c.agent].color; });
 const CREW_STATE = { running: "Working", ready: "Ready", planned: "Off" };
 
-function portrait(color, powered, planned) {
+function portrait(color, powered, planned, crown) {
   const cv2 = document.createElement("canvas"); cv2.width = cv2.height = 96;
   const g = cv2.getContext("2d");
   const bg = g.createRadialGradient(48, 40, 4, 48, 48, 60); bg.addColorStop(0, planned ? "#2a2214" : "#1c2633"); bg.addColorStop(1, "#0c1016");
@@ -288,10 +292,14 @@ function portrait(color, powered, planned) {
   g.setLineDash([]); g.strokeStyle = planned ? "#ffb547" : "#8b949e"; g.lineWidth = 2;
   g.beginPath(); g.moveTo(48, 22); g.lineTo(48, 10); g.stroke();
   g.beginPath(); g.arc(48, 8, 4, 0, Math.PI * 2); g.fillStyle = planned ? "#ffb547" : powered ? "#62d8ff" : "#3a4458"; g.fill();
+  if (crown) {
+    g.setLineDash([]); g.fillStyle = "#f2c230"; g.strokeStyle = "#a07a10"; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(30, 26); g.lineTo(34, 12); g.lineTo(41, 21); g.lineTo(48, 8); g.lineTo(55, 21); g.lineTo(62, 12); g.lineTo(66, 26); g.closePath(); g.fill(); g.stroke();
+  }
   if (!powered && !planned) { g.fillStyle = "rgba(200,210,225,0.8)"; g.font = "bold 16px Inter, sans-serif"; g.fillText("z", 70, 24); g.font = "bold 11px Inter, sans-serif"; g.fillText("z", 80, 14); }
   return cv2.toDataURL();
 }
-CREW.forEach(c => { c.img = portrait(c.color, c.status !== "planned", c.status === "planned" && byId[c.room].status === "planned"); });
+CREW.forEach(c => { c.img = portrait(c.color, c.status !== "planned", c.status === "planned" && byId[c.room].status === "planned", c.crown); });
 
 let pickedCrew = null;
 function crewList() {
@@ -468,7 +476,7 @@ const bots = [];
 function addBot(room, key, name, color, powered, pts, opts = {}) {
   const bp = room.status === "planned";
   const abs = pts.map(([px, py]) => ({ x: room.x + px, y: room.y + py }));
-  bots.push({ room, key, name, color, powered, bp, pts: abs, i: 0, x: abs[0].x, y: abs[0].y, wait: Math.random() * 1.5, bob: opts.bob, phase: Math.random() * 6, face: 1 });
+  bots.push({ room, key, name, color, powered, bp, pts: abs, i: 0, x: abs[0].x, y: abs[0].y, wait: Math.random() * 1.5, bob: opts.bob, phase: Math.random() * 6, face: 1, size: opts.size || 1, crown: opts.crown });
 }
 function stepBots(dt) {
   if (reduceMotion) return;
@@ -486,7 +494,7 @@ function shade(hex, f) {
 }
 function drawBot(b, t) {
   const bob = b.powered && !reduceMotion ? Math.sin(t * 3 + b.phase) * 0.04 : 0;
-  const x = P(b.x), y = P(b.y + bob), r = P(0.34);
+  const x = P(b.x), y = P(b.y + bob), r = P(0.34 * b.size);
   if (b.bp) { ctx.save(); ctx.setLineDash([4, 3]); ctx.strokeStyle = C.plan; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y - r * 0.55, r * 0.6, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); return; }
   ctx.fillStyle = "rgba(0,0,0,0.35)"; ctx.beginPath(); ctx.ellipse(x, P(b.y) + r * 0.85, r * 0.95, r * 0.35, 0, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = b.color; ctx.fill(); ctx.strokeStyle = shade(b.color, 0.6); ctx.lineWidth = 2; ctx.stroke();
@@ -498,6 +506,12 @@ function drawBot(b, t) {
   ctx.strokeStyle = "#8b949e"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, hy - hr); ctx.lineTo(x, hy - hr * 1.6); ctx.stroke();
   ctx.beginPath(); ctx.arc(x, hy - hr * 1.7, 2.5, 0, Math.PI * 2);
   ctx.fillStyle = b.powered ? (Math.sin(t * 4 + b.phase) > 0 ? C.live : "#2c6a80") : "#3a4458"; ctx.fill();
+  if (b.crown) {
+    const cy = hy - hr * 0.75, cw = hr * 1.1;
+    ctx.fillStyle = "#f2c230"; ctx.strokeStyle = "#a07a10"; ctx.lineWidth = 1.2; ctx.beginPath();
+    ctx.moveTo(x - cw / 2, cy); ctx.lineTo(x - cw / 2 + cw * 0.1, cy - hr * 0.7); ctx.lineTo(x - cw * 0.17, cy - hr * 0.3); ctx.lineTo(x, cy - hr * 0.9);
+    ctx.lineTo(x + cw * 0.17, cy - hr * 0.3); ctx.lineTo(x + cw / 2 - cw * 0.1, cy - hr * 0.7); ctx.lineTo(x + cw / 2, cy); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
   if (!b.powered && !reduceMotion) {
     ctx.fillStyle = "rgba(200,210,225,0.7)"; ctx.font = `600 ${P(0.3)}px Inter, sans-serif`;
     const zz = (t * 0.5 + b.phase) % 1;
@@ -582,6 +596,10 @@ const FURNITURE = {
     ctx.beginPath(); ctx.ellipse(P(ox + 5), P(oy + 4.2), P(0.75), P(0.35), a + Math.PI / 2, 0, Math.PI * 2); ctx.stroke();
     ctx.beginPath(); ctx.arc(P(ox + 5), P(oy + 4.2), P(0.18), 0, Math.PI * 2); ctx.fillStyle = C.live; ctx.fill(); ctx.restore();
     lavaLamp(ox + 0.7, oy + 6.2, C.pink, C.orange, t); lavaLamp(ox + 9.3, oy + 6.2, C.teal, C.mustard, t);
+    // the Boss's desk: big wooden desk with a gold trim and one screen
+    box(bp, ox + 7.5, oy + 2.4, 1, 2.6, "#6b4a2e", "#d4a72c");
+    glow(bp, ox + 7.62, oy + 3.3, 0.3, 0.8, C.live, reduceMotion ? 1 : 0.8 + 0.2 * Math.sin(t * 2));
+    circle(bp, ox + 9.05, oy + 3.7, 0.55, "#7a2e2e", "#a54a4a");
   },
   rules(m, bp, t) {
     const ox = m.x, oy = m.y;
@@ -677,7 +695,7 @@ const FURNITURE = {
 };
 
 // Labels shown when zoomed in
-L(byId.core, "CLAUDE.md console", 5, 0.4); L(byId.core, "Station hologram", 5, 5.7);
+L(byId.core, "CLAUDE.md console", 5, 0.4); L(byId.core, "Station hologram", 3.6, 5.7); L(byId.core, "Boss's desk", 8, 2.1);
 L(byId.rules, "general.md", 1.7, 4.7); L(byId.rules, "working-with-me.md", 4.1, 4.7); L(byId.rules, "README.md", 6.5, 4.7);
 L(byId.research, "Market screens", 2.9, 0.4); L(byId.research, "Scanner", 2.45, 4.4);
 L(byId.research, `Report belt: ${COUNTS.reports} report${COUNTS.reports === 1 ? "" : "s"}`, 5, 6.3);
@@ -693,6 +711,8 @@ L(byId.vault, "Investment safe", 5, 0.45, "plan"); L(byId.vault, "Profit counter
 
 // Robots and their routes (room tiles)
 const on = k => AGENTS[k].status !== "planned";
+addBot(byId.core, "boss", "Boss", AGENTS.boss.color, on("boss"), [[9.05, 3.75]], { size: 1.3, crown: true });
+addBot(byId.core, "underboss", "Underboss", AGENTS.underboss.color, on("underboss"), [[3, 2.1], [4.2, 3.3], [6.9, 3.7], [4.2, 3.3]]);
 addBot(byId.research, "scout", "Scout", AGENTS.scout.color, on("scout"), [[2.9, 2.2], [3.1, 4.1], [6.5, 4.2], [8.6, 4.3], [6.5, 4.2], [3.1, 4.1]]);
 addBot(byId.research, null, "Demand", "#8a9a3b", on("scout"), [[5.2, 8.9]], { bob: true });
 addBot(byId.research, null, "Safety", "#d94f8a", on("scout"), [[7, 8.9]], { bob: true });
