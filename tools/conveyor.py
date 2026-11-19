@@ -46,6 +46,8 @@ def main():
         write(p, {"from": x.__dict__["from"], "to": x.to, "type": x.type, "status": "open", "created": today}, f"# {x.title}\n\n{x.body}")
         print("added", os.path.relpath(p))
     elif x.cmd == "close":
+        if not os.path.exists(x.file):  # accept the bare name that `list` prints
+            x.file = os.path.join(DIR, os.path.basename(x.file))
         h, b = read(x.file); h["status"] = "done"; h["closed"] = dt.date.today().isoformat()
         write(x.file, h, b + f"\n\n**Result:** {x.result}"); print("closed", x.file)
     elif x.cmd == "stats":

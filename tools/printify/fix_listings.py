@@ -64,53 +64,57 @@ PLAN = {
         "desc": "Snowed in with a good book: our original cocoa-and-books illustration as a kiss-cut sticker.\n\n• Original design by our shop, printed on demand"},
 }
 
-uploaded = {}
-def upload(name):
-    if name in uploaded: return uploaded[name]
-    path = os.path.join(ROOT, "art", "final", name)
-    if not APPLY:
-        uploaded[name] = {"id": f"<upload {name}>"}; return uploaded[name]
-    r = call("POST", "/uploads/images.json", {"file_name": name, "contents": base64.b64encode(open(path, "rb").read()).decode()})
-    uploaded[name] = r; print("  uploaded", name, r.get("id")); return r
+def main():
+    uploaded = {}
+    def upload(name):
+        if name in uploaded: return uploaded[name]
+        path = os.path.join(ROOT, "art", "final", name)
+        if not APPLY:
+            uploaded[name] = {"id": f"<upload {name}>"}; return uploaded[name]
+        r = call("POST", "/uploads/images.json", {"file_name": name, "contents": base64.b64encode(open(path, "rb").read()).decode()})
+        uploaded[name] = r; print("  uploaded", name, r.get("id")); return r
 
-for pid, cfg in PLAN.items():
-    p = call("GET", f"/shops/{SHOP}/products/{pid}.json")
-    color_opt = next((i for i, o in enumerate(p["options"]) if o["type"] == "color"), None)
-    light_ids = set()
-    if color_opt is not None:
-        light_vals = {v["id"] for v in p["options"][color_opt]["values"] if is_light(v.get("colors"))}
-        names = {v["id"]: v["title"] for v in p["options"][color_opt]["values"]}
-        colour_of = lambda v: next(o for o in v["options"] if o in names)  # variant option order varies
-        for v in p["variants"]:
-            if colour_of(v) in light_vals: light_ids.add(v["id"])
-    else:
-        light_ids = {v["id"] for v in p["variants"]}  # no color choice: white/clear product, use the light design
-    all_ids = [v["id"] for v in p["variants"]]
-    dark_ids = [i for i in all_ids if i not in light_ids]
-    en = {v["id"] for v in p["variants"] if v["is_enabled"]}
-    print(f"\n{p['title'][:60]}  →  {cfg['title'][:60]}...")
-    print(f"  enabled variants: {len(en & light_ids)} light-color, {len(en - light_ids)} dark-color | tags {len(cfg['tags'])} | {'HIDE from Etsy' if cfg.get('hide') else 'publish'}")
-    if color_opt is not None:
-        lc = sorted({names[colour_of(v)] for v in p['variants'] if v['is_enabled'] and v['id'] in light_ids})
-        dc = sorted({names[colour_of(v)] for v in p['variants'] if v['is_enabled'] and v['id'] not in light_ids})
-        print("  light colors:", lc); print("  dark colors:", dc)
-    old = p["print_areas"][0]
-    front = next(ph for ph in old["placeholders"] if ph["position"] == "front")
-    tmpl = front["images"][0]
-    others = [ph for ph in old["placeholders"] if ph["position"] != "front" and any(im.get("type", "").startswith("image/") for im in ph.get("images", []))]
-    def area(ids, which):
-        img = upload(f"{cfg['design']}-for-{which}-shirts.png")
-        return {"variant_ids": ids, "placeholders": [{"position": "front", "images": [{"id": img["id"], "x": tmpl["x"], "y": tmpl["y"], "scale": tmpl["scale"], "angle": tmpl["angle"]}]}]
-                + [{"position": ph["position"], "images": [{k: im[k] for k in ("id", "x", "y", "scale", "angle")} for im in ph["images"]]} for ph in others]}
-    areas = []
-    if dark_ids: areas.append(area(dark_ids, "dark"))
-    if light_ids: areas.append(area(sorted(light_ids), "light"))
-    body = {"title": cfg["title"], "description": cfg["desc"], "tags": cfg["tags"], "print_areas": areas}
-    if not APPLY: continue
-    call("PUT", f"/shops/{SHOP}/products/{pid}.json", body)
-    print("  updated")
-    if cfg.get("hide"):
-        call("PUT", f"/shops/{SHOP}/products/{pid}.json", {"visible": False})
-    call("POST", f"/shops/{SHOP}/products/{pid}/publish.json",
-         {"title": True, "description": True, "images": True, "variants": True, "tags": True, "keyFeatures": True, "shipping_template": True})
-    print("  sent to Etsy")
+    for pid, cfg in PLAN.items():
+        p = call("GET", f"/shops/{SHOP}/products/{pid}.json")
+        color_opt = next((i for i, o in enumerate(p["options"]) if o["type"] == "color"), None)
+        light_ids = set()
+        if color_opt is not None:
+            light_vals = {v["id"] for v in p["options"][color_opt]["values"] if is_light(v.get("colors"))}
+            names = {v["id"]: v["title"] for v in p["options"][color_opt]["values"]}
+            colour_of = lambda v: next(o for o in v["options"] if o in names)  # variant option order varies
+            for v in p["variants"]:
+                if colour_of(v) in light_vals: light_ids.add(v["id"])
+        else:
+            light_ids = {v["id"] for v in p["variants"]}  # no color choice: white/clear product, use the light design
+        all_ids = [v["id"] for v in p["variants"]]
+        dark_ids = [i for i in all_ids if i not in light_ids]
+        en = {v["id"] for v in p["variants"] if v["is_enabled"]}
+        print(f"\n{p['title'][:60]}  →  {cfg['title'][:60]}...")
+        print(f"  enabled variants: {len(en & light_ids)} light-color, {len(en - light_ids)} dark-color | tags {len(cfg['tags'])} | {'HIDE from Etsy' if cfg.get('hide') else 'publish'}")
+        if color_opt is not None:
+            lc = sorted({names[colour_of(v)] for v in p['variants'] if v['is_enabled'] and v['id'] in light_ids})
+            dc = sorted({names[colour_of(v)] for v in p['variants'] if v['is_enabled'] and v['id'] not in light_ids})
+            print("  light colors:", lc); print("  dark colors:", dc)
+        old = p["print_areas"][0]
+        front = next(ph for ph in old["placeholders"] if ph["position"] == "front")
+        tmpl = front["images"][0]
+        others = [ph for ph in old["placeholders"] if ph["position"] != "front" and any(im.get("type", "").startswith("image/") for im in ph.get("images", []))]
+        def area(ids, which):
+            img = upload(f"{cfg['design']}-for-{which}-shirts.png")
+            return {"variant_ids": ids, "placeholders": [{"position": "front", "images": [{"id": img["id"], "x": tmpl["x"], "y": tmpl["y"], "scale": tmpl["scale"], "angle": tmpl["angle"]}]}]
+                    + [{"position": ph["position"], "images": [{k: im[k] for k in ("id", "x", "y", "scale", "angle")} for im in ph["images"]]} for ph in others]}
+        areas = []
+        if dark_ids: areas.append(area(dark_ids, "dark"))
+        if light_ids: areas.append(area(sorted(light_ids), "light"))
+        body = {"title": cfg["title"], "description": cfg["desc"], "tags": cfg["tags"], "print_areas": areas}
+        if not APPLY: continue
+        call("PUT", f"/shops/{SHOP}/products/{pid}.json", body)
+        print("  updated")
+        if cfg.get("hide"):
+            call("PUT", f"/shops/{SHOP}/products/{pid}.json", {"visible": False})
+        call("POST", f"/shops/{SHOP}/products/{pid}/publish.json",
+             {"title": True, "description": True, "images": True, "variants": True, "tags": True, "keyFeatures": True, "shipping_template": True})
+        print("  sent to Etsy")
+
+if __name__ == "__main__":
+    main()

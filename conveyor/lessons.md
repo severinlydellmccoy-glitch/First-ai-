@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-19 (problem-solver): Etsy can't be read from the cloud, but Printify's product record shows what it last sent to Etsy (title, tags, design file name per color, Etsy listing id). `tools/printify/check_listings.py` checks all of it read-only. Etsy web addresses keep the first title's words; ignore that.
 - 2026-11-18 (finance-chief): Offsite Ads (15%) plus free shipping together leave a sweatshirt only about $1.60 a sale. Check both Etsy settings before judging profit or spending on ads, and size ads to safe spend per sale ($3 a day, not $5, for a shop with no sales yet).
 - 2026-11-18 (profit-analyst): Etsy fees (6.5% + 3%) are charged on shipping too, so buyer-paid shipping still costs about 10% of the shipping price. Judge tote and candle on the free-shipping column until the owner confirms the shipping setting.
 - 2026-11-19 (finance-operator): The tote and candle only make money if the buyer pays shipping; with free shipping the candle loses about $1.86 a sale. Check the Etsy shipping setting before any profit claim or ad spend on low-price items.

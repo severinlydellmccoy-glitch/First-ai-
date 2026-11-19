@@ -20,7 +20,10 @@ How close the business is to running itself. Update this whenever something gets
 - [x] **Printify connection** works (Nov 18). Agents can read and update products.
 - [x] **Listing fixer:** `tools/printify/fix_listings.py` puts the right design on each color and our titles and tags, then publishes
 - [ ] **Seller agent:** create products in Printify from `art/final/` and publish to Etsy, as drafts at first and full auto once trusted.
-- [ ] **Producer agent:** listing text (done by hand so far), Pinterest pins, short-video scripts and captions.
+- [x] **Producer agent** (`.claude/agents/producer.md`, Nov 19): listing text, Pinterest pins, short-video scripts and captions. The owner still posts pins and videos by hand.
+- [x] **Listing check** (`tools/printify/check_listings.py`, Nov 19): the Analyst checks every product's title, tags and design-per-color each day, read only. Etsy itself can't be read from the cloud, so this checks what Printify sent to Etsy.
+- [ ] **Pinterest posting:** Pinterest has an official API, but it needs an owner-created Pinterest business account and app approval. Until then the owner posts the Producer's pins.
+- [ ] **New listing defaults:** `fix_listings.py` has a hand-written plan per product; the Seller agent should read titles and tags straight from `media/final/` listing files for new products.
 - [x] **Finance Operator agent** (Observatory): weekly sales report, profit breakdown, budget check and investment pool. It needs Printify access for orders and the owner's Etsy numbers.
 - [ ] **Analyst agent:** read Printify orders and profits each week, compare them with ad spend, and feed the results to the Scout.
 - [ ] **Weekly schedule:** one scheduled run that chains every agent, plus a report to the owner (phone notification).

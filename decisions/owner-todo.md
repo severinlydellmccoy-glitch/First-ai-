@@ -21,6 +21,7 @@ Goal: ready for **Black Friday, Nov 27**. Last safe day for Christmas orders: **
 
 ## Shop setup
 
+- [ ] Optional, 1 minute: open etsy.com/shop/LiquidLav and check one listing shows our title (for example "Funny Christmas Cat Sweatshirt, Professional Ornament Remover…"). Printify says all 5 do; the web address keeping old words is normal.
 - [ ] Finish Etsy payments and billing (`sales/setup-checklist.md`, step 2).
 - [ ] Check the fees in the Etsy dashboard (listing $0.20, 6.5% per sale, 3% + $0.25 payment) and tell Claude if they differ.
 - [ ] Check Etsy's help pages: does every listing need a real, unedited photo? If yes, the samples become required.

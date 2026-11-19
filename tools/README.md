@@ -6,3 +6,4 @@ Scripts the agents use. The Problem Solver adds new ones here. Each script gets 
 - `market/daily_screen.py`: the large-cap stock screen for the Market Watcher. `python3 tools/market/daily_screen.py` (needs the FMP key)
 - `finance/profitability.py`: profit per sale for every live product, from real Printify costs and Etsy fees. Writes `finance/profitability.md`.
 - `printify/fix_listings.py`: puts the right design on each shirt color, plus our titles and tags (dry run by default; `--apply` publishes).
+- `printify/check_listings.py`: read-only health check of every product (our title, 13 tags, right design per color, on Etsy or hidden as planned). Changes nothing. `python3 tools/printify/check_listings.py` (exit code 1 if anything needs fixing)
