@@ -32,6 +32,12 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [ ] In the Etsy shop dashboard, check the fees (listing $0.20, 6.5% per sale, 3% + $0.25 payment) and whether **Offsite Ads** applies, and at what rate. Tell Claude what you see.
 - [ ] Publish both listings, copying title, tags and description from the two `media/final/*-listing.md` files. Price $34.99. (Target: Nov 26, before Black Friday.)
 
+## Money plan ($25 to $50 a week)
+
+- [ ] Once the 3 main listings show the light-shirts design: order **2 sample sweatshirts** (cat and book, about $40) for real photos and a quality check.
+- [ ] From Nov 23: turn on **Etsy Ads at $3 to $5 a day** for the 3 fixed main listings only. Shop Manager → Marketing → Etsy Ads.
+- [ ] Every week: tell Claude your Etsy **views, favorites, sales and ad spend** (Shop Manager → Stats), so we can stop ads that don't pay.
+
 ## Security (soon, not urgent tonight)
 
 - [ ] **Replace the Printify key.** Two keys were pasted into the chat, so they aren't secret any more. In Printify → Connections, generate a new token, delete the old ones, and give the new one to Claude through the secure form, never the chat.
