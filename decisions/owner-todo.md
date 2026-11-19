@@ -32,6 +32,10 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [ ] In the Etsy shop dashboard, check the fees (listing $0.20, 6.5% per sale, 3% + $0.25 payment) and whether **Offsite Ads** applies, and at what rate. Tell Claude what you see.
 - [ ] Publish both listings, copying title, tags and description from the two `media/final/*-listing.md` files. Price $34.99. (Target: Nov 26, before Black Friday.)
 
+## Security (soon, not urgent tonight)
+
+- [ ] **Replace the Printify key.** Two keys were pasted into the chat, so they aren't secret any more. In Printify → Connections, generate a new token, delete the old ones, and give the new one to Claude through the secure form, never the chat.
+
 ## 4. Amazon (start now, it takes a while)
 
 - [ ] Apply to Amazon Merch on Demand at merch.amazon.com. Approval can take weeks. Etsy comes first. (`sales/setup-checklist.md`, step 3)
