@@ -155,11 +155,11 @@ const COUNTS = { conveyor: 3, lessons: 7, reports: 2, approved: 5, denied: 16, p
 const TODO = {
   updated: "18 Nov 2026",
   next: [
-    ["Save the free FMP key (stock reports need it)", "now"],
+    ["Read your first stock report (decide in Robinhood yourself)", "7:45 am Nov 19"],
     ["Optional: order 2 sample sweatshirts (about $40)", "this week"],
     ["Optional: Etsy Ads at $3 to $5 a day", "from Nov 23"],
   ],
-  done: ["All listings fixed and checked", "Prices kept", "Sticker hidden"],
+  done: ["All listings fixed and checked", "Prices kept", "Stock data connected"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
@@ -226,10 +226,10 @@ const MODULES = [
   { id: "vault", name: "Investment Vault", status: "empty", folder: "investing", x: 35, y: 32, w: 10, h: 6,
     purpose: "The investment team. Daily stock reports on large companies (over $50B) with high volume, rising RSI and positive moving averages, plus their major news. Later, records of the business's investments. Information only: you make every decision.",
     contents: [["daily/", "Market-day reports at 7:45 am Central (first one Nov 19)"], ["weekly/", "Sunday-night week-ahead reports"], ["README.md", "Your tests: over $50B, volume 1.5× the 20-day average, RSI rising 50 to 70, price > 50-day > 200-day"]],
-    emptyNote: "No reports yet. Needs the free FMP data key.",
+    emptyNote: "No reports yet. The first one arrives at 7:45 am Central on Nov 19.",
     inside: "The Market Watcher studies a wall of tickers and charts at the trading desk. The safe stays locked: there's no business money to invest until there are profits, and you decide.",
     agent: "treasurer",
-    next: "Save the free FMP key so the 7:45 am reports have stock prices. Later, choose what share of profit to invest." },
+    next: "Stock data is connected (FMP free plan; a few big tickers aren't covered). Later, choose what share of profit to invest." },
 ];
 
 // Corridors between rooms, in floor tiles. planned = drawn as a blueprint.
