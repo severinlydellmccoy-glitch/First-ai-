@@ -141,47 +141,45 @@ a { color: var(--live); }
 
 <script>
 const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
-const SNAPSHOT = "19 Nov 2026";
+const SNAPSHOT = "18 Nov 2026, after the first test run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { reports: 0, approved: 0, denied: 0, prospects: 0, drafts: 0, finals: 0, mediaDrafts: 0, mediaFinals: 0 };
+const COUNTS = { reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 0, finals: 0, mediaDrafts: 0, mediaFinals: 0 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
 // x, y, w, h = the room's place on the map, in floor tiles
 const MODULES = [
   { id: "core", name: "Command Core", status: "active", folder: "", x: 20, y: 14, w: 10, h: 7,
     purpose: "The station's brain. It holds the instructions every Claude session reads before doing any work.",
-    contents: [["CLAUDE.md", "Explains the business plan and the folders, and tells Claude to follow everything in the Rules Deck"], ["decisions/", "The Underboss's briefings and the Boss's decisions (0 so far)"], ["station/", "Backup copy of this station map"]],
+    contents: [["CLAUDE.md", "Explains the business plan and the folders, and tells Claude to follow everything in the Rules Deck"], ["decisions/2026-11-18-decisions.md", "The Boss's first decisions: make the holiday cat and book-lover sweatshirts, plus their listing copy"], ["decisions/2026-11-18-briefing.md", "The Underboss's briefing: 5 ideas passed, 1 sent back"], ["station/", "Backup copy of this station map"]],
     inside: "The control room. The Boss sits at the big desk and makes the final call on what the station makes next. The Underboss walks between the console, the hologram and the Boss, checking every report first.",
     agent: "boss",
-    next: "After tonight's test runs, the Underboss checks the reports and the Boss makes its first decisions." },
+    next: "Needs you: finish Printify and the Etsy shop, then approve each listing before it goes live." },
   { id: "rules", name: "Rules Deck", status: "active", folder: "rules", x: 21, y: 4, w: 8, h: 6,
     purpose: "The rules every agent and every Claude session must follow.",
     contents: [["general.md", "Original art only, cite and date research, keep finished work apart from drafts, never store passwords or keys"], ["working-with-me.md", "Your rules: three questions first, check the work, thorough but readable, no tech-speak"], ["README.md", "Index of the rule files"]],
     inside: "An archive with one glowing tablet for each rule file.",
     agent: null,
     next: "Add any rules of your own, such as a budget, a style, or products to avoid." },
-  { id: "research", name: "Research Lab", status: "empty", folder: "research", x: 4, y: 12, w: 11, h: 11,
+  { id: "research", name: "Research Lab", status: "active", folder: "research", x: 4, y: 12, w: 11, h: 11,
     purpose: "Market research: what merchandise is selling on Etsy, Amazon and Temu. Decides what the station makes.",
-    contents: [["README.md", "How to name and write research notes"], ["scout/", "The Scout's weekly reports (0 so far)"]],
-    emptyNote: "No reports yet.",
+    contents: [["scout/2026-11-18-weekly-merch-report.md", "First report: 2 ideas approved (funny holiday cat, cozy book-lover gifts), 8 denied"], ["README.md", "How to name and write research notes"]],
     inside: "The Scout walks between its market screens and the scanner. Each idea rides the belt to three robot judges (Demand, Safety, Profit), who decide for themselves. Ideas all three approve drop into the approved bin, and the rest go to the denied bin.",
     agent: "scout",
-    next: "The first test report runs at 9 pm Central. If the data is good, the Scout switches to a weekly schedule." },
-  { id: "prospecting", name: "Prospecting Hub", parent: "research", status: "empty", folder: "research/prospecting", x: 5, y: 2, w: 9, h: 6,
+    next: "The data was weak to medium: Amazon, Etsy and Fiverr pages couldn't be opened directly. Fix that before switching on the weekly schedule." },
+  { id: "prospecting", name: "Prospecting Hub", parent: "research", status: "active", folder: "research/prospecting", x: 5, y: 2, w: 9, h: 6,
     purpose: "Finds business ideas beyond merchandise: services Claude can help make and sell, like YouTube thumbnails, ads, or a grandma's dog photo printed on a shirt. Listens to what people ask for on YouTube and Instagram.",
-    contents: [["README.md", "How prospecting reports are named and written"]],
-    emptyNote: "No business ideas yet.",
+    contents: [["2026-11-18-prospecting-report.md", "First report: 11 ideas, 3 approved (listing copy for other sellers, social media packs, YouTube channel art)"], ["README.md", "How prospecting reports are named and written"]],
     inside: "A lounge with a wall of TVs showing what people talk about on YouTube and Instagram. The Prospector pins ideas to the board, and a tube carries each one down to the judges in the Research Lab.",
     agent: "prospector",
-    next: "The first test run is at 9 pm Central, alongside the Scout." },
+    next: "The Boss put the service ideas on hold until January. They need a Fiverr or Upwork account only you can open." },
   { id: "art", name: "Art Studio", status: "empty", folder: "art", x: 35, y: 9, w: 10, h: 8,
     purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
     contents: [["README.md", "How drafts and finished designs are stored"], ["drafts/", "0 files"], ["final/", "0 files"]],
     emptyNote: "No designs yet.",
     inside: "Easels with blank canvases, a workbench, and two bins: drafts and final. The Artist is powered down until it has a design to make.",
     agent: "artist",
-    next: "Waiting on the Research Lab to pick what to make." },
+    next: "The Boss picked two designs to make by 24 Nov: a funny holiday cat sweatshirt (our own cat) and a cozy book-lover sweatshirt. The Artist isn't set up yet." },
   { id: "media", name: "Media Bay", status: "empty", folder: "media", x: 35, y: 21, w: 10, h: 8,
     purpose: "Mockups, product photos, video, social posts and listing text that sell the products.",
     contents: [["README.md", "How media files are stored and named"], ["drafts/", "0 files"], ["final/", "0 files"]],
@@ -194,7 +192,7 @@ const MODULES = [
     contents: [], emptyNote: "Not built yet. There is no folder for it.",
     inside: "A blueprint: a packing line that will send orders out to a shipping pod for Etsy and Amazon.",
     agent: "seller",
-    next: "To build it: open seller accounts on Etsy and Amazon, and pick a print-on-demand service that makes and ships the products." },
+    next: "To build it, follow sales/setup-checklist.md: pick a print-on-demand service, open the Etsy shop, and apply to Amazon Merch on Demand. You sign up yourself; Claude can't open accounts for you." },
   { id: "observatory", name: "Observatory", status: "planned", folder: null, x: 5, y: 27, w: 9, h: 6,
     purpose: "Watches what sells and sends the results back to the Research Lab, so the next round of products is better.",
     contents: [], emptyNote: "Not built yet. There is no folder for it.",
@@ -223,10 +221,10 @@ const CORRIDORS = [
 
 // status: ready = set up but hasn't done any work yet, running = has produced work, planned = not set up
 const AGENTS = {
-  boss:       { name: "Boss", status: "ready", color: "#d4a72c", job: "Makes the final call on what the station makes next, from the ideas the judges approved. Can't overturn a Safety deny. Money, accounts and investments stay with you.", note: "Set up and waiting for its first decisions." },
-  underboss:  { name: "Underboss", status: "ready", color: "#5b7fbf", job: "Second in command. Checks every report for sources, judge votes and made-up numbers, sends weak work back, and briefs the Boss.", note: "Set up and waiting for its first reports." },
-  scout:      { name: "Scout", status: "ready", color: "#e3a72f", job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "Set up and waiting for its first run." },
-  prospector: { name: "Prospector", status: "ready", color: "#8b5cf6", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "Set up and waiting for its first run." },
+  boss:       { name: "Boss", status: "running", color: "#d4a72c", job: "Makes the final call on what the station makes next, from the ideas the judges approved. Can't overturn a Safety deny. Money, accounts and investments stay with you.", note: "First decisions made 18 Nov: make the holiday cat and book-lover sweatshirts next." },
+  underboss:  { name: "Underboss", status: "running", color: "#5b7fbf", job: "Second in command. Checks every report for sources, judge votes and made-up numbers, sends weak work back, and briefs the Boss.", note: "First briefing done 18 Nov: passed 5 ideas, sent 1 back." },
+  scout:      { name: "Scout", status: "running", color: "#e3a72f", job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "First report 18 Nov: 2 approved, 8 denied." },
+  prospector: { name: "Prospector", status: "running", color: "#8b5cf6", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "First report 18 Nov: 3 approved, 8 denied." },
   artist:     { name: "Artist", status: "planned", color: "#e8692c", job: "Creates original designs." },
   producer:   { name: "Producer", status: "planned", color: "#2f9c95", job: "Makes mockups, photos, posts and listing text." },
   seller:     { name: "Seller", status: "planned", color: "#8a9a3b", job: "Lists products and keeps prices up to date." },
