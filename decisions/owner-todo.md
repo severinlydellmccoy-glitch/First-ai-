@@ -6,9 +6,9 @@ Your checklist for getting the shop running. Tick a box by changing `[ ]` to `[x
 
 ## Do next
 
-1. **Get the first listing live on Etsy:** finish any Etsy shop setup steps left (payments, billing, open shop), then check Shop Manager → Listings (Draft/Inactive) and publish it.
-2. **Check the cat sweatshirt's color matches the file:** light-shirts file (red words) on light colors, dark-shirts file (white words) on dark colors. Then add the other version.
-3. **Create the book-lover sweatshirt** in Printify (Gildan 18000, $34.99).
+1. **Fix the live cat sweatshirt in Printify, then click Publish:** swap in the **light-shirts** file (it's on a white shirt), paste our title, description and 13 tags from `media/final/holiday-cat-ornament-remover-listing.md`, and set the price (plan: $34.99; Printify set $37.67).
+2. **Create the book-lover sweatshirt** in Printify (Gildan 18000, $34.99), with its listing text.
+3. **Add a dark version of the cat sweatshirt:** dark-shirts file on Black, Forest Green, Navy, Maroon.
 
 Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Christmas: **about Dec 1**.
 
@@ -49,7 +49,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [x] Shop name chosen: LiquidLav (Nov 18)
 - [x] Printify account created (Nov 18)
 - [x] Printify connected to Etsy (Nov 18)
-- [x] First product published from Printify: holiday cat crewneck sweatshirt, 6 sizes, 1 color (Nov 18). Not active on Etsy yet.
+- [x] **LiquidLav is live on Etsy**, with its first listing: the holiday cat crewneck sweatshirt, white, 6 sizes (Nov 18)
 
 ## Not now
 

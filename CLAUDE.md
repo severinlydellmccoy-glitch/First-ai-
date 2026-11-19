@@ -49,4 +49,5 @@ Record here once known: the print-on-demand service, seller account details (nev
 - **Shop name:** LiquidLav (chosen 2026-11-18). A web search found no shop, brand or trademark with this name.
 - **Etsy:** account created by the owner on 2026-11-18. Shop setup (payments, billing) not confirmed yet.
 - **Print-on-demand:** Printify, free plan. Account created and connected to the Etsy shop on 2026-11-18.
-- **Products:** holiday cat crewneck sweatshirt (Gildan 18000, 6 sizes, 1 color) published from Printify on 2026-11-18. Printify said the Etsy shop had no active listings yet.
+- **Etsy shop:** live at etsy.com/shop/LiquidLav since 2026-11-18.
+- **Live listings:** holiday cat crewneck sweatshirt (Gildan 18000, white, 6 sizes), published from Printify 2026-11-18. To fix: it uses the dark-shirts file, Printify's default title, and Printify's price of $37.67 (plan $34.99). Edit in Printify, then republish, so Printify doesn't overwrite changes made in Etsy.
