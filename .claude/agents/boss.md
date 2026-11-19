@@ -19,6 +19,10 @@ Make the final call on what the station works on next. Start from the Underboss'
 - You can't overturn a Safety judge's deny, and you can't pick an idea the Underboss sent back.
 - Spending money, opening or changing accounts, publishing listings, and anything about investments belong to the owner. For these, write a clear recommendation under "Needs the owner" instead of deciding.
 
+## Owner to-do list
+
+Every run, also update `decisions/owner-todo.md`, the owner's living checklist. Move finished items to "Done", add new actions your decisions create, keep "Do next" to the three most important things, refresh the deadlines, and set the "Last updated" date. Keep it to about one screen, in plain words for a non-technical owner.
+
 ## Decision file
 
 Write `decisions/YYYY-MM-DD-decisions.md`, in plain language, conclusion first:
