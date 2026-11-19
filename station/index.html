@@ -196,7 +196,7 @@ const MODULES = [
     emptyNote: "No fixes shipped yet.",
     inside: "A workshop with a blueprint table and a toolbench. The Problem Solver picks the next manual job from the automation plan and builds the fix.",
     agent: "solver",
-    next: "Runs at the end of every 72-hour cycle and automates one job per run." },
+    next: "Runs whenever the Analyst sends it work (open problems), or every 3rd day." },
   { id: "art", name: "Art Studio", status: "active", folder: "art", x: 35, y: 9, w: 10, h: 8,
     purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
     contents: [["final/holiday-cat-ornament-remover", "\"Professional Ornament Remover\": our orange cat swatting an ornament off the tree. Light- and dark-shirt versions, print-ready."], ["final/book-lover-snowed-in", "\"Snowed in with a good book\": cocoa on a stack of books under falling snow. Light- and dark-shirt versions."], ["drafts/", "4 designs, 8 print files (includes \"Head of Tree Inspection\" and \"Blanket. Cocoa. Chapter twelve.\")"]],
@@ -220,7 +220,7 @@ const MODULES = [
     purpose: "Watches the money and what sells: sales reports, profit, budget, and how much could be invested. Sends the results back to the Research Lab.",
     contents: [["ledger.csv", "Every sale, cost, fee and ad dollar. Empty until the first sale."], ["README.md", "How the finance records work"]],
     emptyNote: "No sales reports yet.",
-    inside: "The Finance Operator works at the money desk under the sales charts, with a telescope pointed at the marketplaces. The Analyst's spot is still empty.",
+    inside: "Mission control. Every night the Analyst decides which teams work the next day, and the Finance Operator works the money desk under the sales charts, with a telescope pointed at the marketplaces.",
     agent: "analyst",
     next: "First sales report after the first week of sales. Needs the Printify connection, plus your Etsy stats and ad spend each week." },
   { id: "vault", name: "Investment Vault", status: "empty", folder: "investing", x: 35, y: 32, w: 10, h: 6,
@@ -256,7 +256,7 @@ const AGENTS = {
   seller:     { name: "Seller", status: "planned", color: "#8a9a3b", job: "Lists products and keeps prices up to date." },
   finance:    { name: "Finance Operator", status: "ready", color: "#3cbf7a", job: "Breaks down sales, costs, fees, ad spend and profit, tracks the weekly budget, works out how much could be invested (never picks stocks), and writes a weekly sales report.", note: "Set up and waiting for the first sales." },
   solver:     { name: "Problem Solver", status: "ready", color: "#b06bff", job: "Finds the jobs you still do by hand and automates them: agent instructions, scripts and scheduled runs. Money, accounts and investments stay with you.", note: "Set up. Runs every 72 hours." },
-  analyst:    { name: "Analyst", status: "planned", color: "#d94f8a", job: "Reads the sales numbers and suggests what to make next." },
+  analyst:    { name: "Analyst", status: "ready", color: "#d94f8a", job: "The station's daily dispatcher. Every night at 9:17 pm it reads orders, profit, listings and the conveyor, then decides which teams need to work that day. It also finds what's selling and tells the Scout.", note: "Runs every 24 hours, starting Nov 19." },
   watcher:    { name: "Market Watcher", status: "ready", color: "#4fa3ff", job: "Each market-day morning, screens stocks worth over $50B for high volume, rising RSI and positive moving averages, and sums up the good and bad news. Information only, never buy or sell calls.", note: "Scheduled: 7:45 am Central on market days, plus Sunday nights." },
   treasurer:  { name: "Treasurer", status: "planned", color: "#a0703c", job: "Tracks profits and keeps the investment record. You make the final call on every investment." },
 };
@@ -294,7 +294,7 @@ const CREW = [
   { name: "Seller", agent: "seller", role: "Etsy and Amazon listings", room: "sales" },
   { name: "Finance Operator", agent: "finance", role: "Sales reports, profit, investment pool", room: "observatory" },
   { name: "Problem Solver", agent: "solver", role: "Automates manual jobs", room: "fixit" },
-  { name: "Analyst", agent: "analyst", role: "Sales numbers", room: "observatory" },
+  { name: "Analyst", agent: "analyst", role: "Daily dispatcher: decides who works", room: "observatory" },
   { name: "Market Watcher", agent: "watcher", role: "Daily stock report", room: "vault" },
   { name: "Treasurer", agent: "treasurer", role: "Investment records", room: "vault" },
 ];
@@ -812,7 +812,7 @@ addBot(byId.art, "artist", "Artist", AGENTS.artist.color, on("artist"), [[2.4, 2
 addBot(byId.media, "producer", "Producer", AGENTS.producer.color, on("producer"), [[5.9, 3.6]]);
 addBot(byId.sales, "seller", "Seller", AGENTS.seller.color, on("seller"), [[4.2, 5]]);
 addBot(byId.observatory, "finance", "Finance Operator", AGENTS.finance.color, on("finance"), [[2.8, 5.0], [1.6, 2.2], [4.6, 2.2], [2.8, 5.0]]);
-addBot(byId.observatory, "analyst", "Analyst", AGENTS.analyst.color, on("analyst"), [[5.6, 5.0]]);
+addBot(byId.observatory, "analyst", "Analyst", AGENTS.analyst.color, on("analyst"), [[5.6, 5.0], [7.4, 5.3], [6.6, 2.2], [5.6, 5.0]]);
 addBot(byId.fixit, "solver", "Problem Solver", AGENTS.solver.color, on("solver"), [[5, 4.7], [2.2, 1.8], [8, 2.9], [5, 4.7]]);
 addBot(byId.vault, "watcher", "Market Watcher", AGENTS.watcher.color, on("watcher"), [[2.8, 4.9], [1.5, 2.2], [4.5, 2.2], [2.8, 4.9]]);
 addBot(byId.vault, "treasurer", "Treasurer", AGENTS.treasurer.color, on("treasurer"), [[6.2, 4.6]]);
