@@ -6,9 +6,9 @@ Your checklist for getting the shop running. Tick a box by changing `[ ]` to `[x
 
 ## Do next
 
-1. **Fix the live cat sweatshirt in Printify, then click Publish:** swap in the **light-shirts** file (it's on a white shirt), paste our title, description and 13 tags from `media/final/holiday-cat-ornament-remover-listing.md`, and set the price (plan: $34.99; Printify set $37.67).
-2. **Create the book-lover sweatshirt** in Printify (Gildan 18000, $34.99), with its listing text.
-3. **Add a dark version of the cat sweatshirt:** dark-shirts file on Black, Forest Green, Navy, Maroon.
+1. **Swap in the light-shirts design file on every white item** (4 book items and the cat sweatshirt), then republish. The words can't be read right now.
+2. **Delete the duplicate book sweatshirt.** Keep one of "Snowed In With Books and Coffee Swe…" and "Snowed In With Coffee Books Sweatshirt".
+3. **Send Claude the profit Printify shows for each item.** Fix the prices (sweatshirts planned at $34.99) and paste our titles and tags from `media/final/`. The t-shirt ($18.81) and hoodie weren't checked by the Profit judge.
 
 Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Christmas: **about Dec 1**.
 
@@ -50,6 +50,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [x] Printify account created (Nov 18)
 - [x] Printify connected to Etsy (Nov 18)
 - [x] **LiquidLav is live on Etsy**, with its first listing: the holiday cat crewneck sweatshirt, white, 6 sizes (Nov 18)
+- [x] Book-lover design listed (Nov 18): 2 sweatshirts at $29.78, a hoodie at $35.96, a t-shirt at $18.81
 
 ## Not now
 
