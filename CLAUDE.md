@@ -45,3 +45,6 @@ Each folder's README explains its naming conventions.
 ## Still to decide
 
 Record here once known: the print-on-demand service, seller account details (never passwords), what share of profit is invested, and commands for any scripts that get added.
+
+- **Etsy:** account created by the owner on 2026-11-18. Shop name and setup (payments, billing) not confirmed yet.
+- **Print-on-demand:** Printify planned (free plan); signup not confirmed yet.

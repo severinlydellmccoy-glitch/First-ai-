@@ -155,10 +155,11 @@ const COUNTS = { reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, 
 const TODO = {
   updated: "18 Nov 2026",
   next: [
-    ["Choose the shop name", "today"],
+    ["Finish the Etsy shop setup: name, payments, billing", "by Nov 23"],
     ["Finish signing up to Printify (free plan)", "by Nov 21"],
-    ["Open the Etsy shop", "by Nov 23"],
+    ["Connect Printify to Etsy", "after both"],
   ],
+  done: ["Etsy account created (Nov 18)"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
@@ -206,7 +207,7 @@ const MODULES = [
     contents: [], emptyNote: "Not built yet. There is no folder for it.",
     inside: "A blueprint: a packing line that will send orders out to a shipping pod for Etsy and Amazon.",
     agent: "seller",
-    next: "To build it, follow sales/setup-checklist.md: pick a print-on-demand service, open the Etsy shop, and apply to Amazon Merch on Demand. You sign up yourself; Claude can't open accounts for you." },
+    next: "Construction started: your Etsy account is open. Next: finish the shop setup, sign up to Printify, and connect the two." },
   { id: "observatory", name: "Observatory", status: "planned", folder: null, x: 5, y: 27, w: 9, h: 6,
     purpose: "Watches what sells and sends the results back to the Research Lab, so the next round of products is better.",
     contents: [], emptyNote: "Not built yet. There is no folder for it.",
@@ -332,6 +333,7 @@ function renderOverview() {
     <div class="todo">
       <h3>&#9819; The Boss's to-do list for you</h3>
       <ol>${TODO.next.map(([t, d]) => `<li>${t}<span>${d}</span></li>`).join("")}</ol>
+      ${TODO.done.length ? `<p style="color:#3cff6a">&#10003; ${TODO.done.join(" &middot; ")}</p>` : ""}
       <p>${TODO.goal} <a href="https://github.com/severinlydellmccoy-glitch/First-ai-/blob/main/decisions/owner-todo.md" target="_blank" rel="noopener">Full list</a> &middot; updated ${TODO.updated}</p>
     </div>
     ${crewList()}
