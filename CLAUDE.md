@@ -22,6 +22,17 @@ Work usually moves in that order: research picks what to make, the art and media
 
 Each folder's README explains its naming conventions.
 
+## Business plan
+
+- **Products:** merchandise (designs printed on products such as shirts and mugs).
+- **Where it sells:** Etsy and Amazon.
+- **Growth:** use sales volume and media attention to make more media, which drives more Etsy and Amazon sales.
+- **Profits:** a share of profits gets invested in stocks. The owner makes every investment decision. Claude can research and keep records, but doesn't pick stocks or present guesses as financial advice.
+
+## Station
+
+`station/` holds a 3D visual map of the business, also published at https://claude.ai/artifact/FX7jK2pgAyh9GkJi99JLAh. Whenever a folder, module or agent changes, update the `MODULES` and `AGENTS` lists in the page, republish it to that same link, and copy it back into `station/index.html`.
+
 ## Still to decide
 
-Record here once known: which marketplaces and platforms are used, any account- or API-specific rules, and commands for any scripts that get added.
+Record here once known: the print-on-demand service, seller account details (never passwords), what share of profit is invested, and commands for any scripts that get added.

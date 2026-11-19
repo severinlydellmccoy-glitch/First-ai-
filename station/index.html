@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>First-ai Station</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-screen 3D station, a small status readout top-left, and a control panel docked right (bottom sheet on phones). */
+:root {
+  --space: #060a12;
+  --hull: rgba(12, 19, 33, 0.88);
+  --line: #24344d;
+  --text: #e7edf6;
+  --muted: #95a3ba;
+  --live: #62d8ff;
+  --plan: #ffb547;
+  --font-display: "Oxanium", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: var(--space); color: var(--text); font-family: var(--font-body); font-size: 14px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+#scene { position: fixed; inset: 0; }
+#scene canvas { display: block; touch-action: none; }
+
+.hud {
+  position: fixed; z-index: 3;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: max(16px, env(safe-area-inset-left, 0px));
+  max-width: min(420px, calc(100% - 32px));
+  pointer-events: none;
+}
+.hud h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: 0.04em; text-wrap: balance; }
+.hud p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.hud .counts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { font-family: var(--font-mono); font-size: 11.5px; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--line); background: var(--hull); font-variant-numeric: tabular-nums; }
+.chip.live { color: var(--live); border-color: color-mix(in srgb, var(--live) 40%, transparent); }
+.chip.plan { color: var(--plan); border-color: color-mix(in srgb, var(--plan) 40%, transparent); }
+
+#panel {
+  position: fixed; z-index: 4;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  right: max(16px, env(safe-area-inset-right, 0px));
+  width: 360px;
+  max-height: calc(100% - 28px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  background: var(--hull); border: 1px solid var(--line); border-radius: 10px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  padding: 18px;
+}
+#panel h2 { margin: 0 0 4px; font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: 0.03em; text-wrap: balance; }
+#panel h3 { margin: 18px 0 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+#panel p { margin: 0; }
+.lede { color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 99px; margin-bottom: 10px; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.active { color: var(--live); background: color-mix(in srgb, var(--live) 14%, transparent); }
+.pill.empty { color: var(--live); background: transparent; border: 1px dashed color-mix(in srgb, var(--live) 55%, transparent); }
+.pill.planned { color: var(--plan); background: color-mix(in srgb, var(--plan) 14%, transparent); }
+
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.list li { display: grid; gap: 1px; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+.list .file { font-family: var(--font-mono); font-size: 12.5px; color: var(--live); }
+.list .note { color: var(--muted); font-size: 13px; }
+.list .none { color: var(--muted); font-style: italic; }
+
+.rooms { display: grid; gap: 6px; }
+.room-btn {
+  display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 10px;
+  width: 100%; text-align: left; font: inherit; color: var(--text); cursor: pointer;
+  padding: 9px 10px; border-radius: 6px; border: 1px solid var(--line); background: rgba(255,255,255,0.02);
+}
+.room-btn:hover { border-color: var(--muted); background: rgba(255,255,255,0.05); }
+.room-btn:focus-visible, .label:focus-visible, .back:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.active { background: var(--live); box-shadow: 0 0 8px var(--live); }
+.dot.empty { border: 1.5px solid var(--live); }
+.dot.planned { border: 1.5px dashed var(--plan); }
+.room-btn small { color: var(--muted); font-size: 12px; }
+
+.agent { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 8px 10px; border-radius: 6px; border: 1px dashed color-mix(in srgb, var(--plan) 35%, transparent); }
+.agent strong { font-weight: 600; }
+.agent span { color: var(--plan); font-size: 12px; align-self: center; }
+.agent p { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
+
+.legend { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+.legend div { display: flex; align-items: center; gap: 8px; }
+.back { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 0; margin-bottom: 12px; cursor: pointer; }
+.back:hover { color: var(--text); }
+.next { padding: 10px 12px; border-left: 2px solid var(--live); background: rgba(98,216,255,0.06); border-radius: 0 6px 6px 0; }
+.next.planned { border-left-color: var(--plan); background: rgba(255,181,71,0.06); }
+.foot { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+a { color: var(--live); }
+.hint { font-size: 13px; color: var(--muted); }
+
+#labels { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+.label {
+  position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer;
+  font-family: var(--font-display); font-weight: 500; font-size: 12.5px; letter-spacing: 0.06em; white-space: nowrap;
+  color: var(--text); background: rgba(6,10,18,0.72); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px;
+  transform: translate(-50%, -100%);
+}
+.label.active, .label.empty { border-color: color-mix(in srgb, var(--live) 50%, transparent); }
+.label.planned { color: var(--plan); border-style: dashed; border-color: color-mix(in srgb, var(--plan) 55%, transparent); }
+.label.selected { background: var(--live); color: var(--space); border-color: var(--live); }
+.label.planned.selected { background: var(--plan); border-color: var(--plan); }
+
+@media (max-width: 700px) {
+  .hud h1 { font-size: 18px; }
+  .hud p { display: none; }
+  #panel {
+    top: auto; width: auto;
+    left: max(16px, env(safe-area-inset-left, 0px));
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+    max-height: 44%;
+    padding: 14px;
+  }
+}
+</style>
+
+<div id="scene" aria-hidden="true"></div>
+<div id="labels"></div>
+<header class="hud">
+  <h1>FIRST-AI STATION</h1>
+  <p>Merchandise sold on Etsy and Amazon, with the profits invested in stocks. Each module is one part of the business.</p>
+  <div class="counts" id="counts"></div>
+</header>
+<aside id="panel" aria-live="polite"></aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
+const SNAPSHOT = "19 Nov 2026";
+
+// status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
+const MODULES = [
+  { id: "core", name: "Command Core", status: "active", folder: "",
+    purpose: "The station's brain. It holds the instructions every Claude session reads before doing any work.",
+    contents: [["CLAUDE.md", "Explains the business and the folders, and tells Claude to follow everything in the Rules Deck"], ["README.md", "Short description of the repository"]],
+    agent: null,
+    next: "Record the plan here: merchandise sold on Etsy and Amazon, with profits invested in stocks." },
+  { id: "rules", name: "Rules Deck", status: "active", folder: "rules",
+    purpose: "The rules every agent and every Claude session must follow.",
+    contents: [["general.md", "Original art only, cite and date research, keep finished work apart from drafts, never store passwords or keys"], ["working-with-me.md", "Your rules: three questions first, check the work, thorough but readable, no tech-speak"], ["README.md", "Index of the rule files"]],
+    agent: null,
+    next: "Add any rules of your own, such as a budget, a style, or products to avoid." },
+  { id: "research", name: "Research Lab", status: "empty", folder: "research",
+    purpose: "Market research: niches, trends, competitors, prices and demand. Decides what the station makes.",
+    contents: [["README.md", "How to name and write research notes"]],
+    emptyNote: "No research notes yet.",
+    agent: "scout",
+    next: "Write the first note: which merchandise niches are selling well on Etsy and Amazon right now." },
+  { id: "art", name: "Art Studio", status: "empty", folder: "art",
+    purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
+    contents: [["README.md", "How drafts and finished designs are stored"], ["drafts/", "0 files"], ["final/", "0 files"]],
+    emptyNote: "No designs yet.",
+    agent: "artist",
+    next: "Waiting on the Research Lab to pick what to make." },
+  { id: "media", name: "Media Bay", status: "empty", folder: "media",
+    purpose: "Mockups, product photos, video, social posts and listing text that sell the products.",
+    contents: [["README.md", "How media files are stored and named"], ["drafts/", "0 files"], ["final/", "0 files"]],
+    emptyNote: "No media yet.",
+    agent: "producer",
+    next: "Waiting on the first finished designs from the Art Studio." },
+  { id: "sales", name: "Sales Dock", status: "planned", folder: null,
+    purpose: "Lists merchandise on Etsy and Amazon, sets prices, and keeps track of orders.",
+    contents: [],
+    emptyNote: "Not built yet. There is no folder for it.",
+    agent: "seller",
+    next: "To build it: open seller accounts on Etsy and Amazon, and pick a print-on-demand service that makes and ships the products." },
+  { id: "observatory", name: "Observatory", status: "planned", folder: null,
+    purpose: "Watches what sells and sends the results back to the Research Lab, so the next round of products is better.",
+    contents: [],
+    emptyNote: "Not built yet. There is no folder for it.",
+    agent: "analyst",
+    next: "To build it: the Sales Dock needs products listed first." },
+  { id: "vault", name: "Investment Vault", status: "planned", folder: null,
+    purpose: "Moves a share of the merchandise profits into stocks and keeps a record of every investment.",
+    contents: [],
+    emptyNote: "Not built yet. There is no folder for it.",
+    agent: "treasurer",
+    next: "To build it: the business needs profits first. Then decide what share of profit to invest and which brokerage account to use." },
+];
+
+const AGENTS = {
+  scout:    { name: "Scout",    home: "research",    job: "Finds niches, trends, competitors and prices." },
+  artist:   { name: "Artist",   home: "art",         job: "Creates original designs." },
+  producer: { name: "Producer", home: "media",       job: "Makes mockups, photos, posts and listing text." },
+  seller:   { name: "Seller",   home: "sales",       job: "Lists products and keeps prices up to date." },
+  analyst:  { name: "Analyst",  home: "observatory", job: "Reads the sales numbers and suggests what to make next." },
+  treasurer:{ name: "Treasurer", home: "vault",      job: "Tracks profits and keeps the investment record. You make the final call on every investment." },
+};
+
+const STATUS_TEXT = { active: "Built, with work inside", empty: "Built, nothing made yet", planned: "Under construction" };
+const byId = Object.fromEntries(MODULES.map(m => [m.id, m]));
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Panel ---------- */
+const panel = document.getElementById("panel");
+const built = MODULES.filter(m => m.status !== "planned").length;
+document.getElementById("counts").innerHTML =
+  `<span class="chip live">${built} of ${MODULES.length} modules built</span>` +
+  `<span class="chip plan">0 of ${Object.keys(AGENTS).length} agents running</span>`;
+
+function agentCard(key) {
+  const a = AGENTS[key];
+  return `<div class="agent"><strong>${a.name}</strong><span>Planned</span><p>${a.job} Not running yet.</p></div>`;
+}
+
+function renderOverview() {
+  panel.innerHTML = `
+    <h2>Station overview</h2>
+    <p class="lede">Lit modules exist in your GitHub repository. Orange outlines are parts of the business that are planned but not built yet.</p>
+    <h3>Modules</h3>
+    <div class="rooms">${MODULES.map(m => `
+      <button class="room-btn" type="button" data-room="${m.id}">
+        <span class="dot ${m.status}"></span><span>${m.name}</span><small>${m.status === "planned" ? "Planned" : m.status === "empty" ? "Empty" : "Active"}</small>
+      </button>`).join("")}
+    </div>
+    <h3>Agents</h3>
+    <p class="hint" style="margin-bottom:8px">The orange drones are the AI helpers this business will use. None of them are running yet; they start once their module has work to do.</p>
+    <div class="rooms">${Object.keys(AGENTS).map(agentCard).join("")}</div>
+    <h3>Key</h3>
+    <div class="legend">
+      <div><span class="dot active"></span>Built, with work inside</div>
+      <div><span class="dot empty"></span>Built, nothing made yet</div>
+      <div><span class="dot planned"></span>Planned, not built yet</div>
+    </div>
+    <h3>Getting around</h3>
+    <p class="hint">Drag to look around. Scroll or pinch to zoom. Tap a module, or its name tag, to go inside.</p>
+    <p class="foot">Snapshot of the repository on ${SNAPSHOT}. Claude updates the station as the business grows.</p>`;
+}
+
+function renderRoom(m) {
+  const contents = m.contents.length
+    ? `<ul class="list">${m.contents.map(([f, n]) => `<li><span class="file">${f}</span><span class="note">${n}</span></li>`).join("")}</ul>`
+    : "";
+  const empty = m.emptyNote ? `<ul class="list" style="margin-top:6px"><li><span class="none">${m.emptyNote}</span></li></ul>` : "";
+  const where = m.folder !== null
+    ? `<a href="${REPO}${m.folder}" target="_blank" rel="noopener">Open ${m.folder ? m.folder + "/" : "the repository"} on GitHub</a>`
+    : "";
+  panel.innerHTML = `
+    <button class="back" type="button" data-back>&larr; Station overview</button>
+    <h2>${m.name}</h2>
+    <span class="pill ${m.status}">${STATUS_TEXT[m.status]}</span>
+    <p class="lede">${m.purpose}</p>
+    <h3>What's inside now</h3>
+    ${contents}${empty}
+    ${where ? `<p style="margin-top:10px;font-size:13px">${where}</p>` : ""}
+    <h3>Agent</h3>
+    ${m.agent ? agentCard(m.agent) : `<p class="hint">No agent works here. Every agent reads this module before starting.</p>`}
+    <h3>Next step</h3>
+    <p class="next ${m.status === "planned" ? "planned" : ""}">${m.next}</p>`;
+  panel.scrollTop = 0;
+}
+
+panel.addEventListener("click", e => {
+  const room = e.target.closest("[data-room]");
+  if (room) return select(room.dataset.room);
+  if (e.target.closest("[data-back]")) select(null);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") select(null); });
+
+renderOverview();
+
+/* ---------- 3D scene ---------- */
+let select = () => {};
+if (!window.THREE || !THREE.OrbitControls) {
+  panel.insertAdjacentHTML("afterbegin", `<p class="next planned" style="margin-bottom:12px">The 3D view couldn't load. Check your connection and reload the page. Everything below still works.</p>`);
+} else {
+  const LIVE = 0x62d8ff, PLAN = 0xffb547;
+  const host = document.getElementById("scene");
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  host.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x060a12);
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.minDistance = 5; controls.maxDistance = 70; controls.enablePan = false;
+
+  scene.add(new THREE.AmbientLight(0x6070a0, 0.7));
+  const sun = new THREE.DirectionalLight(0xfff4e6, 1.2); sun.position.set(25, 30, 15); scene.add(sun);
+  const rim = new THREE.DirectionalLight(0x4f7cff, 0.5); rim.position.set(-20, -10, -20); scene.add(rim);
+
+  // Stars
+  const starGeo = new THREE.BufferGeometry(), sp = [];
+  for (let i = 0; i < 2000; i++) {
+    const v = new THREE.Vector3().randomDirection ? new THREE.Vector3().randomDirection() : new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize();
+    v.multiplyScalar(250 + Math.random() * 200); sp.push(v.x, v.y, v.z);
+  }
+  starGeo.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3));
+  scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xcfd8ff, size: 1.6, sizeAttenuation: false })));
+
+  // Planet
+  const planet = new THREE.Mesh(new THREE.SphereGeometry(32, 64, 48), new THREE.MeshStandardMaterial({ color: 0x1f3d68, roughness: 1 }));
+  planet.position.set(-70, -40, -110); scene.add(planet);
+  const atmo = new THREE.Mesh(new THREE.SphereGeometry(34, 64, 48), new THREE.MeshBasicMaterial({ color: 0x4f9dff, transparent: true, opacity: 0.12, side: THREE.BackSide }));
+  atmo.position.copy(planet.position); scene.add(atmo);
+
+  const station = new THREE.Group(); scene.add(station);
+  const hullMat = new THREE.MeshStandardMaterial({ color: 0x2a3a52, metalness: 0.55, roughness: 0.45 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x18243a, metalness: 0.5, roughness: 0.6 });
+  const R = 11, hits = [], drones = [], beacons = [];
+
+  function glowBand(radius, height, intensity) {
+    return new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height, 40, 1, true),
+      new THREE.MeshStandardMaterial({ color: 0x07121d, emissive: LIVE, emissiveIntensity: intensity, side: THREE.DoubleSide }));
+  }
+
+  // Core
+  const core = new THREE.Group();
+  core.add(new THREE.Mesh(new THREE.SphereGeometry(2.4, 40, 28), hullMat));
+  const coreBand = glowBand(2.45, 0.5, 1.3); core.add(coreBand);
+  const coreRing = new THREE.Mesh(new THREE.TorusGeometry(3.3, 0.18, 12, 80), darkMat); coreRing.rotation.x = Math.PI / 2; core.add(coreRing);
+  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 7, 8), darkMat); core.add(mast);
+  const tip = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 12), new THREE.MeshBasicMaterial({ color: LIVE })); tip.position.y = 3.6; core.add(tip);
+  station.add(core);
+  byId.core.group = core; byId.core.labelHeight = 4.4;
+  addHit(core, 3.4, "core");
+
+  // Ring
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(R, 0.14, 8, 160), darkMat); ring.rotation.x = Math.PI / 2; station.add(ring);
+
+  const outer = MODULES.filter(m => m.id !== "core");
+  outer.forEach((m, i) => {
+    const a = (i / outer.length) * Math.PI * 2 - Math.PI / 2;
+    const pos = new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R);
+    const g = new THREE.Group(); g.position.copy(pos); station.add(g);
+    m.group = g; m.labelHeight = 2.9;
+
+    if (m.status !== "planned") {
+      g.add(new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 36), hullMat));
+      const dome = new THREE.Mesh(new THREE.SphereGeometry(1.5, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2), darkMat); dome.position.y = 1.1; g.add(dome);
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 0.8, 0.6, 36), darkMat); base.position.y = -1.4; g.add(base);
+      g.add(glowBand(1.53, 0.35, m.status === "active" ? 1.4 : 0.35));
+      if (m.status === "active") { const b2 = glowBand(1.53, 0.12, 0.9); b2.position.y = 0.55; g.add(b2); }
+    } else {
+      const frameMat = new THREE.LineBasicMaterial({ color: PLAN, transparent: true, opacity: 0.85 });
+      g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 10)), frameMat));
+      g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.6, 3.2, 3.6)), new THREE.LineBasicMaterial({ color: PLAN, transparent: true, opacity: 0.25 })));
+      const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), new THREE.MeshBasicMaterial({ color: PLAN, transparent: true }));
+      beacon.position.y = 1.9; g.add(beacon); beacons.push(beacon);
+    }
+
+    // Spoke from core to module
+    const start = pos.clone().normalize().multiplyScalar(3.4), end = pos.clone().normalize().multiplyScalar(R - 1.6);
+    if (m.status !== "planned") {
+      const len = start.distanceTo(end);
+      const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, len, 10), darkMat);
+      spoke.position.copy(start.clone().add(end).multiplyScalar(0.5));
+      spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), end.clone().sub(start).normalize());
+      station.add(spoke);
+    } else {
+      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([start, end]), new THREE.LineDashedMaterial({ color: PLAN, dashSize: 0.5, gapSize: 0.35, transparent: true, opacity: 0.7 }));
+      line.computeLineDistances(); station.add(line);
+    }
+
+    // Planned agent drone circling its module
+    if (m.agent) {
+      const drone = new THREE.Group();
+      drone.add(new THREE.Mesh(new THREE.OctahedronGeometry(0.32), new THREE.MeshBasicMaterial({ color: PLAN, wireframe: true, transparent: true, opacity: 0.95 })));
+      drone.add(new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), new THREE.MeshBasicMaterial({ color: PLAN })));
+      g.add(drone); drones.push({ obj: drone, phase: i * 1.3 });
+    }
+    addHit(g, 2.5, m.id);
+  });
+
+  function addHit(group, radius, id) {
+    const s = new THREE.Mesh(new THREE.SphereGeometry(radius, 12, 8), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
+    s.userData.id = id; group.add(s); hits.push(s);
+  }
+
+  // Labels
+  const labelLayer = document.getElementById("labels");
+  MODULES.forEach(m => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = `label ${m.status}`; b.textContent = m.name;
+    b.addEventListener("click", () => select(m.id));
+    labelLayer.appendChild(b); m.label = b;
+  });
+
+  // Camera views
+  const isPhone = () => window.innerWidth < 700;
+  function overviewView() {
+    return isPhone() ? { target: new THREE.Vector3(0, -7, 0), cam: new THREE.Vector3(0, 24, 44) } : { target: new THREE.Vector3(6, 0, 0), cam: new THREE.Vector3(6, 17, 31) };
+  }
+  let fly = null, selected = null;
+  function flyTo(view) {
+    if (reduceMotion) { controls.target.copy(view.target); camera.position.copy(view.cam); return; }
+    fly = { t: 0, fromT: controls.target.clone(), toT: view.target, fromC: camera.position.clone(), toC: view.cam };
+  }
+  select = id => {
+    if (selected) selected.label.classList.remove("selected");
+    selected = id ? byId[id] : null;
+    if (!selected) { renderOverview(); flyTo(overviewView()); return; }
+    selected.label.classList.add("selected");
+    renderRoom(selected);
+    const w = new THREE.Vector3(); selected.group.getWorldPosition(w);
+    const out = id === "core" ? new THREE.Vector3(0, 0, 1) : w.clone().setY(0).normalize();
+    const dist = id === "core" ? 14 : 13;
+    const target = w.clone(); if (isPhone()) target.y -= 3.5;
+    flyTo({ target, cam: w.clone().add(out.multiplyScalar(dist)).add(new THREE.Vector3(0, 3.5, 0)) });
+  };
+
+  const start = overviewView(); controls.target.copy(start.target); camera.position.copy(start.cam);
+
+  // Picking: a tap selects, a drag only rotates
+  const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+  let downAt = null;
+  function pick(e) {
+    const r = renderer.domElement.getBoundingClientRect();
+    ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ptr, camera);
+    const hit = ray.intersectObjects(hits, false)[0];
+    return hit ? hit.object.userData.id : null;
+  }
+  renderer.domElement.addEventListener("pointerdown", e => { downAt = [e.clientX, e.clientY]; });
+  renderer.domElement.addEventListener("pointerup", e => {
+    if (!downAt) return;
+    const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]); downAt = null;
+    if (moved < 6) { const id = pick(e); if (id) select(id); }
+  });
+  renderer.domElement.addEventListener("pointermove", e => {
+    if (e.pointerType === "mouse") renderer.domElement.style.cursor = pick(e) ? "pointer" : "grab";
+  });
+
+  function resize() {
+    const w = window.innerWidth, h = window.innerHeight;
+    renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  window.addEventListener("resize", resize); resize();
+
+  const clock = new THREE.Clock(), tmp = new THREE.Vector3();
+  const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function frame() {
+    const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+    if (!reduceMotion) {
+      if (!selected && !fly) station.rotation.y += dt * 0.04;
+      coreRing.rotation.z += dt * 0.25;
+      drones.forEach(d => {
+        const a = t * 0.7 + d.phase;
+        d.obj.position.set(Math.cos(a) * 2.7, 1.3 + Math.sin(t * 1.6 + d.phase) * 0.35, Math.sin(a) * 2.7);
+        d.obj.rotation.y = t * 1.5;
+      });
+      beacons.forEach((b, i) => { b.material.opacity = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 3 + i)); });
+      tip.material.color.setHex(Math.sin(t * 2) > 0 ? LIVE : 0x2c6a80);
+    } else {
+      drones.forEach(d => d.obj.position.set(Math.cos(d.phase) * 2.7, 1.3, Math.sin(d.phase) * 2.7));
+    }
+    if (fly) {
+      fly.t = Math.min(1, fly.t + dt / 1.2); const e = ease(fly.t);
+      controls.target.lerpVectors(fly.fromT, fly.toT, e);
+      camera.position.lerpVectors(fly.fromC, fly.toC, e);
+      if (fly.t === 1) fly = null;
+    }
+    controls.update();
+    renderer.render(scene, camera);
+
+    const w = window.innerWidth, h = window.innerHeight;
+    MODULES.forEach(m => {
+      m.group.getWorldPosition(tmp); tmp.y += m.labelHeight; tmp.project(camera);
+      if (tmp.z > 1) { m.label.hidden = true; return; }
+      m.label.hidden = false;
+      m.label.style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * h}px) translate(-50%, -100%)`;
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+</script>
+
+</body>
+</html>
