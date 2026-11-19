@@ -48,6 +48,7 @@ The owner wants the agents to run the business on their own once it's set up (`r
 - `AGENTS`: each robot's status (`ready`, `running`, `planned`).
 - `CREW`: the crew roster (every robot, including the three judges), with its role and room.
 - `TODO`: the top three items from the Boss's `decisions/owner-todo.md`, shown at the top of the panel.
+- `COUNTS.conveyor` and `COUNTS.lessons`: open conveyor items and lessons; the gold boxes moving through the corridors are the open items.
 - `COUNTS`: real numbers from the repository; they set the items on the belts, the bins and the idea board.
 
 ## Still to decide
