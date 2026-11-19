@@ -16,6 +16,7 @@ How close the business is to running itself. Update this whenever something gets
 - [ ] **Printify connection.** The key is saved; waiting for it to work. This unlocks everything below.
 - [ ] **Seller agent:** create products in Printify from `art/final/` and publish to Etsy, as drafts at first and full auto once trusted.
 - [ ] **Producer agent:** listing text (done by hand so far), Pinterest pins, short-video scripts and captions.
+- [x] **Finance Operator agent** (Observatory): weekly sales report, profit breakdown, budget check and investment pool. It needs Printify access for orders and the owner's Etsy numbers.
 - [ ] **Analyst agent:** read Printify orders and profits each week, compare them with ad spend, and feed the results to the Scout.
 - [ ] **Weekly schedule:** one scheduled run that chains every agent, plus a report to the owner (phone notification).
 - [ ] **Order fulfillment:** turn on "auto-approve orders" in Printify (an owner setting).
