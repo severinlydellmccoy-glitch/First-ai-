@@ -24,6 +24,10 @@ Work usually moves in that order: research picks what to make, the art and media
 
 Each folder's README explains its naming conventions.
 
+## Goal: autopilot
+
+The owner wants the agents to run the business on their own once it's set up (`rules/working-with-me.md`, rule 5). Whenever a task is done by hand, also automate it for next time, and keep `decisions/automation-plan.md` up to date.
+
 ## Business plan
 
 - **Products:** merchandise (designs printed on products such as shirts and mugs).
