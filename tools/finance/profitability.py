@@ -52,19 +52,23 @@ def main():
                      "margin": buyer_pays / price if price else 0})
     rows.sort(key=lambda r: -r["buyer_pays"])
     def verdict(r):
-        if r["free_ship"] < 1: return "❌ loses money with free shipping" if r["buyer_pays"] < 3 else "⚠️ only works if the buyer pays shipping"
-        if r["buyer_pays"] >= 12: return "✅ strong"
-        if r["buyer_pays"] >= 6: return "🟡 OK"
-        return "⚠️ thin"
+        b = r["buyer_pays"]
+        tier = "❌ losing" if b <= 0 else "✅ strong" if b >= 12 else "🟡 OK" if b >= 6 else "⚠️ thin"
+        if r["free_ship"] < 1 and b > 0: tier += "; only works if the buyer pays shipping"
+        return tier
+    def safe_ads(r):
+        # Ad cost per sale: at most half the profit in the worse of the two shipping cases, never below $0.
+        return max(0.0, min(r["buyer_pays"], r["free_ship"]) / 2)
     today = dt.date.today().isoformat()
     out = [f"# Profit per product", "", f"Real Printify costs, read {today}. Typical size and color (median). Etsy fees: listing $0.20, 6.5% transaction, 3% + $0.25 payment processing.", "",
-           "| Product | Live | Price | Printify cost | Printify US shipping | Profit if buyer pays shipping | Profit with free shipping | Offsite Ads fee if it applies | Verdict |",
-           "|---|---|---|---|---|---|---|---|---|"]
+           "| Product | Live | Price | Printify cost | Printify US shipping | Profit if buyer pays shipping | Profit with free shipping | Offsite Ads fee if it applies | Safe ad spend per sale | Verdict |",
+           "|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         sh = f"${r['ship']:.2f}" if r["ship"] is not None else "unknown"
-        out.append(f"| {r['title']} | {'yes' if r['visible'] else 'hidden'} | ${r['price']:.2f} | ${r['cost']:.2f} | {sh} | **${r['buyer_pays']:.2f}** ({r['margin']:.0%}) | ${r['free_ship']:.2f} | −${r['offsite']:.2f} | {verdict(r)} |")
-    out += ["", "**Most you can spend on Etsy Ads per sale before it stops paying** = the profit in the first profit column. Keep ads well below that.",
-            "", "Check the Etsy shipping settings: if the shop offers free shipping, use the free-shipping column."]
+        out.append(f"| {r['title']} | {'yes' if r['visible'] else 'hidden'} | ${r['price']:.2f} | ${r['cost']:.2f} | {sh} | **${r['buyer_pays']:.2f}** ({r['margin']:.0%}) | ${r['free_ship']:.2f} | −${r['offsite']:.2f} | ${safe_ads(r):.2f} | {verdict(r)} |")
+    out += ["", "**Verdict tiers** (profit if buyer pays shipping): strong $12+, OK $6 to $12, thin under $6, losing $0 or less.", "",
+            "**Safe ad spend per sale** = half the profit in the worse shipping case, so a sale from an ad still clears profit even if the shop offers free shipping. The break-even ceiling is the full profit. $0 means no ads.",
+            "", "Check the Etsy shipping settings: if the shop offers free shipping, use the free-shipping column. Etsy's US free-shipping guarantee usually applies to orders of $35 or more, so check it for the sweatshirts and hoodie too."]
     open(a.out, "w").write("\n".join(out) + "\n")
     print("\n".join(out))
 

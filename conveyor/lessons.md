@@ -2,6 +2,10 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-18 (finance-chief): Offsite Ads (15%) plus free shipping together leave a sweatshirt only about $1.60 a sale. Check both Etsy settings before judging profit or spending on ads, and size ads to safe spend per sale ($3 a day, not $5, for a shop with no sales yet).
+- 2026-11-18 (profit-analyst): Etsy fees (6.5% + 3%) are charged on shipping too, so buyer-paid shipping still costs about 10% of the shipping price. Judge tote and candle on the free-shipping column until the owner confirms the shipping setting.
+- 2026-11-19 (finance-operator): The tote and candle only make money if the buyer pays shipping; with free shipping the candle loses about $1.86 a sale. Check the Etsy shipping setting before any profit claim or ad spend on low-price items.
+
 - 2026-11-18 (Claude): FMP's free plan leaves out some big tickers (GOOG, AVGO and others return 402). List them as not covered; never guess their numbers.
 - 2026-11-18 (Claude): Keys pasted into the chat don't work. They only work when saved through the secure form, in the value box.
 
