@@ -48,4 +48,4 @@ Record here once known: the print-on-demand service, seller account details (nev
 
 - **Shop name:** LiquidLav (chosen 2026-11-18). A web search found no shop, brand or trademark with this name.
 - **Etsy:** account created by the owner on 2026-11-18. Shop setup (payments, billing) not confirmed yet.
-- **Print-on-demand:** Printify planned (free plan); signup not confirmed yet.
+- **Print-on-demand:** Printify, free plan. Account created by the owner on 2026-11-18; not yet connected to Etsy.

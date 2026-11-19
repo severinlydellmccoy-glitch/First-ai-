@@ -7,15 +7,15 @@ Your checklist for getting the shop running. Tick a box by changing `[ ]` to `[x
 ## Do next
 
 1. **Finish the Etsy shop setup** (by Nov 23): enter the shop name **LiquidLav**, then payments (bank account) and billing (card).
-2. **Finish signing up to Printify** (by Nov 21). See `sales/setup-checklist.md`, step 1.
-3. **Connect Printify to Etsy** (right after both are done).
+2. **Create the first product in Printify:** the holiday cat sweatshirt (Gildan 18000, dark-shirt file on Black, Forest Green, Navy, Maroon). This unlocks the Etsy connection.
+3. **Connect Printify to Etsy:** Printify's step "2. Connect your Etsy store".
 
 Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Christmas: **about Dec 1**.
 
 ## 1. Accounts
 
 - [x] Choose a shop name: **LiquidLav**. A web search found no shop or trademark using it.
-- [ ] Finish the Printify signup. Stay on the free plan. (`decisions/2026-11-18-decisions.md`, Needs the owner #1)
+- [x] Printify account created, free plan (Nov 18)
 - [x] Create the Etsy account (done Nov 18)
 - [ ] Finish the Etsy shop setup: shop name, payments and billing. (`sales/setup-checklist.md`, step 2)
 - [ ] Connect Printify to Etsy: in Printify, click **Manage my stores**, then **Add new store**, then **Etsy**, and log in to Etsy when asked.
@@ -47,6 +47,7 @@ Goal: both sweatshirts live by **Black Friday, Nov 27**. Last safe day for Chris
 - [x] Etsy and Amazon listing text for both (`media/final/`)
 - [x] Etsy account created (Nov 18)
 - [x] Shop name chosen: LiquidLav (Nov 18)
+- [x] Printify account created (Nov 18)
 
 ## Not now
 
