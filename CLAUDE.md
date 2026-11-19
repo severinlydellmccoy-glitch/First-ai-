@@ -22,7 +22,7 @@ Work usually moves in that order: research picks what to make, the art and media
 - `conveyor/`: how the agents talk to each other: hand-offs, problems and requests in `items/`, plus the shared `lessons.md`. Every agent reads its items at the start of a run and adds new ones at the end (`tools/conveyor.py`).
 - `investing/`: the Market Watcher's daily stock reports (market days, 7:45 am Central) and Sunday week-ahead reports. Information only, never buy or sell calls.
 - `tools/`: scripts the agents use, each with a line on how to run it.
-- `finance/`: the Finance Operator's ledger and weekly sales reports. It covers sales, costs, fees, ad spend, profit and the investment pool, but never stock picks.
+- `finance/`: the Observatory's financial management team. The Finance Chief (manager) decides what to keep, grow, fix or drop and where the budget goes; the Profit Analyst keeps `profitability.md` (real profit per product); the Finance Operator keeps the ledger and weekly sales reports. They recommend; money moves need the owner. Never stock picks.
 - `art/`: original designs. `drafts/` holds work in progress and `final/` holds finished designs.
 - `media/`: mockups, photos, video, social posts and listing copy, split the same way into `drafts/` and `final/`.
 

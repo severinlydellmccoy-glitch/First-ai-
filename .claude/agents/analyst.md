@@ -20,6 +20,8 @@ Then choose who runs today, using these rules:
 - **underboss** and **boss:** whenever new research came in today, or there are open items for them.
 - **artist:** when the Boss's newest decisions name designs not yet in `art/final/`.
 - **finance-operator:** when there are new orders or owner-reported numbers, on Mondays (weekly report), or when there are open items for it.
+- **profit-analyst:** when products, prices or costs changed since its last run, or weekly on Mondays.
+- **finance-chief:** after the Profit Analyst or Finance Operator ran, or weekly on Mondays.
 - **problem-solver:** when there are open `problem` items, anything open for 2 or more days, or new manual steps in the to-do list. Otherwise every 3rd day.
 - **Skip anything with nothing new to do.** Every run uses the owner's Claude plan, so quiet days should stay short.
 
