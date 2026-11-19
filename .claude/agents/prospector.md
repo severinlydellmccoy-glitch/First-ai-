@@ -17,7 +17,7 @@ Find business ideas where Claude can do most of the creative work and a customer
 
 ## Where to look
 
-Focus on YouTube and Instagram, where people talk about what they need:
+Focus on TikTok, YouTube and Instagram, where people talk about what they need. TikTok is read through search results, the same way as Instagram:
 
 - Videos and posts where creators or small businesses ask for help, complain about a task, or show what they paid for
 - Comments asking "where can I get this made?" or "how do I make this?"

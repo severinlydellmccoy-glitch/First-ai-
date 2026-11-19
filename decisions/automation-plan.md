@@ -10,6 +10,8 @@ How close the business is to running itself. Update this whenever something gets
 - [x] Quality check and decisions (Underboss, Boss), run on request
 - [x] Owner to-do list, kept current by the Boss
 - [x] Designs drawn and rendered print-ready (Artist, `art/source/build.js`)
+- [x] **72-hour cycle:** a scheduled run every 3 days (Scout and Prospector with TikTok and Instagram trends → judges → Underboss → Boss → Problem Solver), with a phone notification
+- [x] **Problem Solving Division:** the Problem Solver automates one or two manual jobs per cycle, under the owner's standing permission (`rules/working-with-me.md`, rule 6)
 
 ## Still manual: next to automate
 

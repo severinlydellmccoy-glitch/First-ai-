@@ -19,6 +19,7 @@ Work usually moves in that order: research picks what to make, the art and media
 - `research/`: market research notes, one dated Markdown file per topic. `research/scout/` holds the Scout's weekly merchandise reports, and `research/prospecting/` holds the Prospector's service-business ideas.
 - `.claude/agents/`: the AI agents. The Scout and Prospector send every idea past three judges (Demand, Safety, Profit), who decide for themselves. The Underboss checks their reports and briefs the Boss, and the Boss makes the final call on what to make next. The Boss can't overturn a Safety deny, and money, accounts and investments stay with the owner.
 - `decisions/`: the Underboss's briefings and the Boss's decisions.
+- `tools/`: scripts the agents use, each with a line on how to run it.
 - `finance/`: the Finance Operator's ledger and weekly sales reports. It covers sales, costs, fees, ad spend, profit and the investment pool, but never stock picks.
 - `art/`: original designs. `drafts/` holds work in progress and `final/` holds finished designs.
 - `media/`: mockups, photos, video, social posts and listing copy, split the same way into `drafts/` and `final/`.
