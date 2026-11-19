@@ -11,6 +11,8 @@ How close the business is to running itself. Update this whenever something gets
 - [x] Owner to-do list, kept current by the Boss
 - [x] Designs drawn and rendered print-ready (Artist, `art/source/build.js`)
 - [x] **72-hour cycle:** a scheduled run every 3 days (Scout and Prospector with TikTok and Instagram trends → judges → Underboss → Boss → Problem Solver), with a phone notification
+- [x] **Conveyor:** agents pass hand-offs, problems and lessons to each other through `conveyor/` every run
+- [x] **Market Watcher:** daily stock report on market days at 7:45 am Central, plus a Sunday-night week-ahead report. **Needs the free FMP key.**
 - [x] **Problem Solving Division:** the Problem Solver automates one or two manual jobs per cycle, under the owner's standing permission (`rules/working-with-me.md`, rule 6)
 
 ## Still manual: next to automate

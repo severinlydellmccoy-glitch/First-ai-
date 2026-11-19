@@ -19,6 +19,8 @@ Work usually moves in that order: research picks what to make, the art and media
 - `research/`: market research notes, one dated Markdown file per topic. `research/scout/` holds the Scout's weekly merchandise reports, and `research/prospecting/` holds the Prospector's service-business ideas.
 - `.claude/agents/`: the AI agents. The Scout and Prospector send every idea past three judges (Demand, Safety, Profit), who decide for themselves. The Underboss checks their reports and briefs the Boss, and the Boss makes the final call on what to make next. The Boss can't overturn a Safety deny, and money, accounts and investments stay with the owner.
 - `decisions/`: the Underboss's briefings and the Boss's decisions.
+- `conveyor/`: how the agents talk to each other: hand-offs, problems and requests in `items/`, plus the shared `lessons.md`. Every agent reads its items at the start of a run and adds new ones at the end (`tools/conveyor.py`).
+- `investing/`: the Market Watcher's daily stock reports (market days, 7:45 am Central) and Sunday week-ahead reports. Information only, never buy or sell calls.
 - `tools/`: scripts the agents use, each with a line on how to run it.
 - `finance/`: the Finance Operator's ledger and weekly sales reports. It covers sales, costs, fees, ad spend, profit and the investment pool, but never stock picks.
 - `art/`: original designs. `drafts/` holds work in progress and `final/` holds finished designs.
@@ -52,6 +54,7 @@ The owner wants the agents to run the business on their own once it's set up (`r
 
 Record here once known: the print-on-demand service, seller account details (never passwords), what share of profit is invested, and commands for any scripts that get added.
 
+- **Stock data:** Financial Modeling Prep (free plan, 250 requests a day) for prices, with the key saved as a network secret (`apikey` header); companiesmarketcap.com for company sizes. Stooq blocks cloud computers.
 - **Budget:** $25 to $50 a week, set by the owner on 2026-11-18. Plan: about $40 on 2 sample sweatshirts once the designs are fixed; then Etsy Ads at $3 to $5 a day, only on fixed listings that convert; plus listing fees ($0.20 each). Check ad spend against sales weekly, and stop ads on listings with no sales after about 2 weeks. The owner approves every purchase.
 - **Shop name:** LiquidLav (chosen 2026-11-18). A web search found no shop, brand or trademark with this name.
 - **Etsy:** account created by the owner on 2026-11-18. Shop setup (payments, billing) not confirmed yet.

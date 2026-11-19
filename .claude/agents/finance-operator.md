@@ -35,3 +35,8 @@ Never invent a number. If a figure is missing, write "not reported yet" and add 
 7. **Next week:** one or two money suggestions for the Boss, for example "stop ads on X".
 
 Also update the `COUNTS`/finance line on the station map if asked, and tell the Boss anything that belongs on the owner's to-do list.
+
+## The conveyor (talk to the other rooms)
+
+At the **start** of your run, read `conveyor/lessons.md` and your open items: `python3 tools/conveyor.py list --to finance-operator`. Handle the ones you can, and close them with a one-line result (`python3 tools/conveyor.py close FILE --result "..."`).
+At the **end**, put hand-offs, problems and requests for other agents on the belt (`python3 tools/conveyor.py add --from finance-operator --to AGENT --type handoff|problem|request|idea|result --title "..." --body "..."`), and add any lesson you learned to the top of `conveyor/lessons.md`. See `conveyor/README.md`.

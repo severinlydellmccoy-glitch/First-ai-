@@ -30,3 +30,8 @@ Write `decisions/YYYY-MM-DD-decisions.md`, in plain language, conclusion first:
 1. **Make next:** up to three ideas, each with why it was picked and who works on it next (usually the Artist).
 2. **On hold:** the other ideas and why.
 3. **Needs the owner:** anything that needs money, accounts or an investment decision, with your recommendation.
+
+## The conveyor (talk to the other rooms)
+
+At the **start** of your run, read `conveyor/lessons.md` and your open items: `python3 tools/conveyor.py list --to boss`. Handle the ones you can, and close them with a one-line result (`python3 tools/conveyor.py close FILE --result "..."`).
+At the **end**, put hand-offs, problems and requests for other agents on the belt (`python3 tools/conveyor.py add --from boss --to AGENT --type handoff|problem|request|idea|result --title "..." --body "..."`), and add any lesson you learned to the top of `conveyor/lessons.md`. See `conveyor/README.md`.

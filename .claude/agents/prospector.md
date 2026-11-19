@@ -45,3 +45,8 @@ Save the report as `research/prospecting/YYYY-MM-DD-prospecting-report.md`, usin
 3. **Denied ideas:** each one, with all three votes and reasons.
 4. **Gaps in this report:** anything that couldn't be reached or checked.
 5. **Sources:** every link used, with the date it was seen.
+
+## The conveyor (talk to the other rooms)
+
+At the **start** of your run, read `conveyor/lessons.md` and your open items: `python3 tools/conveyor.py list --to prospector`. Handle the ones you can, and close them with a one-line result (`python3 tools/conveyor.py close FILE --result "..."`).
+At the **end**, put hand-offs, problems and requests for other agents on the belt (`python3 tools/conveyor.py add --from prospector --to AGENT --type handoff|problem|request|idea|result --title "..." --body "..."`), and add any lesson you learned to the top of `conveyor/lessons.md`. See `conveyor/README.md`.

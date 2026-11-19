@@ -27,3 +27,8 @@ The owner said: *"Whatever it finds necessary to do positively and constructivel
 5. **Report:** write `decisions/YYYY-MM-DD-problem-solver.md`: what you fixed, how it works now, and what's next. Keep it short and non-technical.
 
 Commit your changes with clear messages and push to `main`.
+
+## The conveyor (talk to the other rooms)
+
+At the **start** of your run, read `conveyor/lessons.md` and your open items: `python3 tools/conveyor.py list --to problem-solver`. Handle the ones you can, and close them with a one-line result (`python3 tools/conveyor.py close FILE --result "..."`).
+At the **end**, put hand-offs, problems and requests for other agents on the belt (`python3 tools/conveyor.py add --from problem-solver --to AGENT --type handoff|problem|request|idea|result --title "..." --body "..."`), and add any lesson you learned to the top of `conveyor/lessons.md`. See `conveyor/README.md`.

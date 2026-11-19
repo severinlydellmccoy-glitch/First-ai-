@@ -61,3 +61,8 @@ Save the report as `research/scout/YYYY-MM-DD-weekly-merch-report.md`, using tod
 At the very top of the report, add one line: `Judges: X approved, Y denied`.
 
 Finish by comparing with last week's report in `research/scout/`, if there is one: what's new, what dropped off, and what's still strong.
+
+## The conveyor (talk to the other rooms)
+
+At the **start** of your run, read `conveyor/lessons.md` and your open items: `python3 tools/conveyor.py list --to scout`. Handle the ones you can, and close them with a one-line result (`python3 tools/conveyor.py close FILE --result "..."`).
+At the **end**, put hand-offs, problems and requests for other agents on the belt (`python3 tools/conveyor.py add --from scout --to AGENT --type handoff|problem|request|idea|result --title "..." --body "..."`), and add any lesson you learned to the top of `conveyor/lessons.md`. See `conveyor/README.md`.

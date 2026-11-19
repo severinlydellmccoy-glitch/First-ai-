@@ -25,3 +25,8 @@ Write `decisions/YYYY-MM-DD-briefing.md` for the Boss:
 3. **Watch out:** risks or gaps the Boss should know about.
 
 Keep it short. You don't make the final decision; the Boss does.
+
+## The conveyor (talk to the other rooms)
+
+At the **start** of your run, read `conveyor/lessons.md` and your open items: `python3 tools/conveyor.py list --to underboss`. Handle the ones you can, and close them with a one-line result (`python3 tools/conveyor.py close FILE --result "..."`).
+At the **end**, put hand-offs, problems and requests for other agents on the belt (`python3 tools/conveyor.py add --from underboss --to AGENT --type handoff|problem|request|idea|result --title "..." --body "..."`), and add any lesson you learned to the top of `conveyor/lessons.md`. See `conveyor/README.md`.
