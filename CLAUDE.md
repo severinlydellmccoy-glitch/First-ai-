@@ -48,4 +48,5 @@ Record here once known: the print-on-demand service, seller account details (nev
 
 - **Shop name:** LiquidLav (chosen 2026-11-18). A web search found no shop, brand or trademark with this name.
 - **Etsy:** account created by the owner on 2026-11-18. Shop setup (payments, billing) not confirmed yet.
-- **Print-on-demand:** Printify, free plan. Account created by the owner on 2026-11-18; not yet connected to Etsy.
+- **Print-on-demand:** Printify, free plan. Account created and connected to the Etsy shop on 2026-11-18.
+- **Products:** holiday cat crewneck sweatshirt (Gildan 18000, 6 sizes, 1 color) published from Printify on 2026-11-18. Printify said the Etsy shop had no active listings yet.

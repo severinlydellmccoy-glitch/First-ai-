@@ -155,11 +155,11 @@ const COUNTS = { reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, 
 const TODO = {
   updated: "18 Nov 2026",
   next: [
-    ["Finish the LiquidLav Etsy shop: payments and billing", "by Nov 23"],
-    ["Create the holiday cat sweatshirt in Printify", "now"],
-    ["Connect Printify to Etsy", "after that"],
+    ["Get the first listing live on Etsy", "now"],
+    ["Check the cat shirt color matches its file", "now"],
+    ["Create the book-lover sweatshirt in Printify", "by Nov 25"],
   ],
-  done: ["Etsy account", "Shop name: LiquidLav", "Printify account"],
+  done: ["Etsy account", "Shop name: LiquidLav", "Printify connected to Etsy", "First product published"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
@@ -202,12 +202,13 @@ const MODULES = [
     inside: "A photo stage with lights and a camera, and a mockup belt. The first listing text and previews were made by a Claude session; the Producer robot itself isn't set up yet.",
     agent: "producer",
     next: "Listing text is ready to copy into Etsy. Real product photos come from Printify mockups, or from samples if Etsy requires them." },
-  { id: "sales", name: "Sales Dock", status: "planned", folder: null, x: 20, y: 26, w: 10, h: 7,
+  { id: "sales", name: "Sales Dock", status: "empty", folder: "sales", x: 20, y: 26, w: 10, h: 7,
     purpose: "Lists merchandise on Etsy and Amazon, sets prices, and keeps track of orders.",
-    contents: [], emptyNote: "Not built yet. There is no folder for it.",
-    inside: "A blueprint: a packing line that will send orders out to a shipping pod for Etsy and Amazon.",
+    contents: [["Printify → Etsy", "Connected on 18 Nov"], ["Holiday cat crewneck sweatshirt", "Published from Printify, 6 sizes. Not active on Etsy yet."], ["setup-checklist.md", "The store setup steps"]],
+    emptyNote: "No sales yet.",
+    inside: "The packing line is built and connected to Etsy through Printify. Orders will ride the belt to the shipping pod. The Seller robot isn't set up yet, so you publish listings yourself.",
     agent: "seller",
-    next: "Construction started: your Etsy account is open. Next: finish the shop setup, sign up to Printify, and connect the two." },
+    next: "Get the first listing active on Etsy, then add the book-lover sweatshirt." },
   { id: "observatory", name: "Observatory", status: "planned", folder: null, x: 5, y: 27, w: 9, h: 6,
     purpose: "Watches what sells and sends the results back to the Research Lab, so the next round of products is better.",
     contents: [], emptyNote: "Not built yet. There is no folder for it.",
@@ -229,7 +230,7 @@ const CORRIDORS = [
   { x: 38.8, y: 16.5, w: 2.4, h: 5 },             // art - media
   { x: 23.8, y: 9.5, w: 2.4, h: 5 },              // rules - core
   { x: 8.3, y: 7.5, w: 2.4, h: 5 },               // prospecting - research
-  { x: 23.8, y: 20.5, w: 2.4, h: 6, planned: true },  // core - sales
+  { x: 23.8, y: 20.5, w: 2.4, h: 6 },                // core - sales
   { x: 8.3, y: 22.5, w: 2.4, h: 5, planned: true },   // research - observatory
   { x: 38.8, y: 28.5, w: 2.4, h: 4, planned: true },  // media - vault
 ];
@@ -697,8 +698,9 @@ const FURNITURE = {
   sales(m, bp, t) {
     const ox = m.x, oy = m.y;
     conveyor(bp, ox + 1, oy + 3, 6.5, 0, t);
-    for (let i = 0; i < 4; i++) box(bp, ox + 0.6 + (i % 2) * 1.1, oy + 0.6 + Math.floor(i / 2) * 1.1, 0.9, 0.9);
-    circle(bp, ox + 8.6, oy + 3.4, 1);
+    for (let i = 0; i < 4; i++) box(bp, ox + 0.6 + (i % 2) * 1.1, oy + 0.6 + Math.floor(i / 2) * 1.1, 0.9, 0.9, "#8a5a32", "#a5764a");
+    circle(bp, ox + 8.6, oy + 3.4, 1, "#9aa3ae", "#c9d0d8");
+    if (!bp) { circle(false, ox + 8.6, oy + 3.4, 0.45, "#2c3139"); glow(false, ox + 8.35, oy + 2.1, 0.5, 0.25, "#3cff6a", reduceMotion ? 1 : 0.6 + 0.4 * Math.sin(t * 3)); }
   },
   observatory(m, bp, t) {
     const ox = m.x, oy = m.y;
@@ -724,7 +726,7 @@ L(byId.prospecting, "What people say on YouTube and Instagram", 4.5, 0.25);
 L(byId.prospecting, `Idea board: ${COUNTS.prospects}`, 7.9, 1.8); L(byId.prospecting, "Tube to the judges", 4.3, 6.1);
 L(byId.art, "Blank canvases", 2.6, 0.6); L(byId.art, `Drafts: ${COUNTS.drafts}`, 2, 5.8); L(byId.art, `Final: ${COUNTS.finals}`, 8, 5.8);
 L(byId.media, "Photo stage (lights off)", 5, 0.25); L(byId.media, `Mockup belt: ${COUNTS.mediaDrafts + COUNTS.mediaFinals}`, 5, 7.3);
-L(byId.sales, "Packing line", 4.25, 2.8, "plan"); L(byId.sales, "Shipping pod: Etsy and Amazon", 8.6, 2.2, "plan");
+L(byId.sales, "Packing line: 0 orders", 4.25, 2.8); L(byId.sales, "Shipping pod: Etsy (connected)", 8.6, 1.9);
 L(byId.observatory, "Market telescope", 4.5, 4.5, "plan"); L(byId.observatory, "Sales charts", 1.7, 0.45, "plan");
 L(byId.vault, "Investment safe", 5, 0.45, "plan"); L(byId.vault, "Profit counter", 8, 3.5, "plan");
 
