@@ -90,6 +90,24 @@ body {
 .agent span { color: var(--plan); font-size: 12px; align-self: center; }
 .agent.ready span, .agent.running span { color: var(--live); }
 .agent p { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
+.crew-head { display: flex; justify-content: space-between; align-items: baseline; margin: 18px 0 8px; }
+.crew-head h3 { margin: 0 !important; }
+.crew-head span { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.crew { display: grid; gap: 6px; }
+.crew-card {
+  display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 12px;
+  width: 100%; text-align: left; font: inherit; color: var(--text); cursor: pointer;
+  padding: 7px 10px 7px 7px; border-radius: 8px; border: 1px dashed color-mix(in srgb, var(--plan) 35%, transparent); background: rgba(255,255,255,0.02);
+}
+.crew-card.on { border: 1px solid color-mix(in srgb, var(--live) 45%, transparent); background: color-mix(in srgb, var(--live) 6%, transparent); }
+.crew-card.picked { box-shadow: 0 0 0 2px var(--live), 0 0 16px color-mix(in srgb, var(--live) 40%, transparent); }
+.crew-card:hover { background: rgba(255,255,255,0.05); }
+.crew-card:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
+.crew-card img { width: 48px; height: 48px; border-radius: 6px; background: #12161d; border: 1px solid var(--line); }
+.crew-card b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; }
+.crew-card small { display: block; color: var(--muted); font-size: 12px; }
+.crew-card em { font-style: normal; font-family: var(--font-mono); font-size: 11.5px; color: var(--plan); }
+.crew-card.on em { color: var(--live); }
 .legend { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
 .legend div { display: flex; align-items: center; gap: 8px; }
 .back { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 0; margin-bottom: 12px; cursor: pointer; }
@@ -233,19 +251,72 @@ function agentCard(key) {
   const note = a.status === "planned" ? "Not set up yet." : a.note;
   return `<div class="agent ${a.status}"><strong>${a.name}</strong><span>${AGENT_STATUS[a.status]}</span><p>${a.job} ${note}</p></div>`;
 }
+// Crew roster: every robot on the station. Judges share the Scout's status because they are part of its work.
+const CREW = [
+  { name: "Scout", agent: "scout", role: "Market researcher", room: "research" },
+  { name: "Demand", agent: "scout", role: "Judge: does it sell?", room: "research", color: "#8a9a3b" },
+  { name: "Safety", agent: "scout", role: "Judge: is it original and allowed?", room: "research", color: "#d94f8a" },
+  { name: "Profit", agent: "scout", role: "Judge: does it make money?", room: "research", color: "#2f9c95" },
+  { name: "Prospector", agent: "prospector", role: "Business prospector", room: "prospecting" },
+  { name: "Artist", agent: "artist", role: "Designer", room: "art" },
+  { name: "Producer", agent: "producer", role: "Mockups and posts", room: "media" },
+  { name: "Seller", agent: "seller", role: "Etsy and Amazon listings", room: "sales" },
+  { name: "Analyst", agent: "analyst", role: "Sales numbers", room: "observatory" },
+  { name: "Treasurer", agent: "treasurer", role: "Investment records", room: "vault" },
+];
+CREW.forEach(c => { c.status = AGENTS[c.agent].status; c.color = c.color || AGENTS[c.agent].color; });
+const CREW_STATE = { running: "Working", ready: "Ready", planned: "Off" };
+
+function portrait(color, powered, planned) {
+  const cv2 = document.createElement("canvas"); cv2.width = cv2.height = 96;
+  const g = cv2.getContext("2d");
+  const bg = g.createRadialGradient(48, 40, 4, 48, 48, 60); bg.addColorStop(0, planned ? "#2a2214" : "#1c2633"); bg.addColorStop(1, "#0c1016");
+  g.fillStyle = bg; g.fillRect(0, 0, 96, 96);
+  if (planned) { g.setLineDash([5, 4]); g.strokeStyle = "#ffb547"; g.lineWidth = 3; }
+  // body
+  g.beginPath(); g.arc(48, 84, 30, Math.PI, 0); if (planned) g.stroke(); else { g.fillStyle = color; g.fill(); }
+  // head
+  g.beginPath(); g.arc(48, 46, 24, 0, Math.PI * 2); if (planned) g.stroke(); else { g.fillStyle = "#f3e3c3"; g.fill(); g.strokeStyle = "#b9ab8e"; g.lineWidth = 2; g.stroke(); }
+  // ears
+  [[22, 46], [74, 46]].forEach(([x, y]) => { g.beginPath(); g.arc(x, y, 6, 0, Math.PI * 2); if (planned) g.stroke(); else { g.fillStyle = color; g.fill(); } });
+  // visor
+  if (!planned) {
+    g.save(); if (powered) { g.shadowColor = "#62d8ff"; g.shadowBlur = 12; g.fillStyle = "#62d8ff"; } else g.fillStyle = "#283040";
+    g.beginPath(); g.roundRect ? g.roundRect(32, 40, 32, 12, 5) : g.rect(32, 40, 32, 12); g.fill(); g.restore();
+  }
+  // antenna
+  g.setLineDash([]); g.strokeStyle = planned ? "#ffb547" : "#8b949e"; g.lineWidth = 2;
+  g.beginPath(); g.moveTo(48, 22); g.lineTo(48, 10); g.stroke();
+  g.beginPath(); g.arc(48, 8, 4, 0, Math.PI * 2); g.fillStyle = planned ? "#ffb547" : powered ? "#62d8ff" : "#3a4458"; g.fill();
+  if (!powered && !planned) { g.fillStyle = "rgba(200,210,225,0.8)"; g.font = "bold 16px Inter, sans-serif"; g.fillText("z", 70, 24); g.font = "bold 11px Inter, sans-serif"; g.fillText("z", 80, 14); }
+  return cv2.toDataURL();
+}
+CREW.forEach(c => { c.img = portrait(c.color, c.status !== "planned", c.status === "planned" && byId[c.room].status === "planned"); });
+
+let pickedCrew = null;
+function crewList() {
+  const working = CREW.filter(c => c.status === "running").length, ready = CREW.filter(c => c.status === "ready").length, off = CREW.length - working - ready;
+  return `<div class="crew-head"><h3>Crew</h3><span>${working} working &middot; ${ready} ready &middot; ${off} off</span></div>
+    <div class="crew">${CREW.map((c, i) => `
+      <button class="crew-card ${c.status !== "planned" ? "on" : ""} ${pickedCrew === i ? "picked" : ""}" type="button" data-crew="${i}">
+        <img src="${c.img}" alt="">
+        <span><b>${c.name}</b><small>${c.role} &middot; ${byId[c.room].name}</small></span>
+        <em>${CREW_STATE[c.status]}</em>
+      </button>`).join("")}</div>`;
+}
+
 function renderOverview() {
   panel.innerHTML = `
     <h2>Station overview</h2>
     <p class="lede">Lit rooms exist in your GitHub repository. Orange outlines are parts of the business that are planned but not built yet.</p>
+    ${crewList()}
+    <p class="hint" style="margin-top:8px">A lit visor means the robot is set up. "Off" robots are planned but not set up yet. Tap anyone to find them on the map.</p>
     <h3>Rooms</h3>
     <div class="rooms">${MODULES.map(m => `
       <button class="room-btn" type="button" data-room="${m.id}">
         <span class="dot ${m.status}"></span><span>${m.parent ? "&#8627; " : ""}${m.name}</span><small>${m.status === "planned" ? "Planned" : m.status === "empty" ? "Empty" : "Active"}</small>
       </button>`).join("")}
     </div>
-    <h3>Agents</h3>
-    <p class="hint" style="margin-bottom:8px">The robots are the AI helpers. A robot's visor lights up once its agent is set up. Powered-down robots are planned but not set up yet.</p>
-    <div class="rooms">${Object.keys(AGENTS).map(agentCard).join("")}</div>
     <h3>Key</h3>
     <div class="legend">
       <div><span class="dot active"></span>Built, with work inside</div>
@@ -271,8 +342,14 @@ function renderRoom(m) {
     <h3>What's inside now</h3>
     ${contents}${empty}
     ${where ? `<p style="margin-top:10px;font-size:13px">${where}</p>` : ""}
-    <h3>Worker</h3>
-    ${m.agent ? agentCard(m.agent) : `<p class="hint">No worker here. Every agent reads this room before starting.</p>`}
+    <h3>Crew in this room</h3>
+    ${CREW.some(c => c.room === m.id)
+      ? `<div class="crew">${CREW.map((c, i) => c.room !== m.id ? "" : `
+        <button class="crew-card ${c.status !== "planned" ? "on" : ""} ${pickedCrew === i ? "picked" : ""}" type="button" data-crew="${i}">
+          <img src="${c.img}" alt=""><span><b>${c.name}</b><small>${c.role}</small></span><em>${CREW_STATE[c.status]}</em>
+        </button>`).join("")}</div>`
+      : `<p class="hint">No crew here. Every agent reads this room before starting.</p>`}
+    ${m.agent ? `<div style="margin-top:8px">${agentCard(m.agent)}</div>` : ""}
     <h3>Next step</h3>
     <p class="next ${m.status === "planned" ? "planned" : ""}">${m.next}</p>`;
   panel.scrollTop = 0;
@@ -282,8 +359,10 @@ let selected = null;
 function select(id) { selected = id ? byId[id] : null; if (selected) { renderRoom(selected); focusRoom(selected); } else { renderOverview(); fitAll(); } }
 panel.addEventListener("click", e => {
   const room = e.target.closest("[data-room]");
-  if (room) return select(room.dataset.room);
-  if (e.target.closest("[data-back]")) select(null);
+  if (room) { pickedCrew = null; return select(room.dataset.room); }
+  const cc = e.target.closest("[data-crew]");
+  if (cc) { pickedCrew = +cc.dataset.crew; return select(CREW[pickedCrew].room); }
+  if (e.target.closest("[data-back]")) { pickedCrew = null; select(null); }
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") select(null); });
 renderOverview();
@@ -685,6 +764,10 @@ function frame(now) {
   CORRIDORS.forEach(drawCorridor);
   MODULES.forEach(m => FURNITURE[m.id](m, m.status === "planned", t));
   bots.slice().sort((a, b) => a.y - b.y).forEach(b => drawBot(b, t));
+  if (pickedCrew !== null) {
+    const b = bots.find(x => x.name === CREW[pickedCrew].name);
+    if (b) { ctx.save(); ctx.strokeStyle = C.live; ctx.shadowColor = C.live; ctx.shadowBlur = 12; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(P(b.x), P(b.y - 0.15), P(0.75 + (reduceMotion ? 0 : 0.08 * Math.sin(t * 4))), 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+  }
   if (selected) { ctx.save(); ctx.strokeStyle = selected.status === "planned" ? C.plan : C.live; ctx.lineWidth = 3 / cam.z; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 12; ctx.strokeRect(P(selected.x) - 14, P(selected.y) - 14, P(selected.w) + 28, P(selected.h) + 28); ctx.restore(); }
 
   drawLabels();

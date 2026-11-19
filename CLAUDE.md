@@ -37,6 +37,7 @@ Each folder's README explains its naming conventions.
 - `MODULES`: one entry per room, with its place on the map (`x`, `y`, `w`, `h` in floor tiles) and status (`active`, `empty`, `planned`).
 - `CORRIDORS`: the links between rooms.
 - `AGENTS`: each robot's status (`ready`, `running`, `planned`).
+- `CREW`: the crew roster (every robot, including the three judges), with its role and room.
 - `COUNTS`: real numbers from the repository; they set the items on the belts, the bins and the idea board.
 
 ## Still to decide
