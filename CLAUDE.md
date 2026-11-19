@@ -32,7 +32,12 @@ Each folder's README explains its naming conventions.
 
 ## Station
 
-`station/` holds a 3D visual map of the business, also published at https://claude.ai/artifact/FX7jK2pgAyh9GkJi99JLAh. Whenever a folder, module or agent changes, update the `MODULES`, `AGENTS` and `COUNTS` lists in the page (`COUNTS` sets how many items ride each conveyor belt), republish it to that same link, and copy it back into `station/index.html`.
+`station/index.html` is a top-down map of the business, drawn on a canvas with no libraries, and published at https://claude.ai/artifact/FX7jK2pgAyh9GkJi99JLAh. Whenever a folder, room or agent changes, update the data near the top of the page and republish to that same link, then save it back to `station/index.html` (the published page has no `<!doctype>`/`<head>` wrapper; the repository copy does).
+
+- `MODULES`: one entry per room, with its place on the map (`x`, `y`, `w`, `h` in floor tiles) and status (`active`, `empty`, `planned`).
+- `CORRIDORS`: the links between rooms.
+- `AGENTS`: each robot's status (`ready`, `running`, `planned`).
+- `COUNTS`: real numbers from the repository; they set the items on the belts, the bins and the idea board.
 
 ## Still to decide
 

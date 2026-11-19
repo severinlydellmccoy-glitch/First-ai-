@@ -10,11 +10,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: full-screen 3D station with rooms you fly into, a status readout top-left, and a control panel docked right (bottom sheet on phones). */
+/* Layout: a top-down station map filling the screen, a status readout top-left, and a control panel docked right (bottom sheet on phones). */
 :root {
-  --space: #060a12;
-  --hull: rgba(12, 19, 33, 0.88);
-  --line: #24344d;
+  --space: #05070d;
+  --hull: rgba(11, 16, 26, 0.9);
+  --line: #26344a;
   --text: #e7edf6;
   --muted: #95a3ba;
   --live: #62d8ff;
@@ -29,10 +29,8 @@ body {
   background: var(--space); color: var(--text); font-family: var(--font-body); font-size: 14px; line-height: 1.5;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-#scene { position: fixed; inset: 0; }
-#scene canvas { display: block; touch-action: none; }
-#fade { position: fixed; inset: 0; z-index: 5; background: #02040a; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
-#fade.on { opacity: 1; }
+#map { position: fixed; inset: 0; display: block; touch-action: none; cursor: grab; }
+#map.dragging { cursor: grabbing; }
 
 .hud {
   position: fixed; z-index: 3;
@@ -68,13 +66,11 @@ body {
 .pill.active { color: var(--live); background: color-mix(in srgb, var(--live) 14%, transparent); }
 .pill.empty { color: var(--live); background: transparent; border: 1px dashed color-mix(in srgb, var(--live) 55%, transparent); }
 .pill.planned { color: var(--plan); background: color-mix(in srgb, var(--plan) 14%, transparent); }
-
 .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .list li { display: grid; gap: 1px; padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
 .list .file { font-family: var(--font-mono); font-size: 12.5px; color: var(--live); }
 .list .note { color: var(--muted); font-size: 13px; }
 .list .none { color: var(--muted); font-style: italic; }
-
 .rooms { display: grid; gap: 6px; }
 .room-btn {
   display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 10px;
@@ -82,20 +78,18 @@ body {
   padding: 9px 10px; border-radius: 6px; border: 1px solid var(--line); background: rgba(255,255,255,0.02);
 }
 .room-btn:hover { border-color: var(--muted); background: rgba(255,255,255,0.05); }
-.room-btn:focus-visible, .label:focus-visible, .back:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
+.room-btn:focus-visible, .back:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; }
 .dot.active { background: var(--live); box-shadow: 0 0 8px var(--live); }
 .dot.empty { border: 1.5px solid var(--live); }
 .dot.planned { border: 1.5px dashed var(--plan); }
 .room-btn small { color: var(--muted); font-size: 12px; }
-
 .agent { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 8px 10px; border-radius: 6px; border: 1px dashed color-mix(in srgb, var(--plan) 35%, transparent); }
-.agent.ready { border: 1px solid color-mix(in srgb, var(--live) 40%, transparent); }
+.agent.ready, .agent.running { border: 1px solid color-mix(in srgb, var(--live) 40%, transparent); }
 .agent strong { font-weight: 600; }
 .agent span { color: var(--plan); font-size: 12px; align-self: center; }
-.agent.ready span { color: var(--live); }
+.agent.ready span, .agent.running span { color: var(--live); }
 .agent p { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
-
 .legend { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
 .legend div { display: flex; align-items: center; gap: 8px; }
 .back { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 0; margin-bottom: 12px; cursor: pointer; }
@@ -105,26 +99,6 @@ body {
 .foot { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
 a { color: var(--live); }
 .hint { font-size: 13px; color: var(--muted); }
-.enter {
-  margin-top: 12px; width: 100%; font: inherit; font-weight: 600; cursor: pointer;
-  padding: 9px 12px; border-radius: 6px; border: 1px solid var(--live); color: var(--space); background: var(--live);
-}
-.enter.planned { border-color: var(--plan); background: var(--plan); }
-
-#labels { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
-.label {
-  position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer;
-  font-family: var(--font-display); font-weight: 500; font-size: 12.5px; letter-spacing: 0.06em; white-space: nowrap;
-  color: var(--text); background: rgba(6,10,18,0.72); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px;
-  transform: translate(-50%, -100%);
-}
-.label.active, .label.empty { border-color: color-mix(in srgb, var(--live) 50%, transparent); }
-.label.planned { color: var(--plan); border-style: dashed; border-color: color-mix(in srgb, var(--plan) 55%, transparent); }
-.label.selected { background: var(--live); color: var(--space); border-color: var(--live); }
-.label.planned.selected { background: var(--plan); border-color: var(--plan); }
-.label.tag { cursor: default; pointer-events: none; font-family: var(--font-body); font-size: 12px; letter-spacing: 0; }
-.label.tag.worker { color: var(--live); border-color: color-mix(in srgb, var(--live) 50%, transparent); }
-.label.tag.off { color: var(--plan); border-style: dashed; border-color: color-mix(in srgb, var(--plan) 55%, transparent); }
 
 @media (max-width: 700px) {
   .hud h1 { font-size: 18px; }
@@ -133,106 +107,111 @@ a { color: var(--live); }
     top: auto; width: auto;
     left: max(16px, env(safe-area-inset-left, 0px));
     bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
-    max-height: 44%;
+    max-height: 42%;
     padding: 14px;
   }
-  .label.tag { font-size: 11px; }
 }
 </style>
 
-<div id="scene" aria-hidden="true"></div>
-<div id="labels"></div>
-<div id="fade"></div>
+<canvas id="map" aria-label="Map of the First-ai station. Use the panel to visit each room."></canvas>
 <header class="hud">
   <h1>FIRST-AI STATION</h1>
-  <p>Merchandise sold on Etsy and Amazon, with the profits invested in stocks. Each module is one part of the business.</p>
+  <p>Merchandise sold on Etsy and Amazon, with the profits invested in stocks. Each room is one part of the business.</p>
   <div class="counts" id="counts"></div>
 </header>
 <aside id="panel" aria-live="polite"></aside>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
 const SNAPSHOT = "19 Nov 2026";
 
-// Real counts from the repository. Conveyor belts carry one item per real file.
+// Real counts from the repository. Belts, bins and the idea board show these numbers.
 const COUNTS = { reports: 0, approved: 0, denied: 0, prospects: 0, drafts: 0, finals: 0, mediaDrafts: 0, mediaFinals: 0 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
+// x, y, w, h = the room's place on the map, in floor tiles
 const MODULES = [
-  { id: "core", name: "Command Core", status: "active", folder: "",
+  { id: "core", name: "Command Core", status: "active", folder: "", x: 20, y: 14, w: 10, h: 7,
     purpose: "The station's brain. It holds the instructions every Claude session reads before doing any work.",
-    contents: [["CLAUDE.md", "Explains the business plan and the folders, and tells Claude to follow everything in the Rules Deck"], ["README.md", "Short description of the repository"], ["station/", "Backup copy of this space station"]],
-    inside: "A control room with a hologram of the whole station and the console that holds CLAUDE.md.",
+    contents: [["CLAUDE.md", "Explains the business plan and the folders, and tells Claude to follow everything in the Rules Deck"], ["README.md", "Short description of the repository"], ["station/", "Backup copy of this station map"]],
+    inside: "A control room with a hologram of the station, the CLAUDE.md console, and lava lamps in the corners.",
     agent: null,
     next: "Still to decide: the print-on-demand service and what share of profit to invest." },
-  { id: "rules", name: "Rules Deck", status: "active", folder: "rules",
+  { id: "rules", name: "Rules Deck", status: "active", folder: "rules", x: 21, y: 4, w: 8, h: 6,
     purpose: "The rules every agent and every Claude session must follow.",
     contents: [["general.md", "Original art only, cite and date research, keep finished work apart from drafts, never store passwords or keys"], ["working-with-me.md", "Your rules: three questions first, check the work, thorough but readable, no tech-speak"], ["README.md", "Index of the rule files"]],
     inside: "An archive with one glowing tablet for each rule file.",
     agent: null,
     next: "Add any rules of your own, such as a budget, a style, or products to avoid." },
-  { id: "research", name: "Research Lab", status: "empty", folder: "research",
+  { id: "research", name: "Research Lab", status: "empty", folder: "research", x: 4, y: 12, w: 11, h: 11,
     purpose: "Market research: what merchandise is selling on Etsy, Amazon and Temu. Decides what the station makes.",
     contents: [["README.md", "How to name and write research notes"], ["scout/", "The Scout's weekly reports (0 so far)"]],
     emptyNote: "No reports yet.",
-    inside: "The Scout works at a wall of market screens. Each idea it finds rides the belt through a scanner to three robot judges: Demand, Safety and Profit. The judges decide for themselves. Only ideas all three approve go into the report bin, and the rest drop into the denied bin. The belt stays empty until the first report exists.",
+    inside: "The Scout walks between its market screens and the scanner. Each idea rides the belt to three robot judges (Demand, Safety, Profit), who decide for themselves. Ideas all three approve drop into the approved bin, and the rest go to the denied bin.",
     agent: "scout",
-    next: "The Scout's first test report runs at 9 pm Central. If the data is good, it switches to a weekly schedule." },
-  { id: "prospecting", name: "Prospecting Hub", parent: "research", status: "empty", folder: "research/prospecting",
+    next: "The first test report runs at 9 pm Central. If the data is good, the Scout switches to a weekly schedule." },
+  { id: "prospecting", name: "Prospecting Hub", parent: "research", status: "empty", folder: "research/prospecting", x: 5, y: 2, w: 9, h: 6,
     purpose: "Finds business ideas beyond merchandise: services Claude can help make and sell, like YouTube thumbnails, ads, or a grandma's dog photo printed on a shirt. Listens to what people ask for on YouTube and Instagram.",
     contents: [["README.md", "How prospecting reports are named and written"]],
     emptyNote: "No business ideas yet.",
-    inside: "A 70s conversation pit facing a wall of TVs showing what people talk about on YouTube and Instagram. The Prospector pins ideas to the board, and a tube sends each one to the Research Lab's three judges.",
+    inside: "A lounge with a wall of TVs showing what people talk about on YouTube and Instagram. The Prospector pins ideas to the board, and a tube carries each one down to the judges in the Research Lab.",
     agent: "prospector",
-    next: "Answer three quick questions, then the Prospector runs its first search." },
-  { id: "art", name: "Art Studio", status: "empty", folder: "art",
+    next: "The first test run is at 9 pm Central, alongside the Scout." },
+  { id: "art", name: "Art Studio", status: "empty", folder: "art", x: 35, y: 9, w: 10, h: 8,
     purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
     contents: [["README.md", "How drafts and finished designs are stored"], ["drafts/", "0 files"], ["final/", "0 files"]],
     emptyNote: "No designs yet.",
     inside: "Easels with blank canvases, a workbench, and two bins: drafts and final. The Artist is powered down until it has a design to make.",
     agent: "artist",
     next: "Waiting on the Research Lab to pick what to make." },
-  { id: "media", name: "Media Bay", status: "empty", folder: "media",
+  { id: "media", name: "Media Bay", status: "empty", folder: "media", x: 35, y: 21, w: 10, h: 8,
     purpose: "Mockups, product photos, video, social posts and listing text that sell the products.",
     contents: [["README.md", "How media files are stored and named"], ["drafts/", "0 files"], ["final/", "0 files"]],
     emptyNote: "No media yet.",
-    inside: "A photo stage with lights and a camera, and a mockup belt. The lights are off and the Producer is powered down.",
+    inside: "A photo stage with lights and a camera, and a mockup belt. The Producer is powered down.",
     agent: "producer",
     next: "Waiting on the first finished designs from the Art Studio." },
-  { id: "sales", name: "Sales Dock", status: "planned", folder: null,
+  { id: "sales", name: "Sales Dock", status: "planned", folder: null, x: 20, y: 26, w: 10, h: 7,
     purpose: "Lists merchandise on Etsy and Amazon, sets prices, and keeps track of orders.",
-    contents: [],
-    emptyNote: "Not built yet. There is no folder for it.",
-    inside: "A blueprint: a packing line that will send orders out to shipping pods for Etsy and Amazon.",
+    contents: [], emptyNote: "Not built yet. There is no folder for it.",
+    inside: "A blueprint: a packing line that will send orders out to a shipping pod for Etsy and Amazon.",
     agent: "seller",
     next: "To build it: open seller accounts on Etsy and Amazon, and pick a print-on-demand service that makes and ships the products." },
-  { id: "observatory", name: "Observatory", status: "planned", folder: null,
+  { id: "observatory", name: "Observatory", status: "planned", folder: null, x: 5, y: 27, w: 9, h: 6,
     purpose: "Watches what sells and sends the results back to the Research Lab, so the next round of products is better.",
-    contents: [],
-    emptyNote: "Not built yet. There is no folder for it.",
+    contents: [], emptyNote: "Not built yet. There is no folder for it.",
     inside: "A blueprint: a telescope pointed at the marketplaces and wall charts of sales.",
     agent: "analyst",
     next: "To build it: the Sales Dock needs products listed first." },
-  { id: "vault", name: "Investment Vault", status: "planned", folder: null,
+  { id: "vault", name: "Investment Vault", status: "planned", folder: null, x: 35, y: 32, w: 10, h: 6,
     purpose: "Moves a share of the merchandise profits into stocks and keeps a record of every investment.",
-    contents: [],
-    emptyNote: "Not built yet. There is no folder for it.",
+    contents: [], emptyNote: "Not built yet. There is no folder for it.",
     inside: "A blueprint: a safe and a profit counter.",
     agent: "treasurer",
     next: "To build it: the business needs profits first. Then decide what share of profit to invest and which brokerage account to use." },
 ];
 
+// Corridors between rooms, in floor tiles. planned = drawn as a blueprint.
+const CORRIDORS = [
+  { x: 14.5, y: 16, w: 6, h: 2.4 },               // research - core
+  { x: 29.5, y: 14.5, w: 6, h: 2.4 },             // core - art
+  { x: 38.8, y: 16.5, w: 2.4, h: 5 },             // art - media
+  { x: 23.8, y: 9.5, w: 2.4, h: 5 },              // rules - core
+  { x: 8.3, y: 7.5, w: 2.4, h: 5 },               // prospecting - research
+  { x: 23.8, y: 20.5, w: 2.4, h: 6, planned: true },  // core - sales
+  { x: 8.3, y: 22.5, w: 2.4, h: 5, planned: true },   // research - observatory
+  { x: 38.8, y: 28.5, w: 2.4, h: 4, planned: true },  // media - vault
+];
+
 // status: ready = set up but hasn't done any work yet, running = has produced work, planned = not set up
 const AGENTS = {
-  scout:     { name: "Scout",     status: "ready",   home: "research",    job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "Set up and waiting for its first run." },
-  prospector:{ name: "Prospector", status: "ready", home: "prospecting", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "Set up and waiting for its first run." },
-  artist:    { name: "Artist",    status: "planned", home: "art",         job: "Creates original designs." },
-  producer:  { name: "Producer",  status: "planned", home: "media",       job: "Makes mockups, photos, posts and listing text." },
-  seller:    { name: "Seller",    status: "planned", home: "sales",       job: "Lists products and keeps prices up to date." },
-  analyst:   { name: "Analyst",   status: "planned", home: "observatory", job: "Reads the sales numbers and suggests what to make next." },
-  treasurer: { name: "Treasurer", status: "planned", home: "vault",       job: "Tracks profits and keeps the investment record. You make the final call on every investment." },
+  scout:      { name: "Scout", status: "ready", color: "#e3a72f", job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "Set up and waiting for its first run." },
+  prospector: { name: "Prospector", status: "ready", color: "#8b5cf6", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "Set up and waiting for its first run." },
+  artist:     { name: "Artist", status: "planned", color: "#e8692c", job: "Creates original designs." },
+  producer:   { name: "Producer", status: "planned", color: "#2f9c95", job: "Makes mockups, photos, posts and listing text." },
+  seller:     { name: "Seller", status: "planned", color: "#8a9a3b", job: "Lists products and keeps prices up to date." },
+  analyst:    { name: "Analyst", status: "planned", color: "#d94f8a", job: "Reads the sales numbers and suggests what to make next." },
+  treasurer:  { name: "Treasurer", status: "planned", color: "#a0703c", job: "Tracks profits and keeps the investment record. You make the final call on every investment." },
 };
 
 const STATUS_TEXT = { active: "Built, with work inside", empty: "Built, nothing made yet", planned: "Under construction" };
@@ -244,10 +223,9 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const panel = document.getElementById("panel");
 const built = MODULES.filter(m => m.status !== "planned").length;
 const agentList = Object.values(AGENTS);
-const ready = agentList.filter(a => a.status !== "planned").length;
 document.getElementById("counts").innerHTML =
-  `<span class="chip live">${built} of ${MODULES.length} modules built</span>` +
-  `<span class="chip live">${ready} of ${agentList.length} agents ready</span>` +
+  `<span class="chip live">${built} of ${MODULES.length} rooms built</span>` +
+  `<span class="chip live">${agentList.filter(a => a.status !== "planned").length} of ${agentList.length} agents ready</span>` +
   `<span class="chip plan">${agentList.filter(a => a.status === "running").length} running</span>`;
 
 function agentCard(key) {
@@ -255,19 +233,18 @@ function agentCard(key) {
   const note = a.status === "planned" ? "Not set up yet." : a.note;
   return `<div class="agent ${a.status}"><strong>${a.name}</strong><span>${AGENT_STATUS[a.status]}</span><p>${a.job} ${note}</p></div>`;
 }
-
 function renderOverview() {
   panel.innerHTML = `
     <h2>Station overview</h2>
-    <p class="lede">Lit modules exist in your GitHub repository. Orange outlines are parts of the business that are planned but not built yet. Every module has a room inside.</p>
-    <h3>Modules</h3>
+    <p class="lede">Lit rooms exist in your GitHub repository. Orange outlines are parts of the business that are planned but not built yet.</p>
+    <h3>Rooms</h3>
     <div class="rooms">${MODULES.map(m => `
       <button class="room-btn" type="button" data-room="${m.id}">
         <span class="dot ${m.status}"></span><span>${m.parent ? "&#8627; " : ""}${m.name}</span><small>${m.status === "planned" ? "Planned" : m.status === "empty" ? "Empty" : "Active"}</small>
       </button>`).join("")}
     </div>
     <h3>Agents</h3>
-    <p class="hint" style="margin-bottom:8px">The robot workers are the AI helpers. A worker lights up once its agent is set up, and its conveyor fills as real work gets saved.</p>
+    <p class="hint" style="margin-bottom:8px">The robots are the AI helpers. A robot's visor lights up once its agent is set up. Powered-down robots are planned but not set up yet.</p>
     <div class="rooms">${Object.keys(AGENTS).map(agentCard).join("")}</div>
     <h3>Key</h3>
     <div class="legend">
@@ -276,20 +253,16 @@ function renderOverview() {
       <div><span class="dot planned"></span>Planned, not built yet</div>
     </div>
     <h3>Getting around</h3>
-    <p class="hint">Drag to look around. Scroll or pinch to zoom. Tap a module, or its name tag, to fly inside its room.</p>
+    <p class="hint">Drag to move around. Scroll or pinch to zoom. Tap a room to zoom in.</p>
     <p class="foot">Snapshot of the repository on ${SNAPSHOT}. Claude updates the station as the business grows.</p>`;
 }
-
-function renderRoom(m, insideRoom) {
+function renderRoom(m) {
   const contents = m.contents.length
-    ? `<ul class="list">${m.contents.map(([f, n]) => `<li><span class="file">${f}</span><span class="note">${n}</span></li>`).join("")}</ul>`
-    : "";
+    ? `<ul class="list">${m.contents.map(([f, n]) => `<li><span class="file">${f}</span><span class="note">${n}</span></li>`).join("")}</ul>` : "";
   const empty = m.emptyNote ? `<ul class="list" style="margin-top:6px"><li><span class="none">${m.emptyNote}</span></li></ul>` : "";
-  const where = m.folder !== null
-    ? `<a href="${REPO}${m.folder}" target="_blank" rel="noopener">Open ${m.folder ? m.folder + "/" : "the repository"} on GitHub</a>`
-    : "";
+  const where = m.folder !== null ? `<a href="${REPO}${m.folder}" target="_blank" rel="noopener">Open ${m.folder ? m.folder + "/" : "the repository"} on GitHub</a>` : "";
   panel.innerHTML = `
-    <button class="back" type="button" data-back>&larr; ${insideRoom ? "Leave room" : "Station overview"}</button>
+    <button class="back" type="button" data-back>&larr; Whole station</button>
     <h2>${m.name}</h2>
     <span class="pill ${m.status}">${STATUS_TEXT[m.status]}</span>
     <p class="lede">${m.purpose}</p>
@@ -299,696 +272,479 @@ function renderRoom(m, insideRoom) {
     ${contents}${empty}
     ${where ? `<p style="margin-top:10px;font-size:13px">${where}</p>` : ""}
     <h3>Worker</h3>
-    ${m.agent ? agentCard(m.agent) : `<p class="hint">No worker here. Every agent reads this module before starting.</p>`}
+    ${m.agent ? agentCard(m.agent) : `<p class="hint">No worker here. Every agent reads this room before starting.</p>`}
     <h3>Next step</h3>
     <p class="next ${m.status === "planned" ? "planned" : ""}">${m.next}</p>`;
   panel.scrollTop = 0;
 }
 
-let select = () => {}, leaveRoom = () => {};
+let selected = null;
+function select(id) { selected = id ? byId[id] : null; if (selected) { renderRoom(selected); focusRoom(selected); } else { renderOverview(); fitAll(); } }
 panel.addEventListener("click", e => {
   const room = e.target.closest("[data-room]");
   if (room) return select(room.dataset.room);
-  if (e.target.closest("[data-back]")) leaveRoom();
+  if (e.target.closest("[data-back]")) select(null);
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") leaveRoom(); });
-
+document.addEventListener("keydown", e => { if (e.key === "Escape") select(null); });
 renderOverview();
 
-/* ---------- 3D ---------- */
-if (!window.THREE || !THREE.OrbitControls) {
-  panel.insertAdjacentHTML("afterbegin", `<p class="next planned" style="margin-bottom:12px">The 3D view couldn't load. Check your connection and reload the page. Everything below still works.</p>`);
-} else {
-  const LIVE = 0x62d8ff, PLAN = 0xffb547;
-  const host = document.getElementById("scene");
-  const fadeEl = document.getElementById("fade");
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  host.appendChild(renderer.domElement);
+/* ---------- Map ---------- */
+const T = 32; // pixels per floor tile
+const C = {
+  wallTop: "#9aa3ae", wallHi: "#c9d0d8", wallSide: "#4b525d", wallDark: "#2c3139",
+  floor: "#22262d", floorLine: "#2d323a", corridor: "#1d2127",
+  live: "#62d8ff", plan: "#ffb547", crt: "#6dff8e",
+  orange: "#e8692c", mustard: "#e3a72f", cream: "#f3e3c3", pink: "#d94f8a", teal: "#2f9c95", avocado: "#8a9a3b",
+};
+const cv = document.getElementById("map"), ctx = cv.getContext("2d");
+let W = 0, H = 0, dpr = 1;
+const cam = { x: 25 * T, y: 20 * T, z: 0.5 };
+let camTo = null;
 
-  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.enablePan = false;
-  const isPhone = () => window.innerWidth < 700;
-
-  function mesh(geo, mat, x = 0, y = 0, z = 0) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); return m; }
-
-  /* 70s palette for the rooms */
-  const RETRO = { orange: 0xe8692c, mustard: 0xe3a72f, avocado: 0x8a9a3b, brown: 0x5a3825, cream: 0xf3e3c3, magenta: 0xd94f8a, teal: 0x2f9c95 };
-  function canvasTex(w, h, draw) {
-    const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d"), w, h);
-    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
-  }
-  let texCache;
-  function retroTextures() {
-    if (texCache) return texCache;
-    const shag = canvasTex(256, 256, (g, w, h) => {
-      g.fillStyle = "#8a4a22"; g.fillRect(0, 0, w, h);
-      const shades = ["#a85a28", "#6e3a1c", "#c46a2e", "#7d4420", "#b8642c"];
-      g.lineWidth = 2;
-      for (let i = 0; i < 5000; i++) {
-        g.strokeStyle = shades[i % shades.length];
-        const x = Math.random() * w, y = Math.random() * h;
-        g.beginPath(); g.moveTo(x, y); g.lineTo(x + (Math.random() - 0.5) * 6, y + (Math.random() - 0.5) * 6); g.stroke();
-      }
-    });
-    shag.repeat.set(6, 6);
-    const rug = canvasTex(512, 512, (g, w) => {
-      const cols = ["#e8692c", "#e3a72f", "#f3e3c3", "#8a9a3b", "#5a3825", "#d94f8a"];
-      for (let i = 12; i > 0; i--) { g.fillStyle = cols[i % cols.length]; g.beginPath(); g.arc(w / 2, w / 2, (i / 12) * w / 2, 0, Math.PI * 2); g.fill(); }
-    });
-    rug.wrapS = rug.wrapT = THREE.ClampToEdgeWrapping;
-    const wall = canvasTex(64, 256, (g, w, h) => {
-      const bands = [["#3b2418", 0.3], ["#5a3825", 0.1], ["#e8692c", 0.09], ["#e3a72f", 0.09], ["#f3e3c3", 0.09], ["#8a9a3b", 0.09], ["#d94f8a", 0.04], ["#3b2418", 0.2]];
-      let y = 0; bands.forEach(([c, f]) => { g.fillStyle = c; g.fillRect(0, y, w, f * h + 1); y += f * h; });
-    });
-    wall.repeat.set(1, 1);
-    texCache = { shag, rug, wall };
-    return texCache;
-  }
-
-  /* ===== Station (outside) ===== */
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x060a12);
-  scene.add(new THREE.AmbientLight(0x6070a0, 0.7));
-  const sun = new THREE.DirectionalLight(0xfff4e6, 1.2); sun.position.set(25, 30, 15); scene.add(sun);
-  const rim = new THREE.DirectionalLight(0x4f7cff, 0.5); rim.position.set(-20, -10, -20); scene.add(rim);
-
-  const starGeo = new THREE.BufferGeometry(), sp = [];
-  for (let i = 0; i < 2000; i++) {
-    const v = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
-    v.multiplyScalar(250 + Math.random() * 200); sp.push(v.x, v.y, v.z);
-  }
-  starGeo.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3));
-  scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xcfd8ff, size: 1.6, sizeAttenuation: false })));
-
-  const planet = mesh(new THREE.SphereGeometry(32, 64, 48), new THREE.MeshStandardMaterial({ color: 0x1f3d68, roughness: 1 }), -70, -40, -110);
-  scene.add(planet);
-  const atmo = mesh(new THREE.SphereGeometry(34, 64, 48), new THREE.MeshBasicMaterial({ color: 0x4f9dff, transparent: true, opacity: 0.12, side: THREE.BackSide }));
-  atmo.position.copy(planet.position); scene.add(atmo);
-
-  const station = new THREE.Group(); scene.add(station);
-  const hullMat = new THREE.MeshStandardMaterial({ color: 0x2a3a52, metalness: 0.55, roughness: 0.45 });
-  const darkMat = new THREE.MeshStandardMaterial({ color: 0x18243a, metalness: 0.5, roughness: 0.6 });
-  const R = 11, hits = [], drones = [], beacons = [];
-
-  function glowBand(radius, height, intensity) {
-    return new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height, 40, 1, true),
-      new THREE.MeshStandardMaterial({ color: 0x07121d, emissive: LIVE, emissiveIntensity: intensity, side: THREE.DoubleSide }));
-  }
-
-  const core = new THREE.Group();
-  core.add(mesh(new THREE.SphereGeometry(2.4, 40, 28), hullMat));
-  core.add(glowBand(2.45, 0.5, 1.3));
-  const coreRing = new THREE.Mesh(new THREE.TorusGeometry(3.3, 0.18, 12, 80), darkMat); coreRing.rotation.x = Math.PI / 2; core.add(coreRing);
-  core.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 7, 8), darkMat));
-  const tip = mesh(new THREE.SphereGeometry(0.22, 16, 12), new THREE.MeshBasicMaterial({ color: LIVE }), 0, 3.6, 0); core.add(tip);
-  station.add(core);
-  byId.core.group = core; byId.core.labelHeight = 4.4;
-  addHit(core, 3.4, "core");
-
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(R, 0.14, 8, 160), darkMat); ring.rotation.x = Math.PI / 2; station.add(ring);
-
-  const outer = MODULES.filter(m => m.id !== "core" && !m.parent);
-  const subs = MODULES.filter(m => m.parent);
-  [...outer, ...subs].forEach((m, i) => {
-    let pos;
-    if (m.parent) {
-      const pp = byId[m.parent].group.position, a = Math.atan2(pp.z, pp.x) + 0.3;
-      pos = new THREE.Vector3(Math.cos(a) * (R + 6.5), 1.2, Math.sin(a) * (R + 6.5));
-    } else {
-      const a = (i / outer.length) * Math.PI * 2 - Math.PI / 2;
-      pos = new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R);
-    }
-    const g = new THREE.Group(); g.position.copy(pos); station.add(g);
-    if (m.parent) g.scale.setScalar(0.8);
-    m.group = g; m.labelHeight = 2.6;
-
-    if (m.status !== "planned") {
-      g.add(mesh(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 36), hullMat));
-      g.add(mesh(new THREE.SphereGeometry(1.5, 36, 16, 0, Math.PI * 2, 0, Math.PI / 2), darkMat, 0, 1.1, 0));
-      g.add(mesh(new THREE.CylinderGeometry(1.5, 0.8, 0.6, 36), darkMat, 0, -1.4, 0));
-      g.add(glowBand(1.53, 0.35, m.status === "active" ? 1.4 : 0.35));
-      if (m.status === "active") { const b2 = glowBand(1.53, 0.12, 0.9); b2.position.y = 0.55; g.add(b2); }
-    } else {
-      g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 10)), new THREE.LineBasicMaterial({ color: PLAN, transparent: true, opacity: 0.85 })));
-      g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.6, 3.2, 3.6)), new THREE.LineBasicMaterial({ color: PLAN, transparent: true, opacity: 0.25 })));
-      const beacon = mesh(new THREE.SphereGeometry(0.2, 16, 12), new THREE.MeshBasicMaterial({ color: PLAN, transparent: true }), 0, 1.9, 0);
-      g.add(beacon); beacons.push(beacon);
-    }
-
-    const start = m.parent ? byId[m.parent].group.position.clone() : pos.clone().normalize().multiplyScalar(3.4);
-    const end = m.parent ? pos.clone() : pos.clone().normalize().multiplyScalar(R - 1.6);
-    if (m.status !== "planned") {
-      const len = start.distanceTo(end);
-      const spoke = mesh(new THREE.CylinderGeometry(0.16, 0.16, len, 10), darkMat);
-      spoke.position.copy(start.clone().add(end).multiplyScalar(0.5));
-      spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), end.clone().sub(start).normalize());
-      station.add(spoke);
-    } else {
-      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([start, end]), new THREE.LineDashedMaterial({ color: PLAN, dashSize: 0.5, gapSize: 0.35, transparent: true, opacity: 0.7 }));
-      line.computeLineDistances(); station.add(line);
-    }
-
-    if (m.agent) {
-      const ag = AGENTS[m.agent], color = ag.status === "planned" ? PLAN : LIVE;
-      const drone = new THREE.Group();
-      drone.add(mesh(new THREE.OctahedronGeometry(0.32), new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.95 })));
-      drone.add(mesh(new THREE.SphereGeometry(0.09, 10, 8), new THREE.MeshBasicMaterial({ color })));
-      g.add(drone); drones.push({ obj: drone, phase: i * 1.3 });
-    }
-    addHit(g, 2.5, m.id);
-  });
-
-  function addHit(group, radius, id) {
-    const s = mesh(new THREE.SphereGeometry(radius, 12, 8), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
-    s.userData.id = id; group.add(s); hits.push(s);
-  }
-
-  const labelLayer = document.getElementById("labels");
-  MODULES.forEach(m => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = `label ${m.status}`; b.textContent = m.name;
-    b.addEventListener("click", () => select(m.id));
-    labelLayer.appendChild(b); m.label = b;
-  });
-
-  /* ===== Rooms (inside) ===== */
-  const WIRE = new THREE.MeshBasicMaterial({ color: PLAN, wireframe: true, transparent: true, opacity: 0.5 });
-  function mats(bp) {
-    if (bp) return new Proxy({}, { get: () => WIRE });
-    const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, metalness: 0.35, roughness: 0.55, ...o });
-    return {
-      metal: std(0xc9ced6, { metalness: 0.8, roughness: 0.25 }), dark: std(0x6b3f22, { metalness: 0.05, roughness: 0.7 }), light: std(RETRO.cream, { metalness: 0.1 }),
-      belt: std(0x3b2418, { roughness: 0.9, metalness: 0.1 }), wood: std(0x8a5a32, { metalness: 0, roughness: 0.8 }),
-      canvas: std(0xf2f0ea, { metalness: 0, roughness: 0.95 }), item: std(RETRO.mustard, { emissive: RETRO.orange, emissiveIntensity: 0.25 }),
-      screen: std(0x08180c, { emissive: 0x6dff8e, emissiveIntensity: 0.9 }), dimScreen: std(0x0a1018, { emissive: 0x6dff8e, emissiveIntensity: 0.12 }),
-      glow: new THREE.MeshBasicMaterial({ color: RETRO.magenta, transparent: true, opacity: 0.6 }),
-      lampOff: std(0xdde3ea, { emissive: 0xffffff, emissiveIntensity: 0.05 }),
-    };
-  }
-
-  function robot(powered, bp, color = RETRO.mustard) {
-    const body = bp ? WIRE : new THREE.MeshStandardMaterial({ color, metalness: 0.25, roughness: 0.35 });
-    const dome = bp ? WIRE : new THREE.MeshStandardMaterial({ color: RETRO.cream, metalness: 0.2, roughness: 0.3 });
-    const trim = bp ? WIRE : new THREE.MeshStandardMaterial({ color: 0xc9ced6, metalness: 0.85, roughness: 0.25 });
-    const visor = bp ? WIRE : new THREE.MeshStandardMaterial({ color: 0x0b1220, emissive: powered ? LIVE : 0x000000, emissiveIntensity: powered ? 1.6 : 0 });
-    const g = new THREE.Group();
-    g.add(mesh(new THREE.CylinderGeometry(0.3, 0.52, 0.3, 20), trim, 0, 0.15, 0));
-    g.add(mesh(new THREE.CylinderGeometry(0.36, 0.32, 0.75, 20), body, 0, 0.65, 0));
-    const head = new THREE.Group(); head.position.y = 1.05;
-    head.add(mesh(new THREE.SphereGeometry(0.34, 24, 16), dome, 0, 0.3, 0));
-    head.add(mesh(new THREE.BoxGeometry(0.5, 0.15, 0.12), visor, 0, 0.32, 0.27));
-    [-1, 1].forEach(sd => { const ear = mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.1, 16), body, sd * 0.36, 0.3, 0); ear.rotation.z = Math.PI / 2; head.add(ear); });
-    head.add(mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.25, 6), trim, 0, 0.7, 0));
-    head.add(mesh(new THREE.SphereGeometry(0.055, 10, 8), bp ? WIRE : new THREE.MeshBasicMaterial({ color: powered ? LIVE : 0x3a4458 }), 0, 0.84, 0));
-    g.add(head);
-    const armGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.55, 8);
-    const armL = mesh(armGeo, trim, -0.43, 0.68, 0.05), armR = mesh(armGeo, trim, 0.43, 0.68, 0.05);
-    armL.rotation.z = -0.2; armR.rotation.z = 0.2; g.add(armL, armR);
-    if (!powered) head.rotation.x = 0.45;
-    g.userData = { head, armR, powered };
-    return g;
-  }
-
-  function conveyor(len, n, moving, M) {
-    const g = new THREE.Group();
-    g.add(mesh(new THREE.BoxGeometry(len, 0.12, 0.9), M.belt, 0, 0.7, 0));
-    [-1, 1].forEach(s => g.add(mesh(new THREE.BoxGeometry(len, 0.1, 0.06), M.metal, 0, 0.8, s * 0.48)));
-    [-len / 2 + 0.3, 0, len / 2 - 0.3].forEach(x => g.add(mesh(new THREE.BoxGeometry(0.12, 0.65, 0.8), M.dark, x, 0.32, 0)));
-    const items = [];
-    for (let i = 0; i < n; i++) { const it = mesh(new THREE.BoxGeometry(0.42, 0.3, 0.5), M.item, 0, 0.92, 0); g.add(it); items.push(it); }
-    const place = t => items.forEach((it, i) => { const p = ((moving ? t * 0.12 : 0) + i / n) % 1; it.position.x = -len / 2 + 0.3 + p * (len - 0.6); });
-    place(0);
-    g.userData.update = moving ? place : null;
-    return g;
-  }
-
-  function bin(w, M) {
-    const g = new THREE.Group();
-    g.add(mesh(new THREE.BoxGeometry(w, 0.08, 1), M.dark, 0, 0.04, 0));
-    [[0, 0.5], [0, -0.5]].forEach(([x, z]) => g.add(mesh(new THREE.BoxGeometry(w, 0.7, 0.06), M.metal, x, 0.35, z)));
-    [-1, 1].forEach(s => g.add(mesh(new THREE.BoxGeometry(0.06, 0.7, 1), M.metal, s * w / 2, 0.35, 0)));
-    return g;
-  }
-
-  function desk(w, M) {
-    const g = new THREE.Group();
-    g.add(mesh(new THREE.BoxGeometry(w, 0.1, 0.9), M.metal, 0, 0.9, 0));
-    g.add(mesh(new THREE.BoxGeometry(w - 0.2, 0.85, 0.7), M.dark, 0, 0.43, -0.05));
-    return g;
-  }
-
-  function lavaLamp(room, x, z, glass, blob) {
-    const g = new THREE.Group(); g.position.set(x, 0, z);
-    const chrome = new THREE.MeshStandardMaterial({ color: 0xc9ced6, metalness: 0.85, roughness: 0.25 });
-    g.add(mesh(new THREE.CylinderGeometry(0.18, 0.45, 0.7, 24), chrome, 0, 0.35, 0));
-    g.add(mesh(new THREE.CylinderGeometry(0.2, 0.33, 1.3, 24), new THREE.MeshStandardMaterial({ color: glass, transparent: true, opacity: 0.45, emissive: glass, emissiveIntensity: 0.5 }), 0, 1.35, 0));
-    g.add(mesh(new THREE.CylinderGeometry(0.06, 0.2, 0.35, 24), chrome, 0, 2.17, 0));
-    const bm = new THREE.MeshStandardMaterial({ color: blob, emissive: blob, emissiveIntensity: 0.9 });
-    const blobs = [0, 1, 2].map(i => { const b = mesh(new THREE.SphereGeometry(0.1 + i * 0.03, 16, 12), bm, 0, 1.0 + i * 0.35, 0); g.add(b); return b; });
-    room.tick(t => blobs.forEach((b, i) => { b.position.y = 1.35 + Math.sin(t * 0.6 + i * 2.1) * 0.45; b.scale.y = 1 + 0.3 * Math.sin(t * 1.3 + i); }));
-    const glow = new THREE.PointLight(glass, 0.6, 5); glow.position.y = 1.4; g.add(glow);
-    room.add(g);
-  }
-
-  function eggChair(room, x, z, ry, color) {
-    const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry;
-    const chrome = new THREE.MeshStandardMaterial({ color: 0xc9ced6, metalness: 0.85, roughness: 0.25 });
-    g.add(mesh(new THREE.CylinderGeometry(0.5, 0.6, 0.08, 24), chrome, 0, 0.04, 0));
-    g.add(mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.6, 10), chrome, 0, 0.35, 0));
-    g.add(mesh(new THREE.SphereGeometry(0.95, 32, 20, Math.PI * 0.3, Math.PI * 1.4), new THREE.MeshStandardMaterial({ color: 0xf6f1e7, roughness: 0.3, side: THREE.DoubleSide }), 0, 1.45, 0));
-    const cushion = mesh(new THREE.SphereGeometry(0.72, 24, 16), new THREE.MeshStandardMaterial({ color, roughness: 0.9 }), 0.12, 1.3, 0); cushion.scale.set(0.8, 1, 1); g.add(cushion);
-    room.add(g);
-  }
-
-  function shell(room, bp) {
-    const s = room.scene;
-    if (bp) {
-      s.background = new THREE.Color(0x0a0f1a);
-      s.add(new THREE.AmbientLight(0x8090b0, 0.55));
-      s.add(new THREE.HemisphereLight(0xbfd8ff, 0x1a2233, 0.55));
-      const p = new THREE.PointLight(0xffffff, 0.9, 30); p.position.set(0, 7, 2); s.add(p);
-      s.add(mesh(new THREE.CylinderGeometry(9, 9, 0.2, 64), new THREE.MeshStandardMaterial({ color: 0x121a29, metalness: 0.3, roughness: 0.8 }), 0, -0.1, 0));
-      const ringM = new THREE.MeshBasicMaterial({ color: PLAN, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
-      [3, 6.5].forEach(r => { const rg = mesh(new THREE.RingGeometry(r, r + 0.05, 96), ringM, 0, 0.01, 0); rg.rotation.x = -Math.PI / 2; s.add(rg); });
-      const grid = new THREE.GridHelper(18, 18, PLAN, PLAN); grid.material.transparent = true; grid.material.opacity = 0.15; grid.position.y = 0.02; s.add(grid);
-      for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; s.add(mesh(new THREE.BoxGeometry(0.15, 3.4, 0.15), WIRE, Math.cos(a) * 9, 1.7, Math.sin(a) * 9)); }
-      const top = mesh(new THREE.TorusGeometry(9, 0.05, 6, 96), WIRE, 0, 3.4, 0); top.rotation.x = Math.PI / 2; s.add(top);
-      return;
-    }
-    const T = retroTextures();
-    s.background = new THREE.Color(0x1a0f0a);
-    s.add(new THREE.AmbientLight(0xffd9b0, 0.5));
-    s.add(new THREE.HemisphereLight(0xffe0b8, 0x3b2418, 0.45));
-    const top = new THREE.PointLight(0xfff0dd, 0.8, 30); top.position.set(0, 7, 2); s.add(top);
-    const d = new THREE.DirectionalLight(0xffffff, 0.35); d.position.set(5, 10, 8); s.add(d);
-    const pink = new THREE.PointLight(RETRO.magenta, 1.3, 14), orange = new THREE.PointLight(RETRO.orange, 1.3, 14);
-    const swirl = t => { pink.position.set(Math.cos(t * 0.5) * 5, 3, Math.sin(t * 0.5) * 5); orange.position.set(-Math.cos(t * 0.5) * 5, 3, -Math.sin(t * 0.5) * 5); };
-    swirl(0); s.add(pink, orange); room.tick(swirl);
-    s.add(mesh(new THREE.CylinderGeometry(9, 9, 0.2, 64), new THREE.MeshStandardMaterial({ map: T.shag, roughness: 1, metalness: 0 }), 0, -0.1, 0));
-    const rug = mesh(new THREE.CircleGeometry(3.6, 64), new THREE.MeshStandardMaterial({ map: T.rug, roughness: 1, metalness: 0 }), 0, 0.015, 0);
-    rug.rotation.x = -Math.PI / 2; s.add(rug);
-    s.add(mesh(new THREE.CylinderGeometry(9, 9, 3.4, 64, 1, true), new THREE.MeshStandardMaterial({ map: T.wall, roughness: 0.9, side: THREE.BackSide }), 0, 1.7, 0));
-    const trim = mesh(new THREE.TorusGeometry(8.95, 0.09, 10, 128), new THREE.MeshStandardMaterial({ color: RETRO.orange, metalness: 0.4, roughness: 0.4 }), 0, 3.42, 0);
-    trim.rotation.x = Math.PI / 2; s.add(trim);
-    lavaLamp(room, Math.cos(-Math.PI * 0.82) * 7.8, Math.sin(-Math.PI * 0.82) * 7.8, RETRO.magenta, RETRO.orange);
-    lavaLamp(room, Math.cos(-Math.PI * 0.18) * 7.8, Math.sin(-Math.PI * 0.18) * 7.8, RETRO.teal, RETRO.mustard);
-    eggChair(room, 7.2, 1.6, 0, RETRO.orange);
-  }
-
-  function workerTag(agentKey) {
-    const a = AGENTS[agentKey];
-    const text = a.status === "planned" ? `${a.name}: planned, powered down` : a.status === "ready" ? `${a.name}: ready, first run pending` : `${a.name}: working`;
-    return { text, cls: a.status === "planned" ? "off" : "worker" };
-  }
-
-  const ROOM_BUILDERS = {
-    core(r, M) {
-      r.add(mesh(new THREE.CylinderGeometry(1.4, 1.1, 0.9, 40), M.metal, 0, 0.45, 0));
-      r.add(mesh(new THREE.CylinderGeometry(1.35, 1.35, 0.04, 40), M.glow, 0, 0.92, 0));
-      const holo = new THREE.Group(); holo.position.y = 1.9;
-      const hm = new THREE.MeshBasicMaterial({ color: LIVE, transparent: true, opacity: 0.6, wireframe: true });
-      const t = mesh(new THREE.TorusGeometry(0.85, 0.04, 6, 48), hm); t.rotation.x = Math.PI / 2; holo.add(t);
-      holo.add(mesh(new THREE.SphereGeometry(0.25, 12, 8), hm));
-      for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; holo.add(mesh(new THREE.SphereGeometry(0.1, 8, 6), hm, Math.cos(a) * 0.85, 0, Math.sin(a) * 0.85)); }
-      r.add(holo);
-      const disco = mesh(new THREE.IcosahedronGeometry(0.6, 2), new THREE.MeshStandardMaterial({ color: 0xdfe4ea, metalness: 0.45, roughness: 0.15, emissive: 0x6a6f78, emissiveIntensity: 0.6, flatShading: true }), 0, 4.6, 0);
-      r.add(disco); r.add(mesh(new THREE.CylinderGeometry(0.015, 0.015, 1.5, 4), new THREE.MeshBasicMaterial({ color: 0xaaaaaa }), 0, 5.9, 0));
-      r.tick(t2 => { holo.rotation.y = t2 * 0.4; disco.rotation.y = t2 * 0.8; });
-      [-0.6, 0, 0.6].forEach((a, i) => {
-        const g = desk(2.2, M); const ang = Math.PI / 2 + a + Math.PI;
-        g.position.set(Math.cos(ang) * 5.2, 0, Math.sin(ang) * 5.2); g.lookAt(0, 0, 0);
-        const sc = mesh(new THREE.BoxGeometry(1.9, 0.95, 0.06), M.screen, 0, 1.6, -0.3); sc.rotation.x = -0.25; g.add(sc);
-        r.add(g);
-      });
-      r.label("Station hologram", 0, 3.1, 0);
-      r.label("CLAUDE.md console", 0, 2.7, -5.2);
-    },
-    rules(r, M) {
-      const files = ["general.md", "working-with-me.md", "README.md"];
-      files.forEach((f, i) => {
-        const x = (i - 1) * 3.2;
-        r.add(mesh(new THREE.CylinderGeometry(0.5, 0.65, 1, 24), M.metal, x, 0.5, -1));
-        const tab = mesh(new THREE.BoxGeometry(1, 1.3, 0.08), M.screen, x, 1.9, -1); r.add(tab);
-        r.tick(t => { tab.position.y = 1.9 + Math.sin(t * 1.2 + i) * 0.08; tab.rotation.y = Math.sin(t * 0.5 + i) * 0.25; });
-        r.label(f, x, 2.95, -1);
-      });
-      for (let i = -2; i <= 2; i++) {
-        const sh = new THREE.Group(); sh.position.set(i * 2.6, 0, -7.2);
-        sh.add(mesh(new THREE.BoxGeometry(2.3, 2.6, 0.5), M.dark, 0, 1.3, 0));
-        [0.7, 1.4, 2.1].forEach(y => sh.add(mesh(new THREE.BoxGeometry(2.1, 0.05, 0.45), M.metal, 0, y, 0.05)));
-        r.add(sh);
-      }
-      r.label("One tablet per rule file", 0, 0.2, 2.2);
-    },
-    research(r, M) {
-      const d = desk(3.2, M); d.position.set(-3.6, 0, -3.4); r.add(d);
-      const screens = [];
-      [-1.05, 0, 1.05].forEach((x, i) => {
-        const sc = mesh(new THREE.BoxGeometry(0.95, 0.65, 0.06), M.screen, -3.6 + x, 1.65 + (i === 1 ? 0.15 : 0), -3.75);
-        sc.rotation.y = -x * 0.25; r.add(sc); screens.push(sc);
-      });
-      const scout = robot(AGENTS.scout.status !== "planned", false, RETRO.mustard); scout.position.set(-3.6, 0, -2.1); scout.rotation.y = Math.PI; r.add(scout); r.worker(scout);
-      const n = COUNTS.reports, moving = n > 0;
-      const belt = conveyor(6.5, n, moving, M); belt.position.set(1.2, 0, 2.4); r.add(belt);
-      const arch = mesh(new THREE.TorusGeometry(1.05, 0.11, 10, 40), M.metal, -1.3, 0.9, 2.4); arch.rotation.y = Math.PI / 2; r.add(arch);
-      const scanGlow = mesh(new THREE.TorusGeometry(0.92, 0.035, 6, 40), M.glow, -1.3, 0.9, 2.4); scanGlow.rotation.y = Math.PI / 2; r.add(scanGlow);
-      r.tick(t => { scanGlow.material.opacity = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(t * 2.5)); screens.forEach((s, i) => s.material.emissiveIntensity = 0.75 + 0.2 * Math.sin(t * 3 + i * 2)); });
-      const b = bin(1.5, M); b.position.set(5.4, 0, 2.4); r.add(b);
-      const nb = bin(1.3, M); nb.position.set(5.4, 0, 4.6); r.add(nb);
-      // Judges' bench: three robots who vote on every idea
-      const bench = new THREE.Group(); bench.position.set(1.8, 0, 0.6);
-      bench.add(mesh(new THREE.BoxGeometry(4.6, 0.12, 0.9), M.wood, 0, 1.25, 0));
-      bench.add(mesh(new THREE.BoxGeometry(4.4, 1.2, 0.7), M.dark, 0, 0.6, 0.05));
-      const stripe = mesh(new THREE.BoxGeometry(4.42, 0.12, 0.02), new THREE.MeshStandardMaterial({ color: RETRO.orange }), 0, 0.85, 0.41); bench.add(stripe);
-      const stripe2 = mesh(new THREE.BoxGeometry(4.42, 0.12, 0.02), new THREE.MeshStandardMaterial({ color: RETRO.mustard }), 0, 0.65, 0.41); bench.add(stripe2);
-      const gavel = new THREE.Group(); gavel.position.set(1.7, 1.34, 0.15);
-      const gh = mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.26, 12), M.wood); gh.rotation.z = Math.PI / 2; gavel.add(gh);
-      gavel.add(mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.35, 6), M.wood, 0, 0, 0.17)).rotation.x = Math.PI / 2;
-      bench.add(gavel);
-      r.add(bench);
-      const judges = [["Demand", RETRO.avocado], ["Safety", RETRO.magenta], ["Profit", RETRO.teal]];
-      const lamps = [];
-      judges.forEach(([name, col], i) => {
-        const x = 0.3 + i * 1.5;
-        const j = robot(AGENTS.scout.status !== "planned", false, col); j.position.set(x, 0.75, -0.1); r.add(j); r.worker(j);
-        // vote lamp on the bench: green = approve, red = deny; dark until there are ideas to judge
-        const lamp = mesh(new THREE.SphereGeometry(0.1, 12, 8), new THREE.MeshStandardMaterial({ color: 0x333333, emissive: 0x000000 }), x, 1.38, 0.95);
-        r.add(lamp); lamps.push(lamp);
-        r.label(name, x, 3.0, -0.1, "worker");
-      });
-      if (COUNTS.approved + COUNTS.denied > 0) {
-        r.tick(t => lamps.forEach((l, i) => { const ok = Math.sin(t * 1.5 + i * 1.7) > -0.3; l.material.emissive.setHex(ok ? 0x3cff6a : 0xff3b3b); l.material.emissiveIntensity = 1.2; }));
-      }
-      if (belt.userData.update) r.tick(belt.userData.update);
-      const w = workerTag("scout");
-      r.label(w.text, -3.6, 2.35, -2.1, w.cls);
-      r.label("Market scanner", -1.3, 2.25, 2.4);
-      r.label(`Report belt: ${n} report${n === 1 ? "" : "s"}`, 2.2, 1.35, 2.4);
-      r.label(`Approved: ${COUNTS.approved}`, 5.4, 1.1, 2.4);
-      r.label(`Denied: ${COUNTS.denied}`, 5.4, 1.0, 4.6);
-      r.label("The judges decide for themselves", 1.8, 3.55, -0.1);
-    },
-    prospecting(r, M) {
-      // conversation pit: curved sofa and backrest
-      const sofa = new THREE.Group(); sofa.position.set(-1.2, 0, 1.2);
-      const seat = mesh(new THREE.TorusGeometry(2.3, 0.4, 14, 48, Math.PI * 1.25), new THREE.MeshStandardMaterial({ color: RETRO.orange, roughness: 0.9 }), 0, 0.4, 0);
-      seat.rotation.x = -Math.PI / 2; seat.rotation.z = Math.PI * 0.12; sofa.add(seat);
-      const backrest = mesh(new THREE.TorusGeometry(2.75, 0.22, 12, 48, Math.PI * 1.25), new THREE.MeshStandardMaterial({ color: RETRO.mustard, roughness: 0.9 }), 0, 0.85, 0);
-      backrest.rotation.x = -Math.PI / 2; backrest.rotation.z = Math.PI * 0.12; sofa.add(backrest);
-      sofa.add(mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.35, 32), M.wood, 0, 0.18, 0));
-      r.add(sofa);
-      // wall of retro TVs
-      const screens = [];
-      const tvCols = [0xff5a5a, 0xc86bff, 0xff7ab8, 0xffb35a, 0x7ad7ff];
-      [-3.6, -1.8, 0, 1.8, 3.6].forEach((x, i) => {
-        const tv = new THREE.Group(); const y = i % 2 ? 0.9 : 0; tv.position.set(x, y, -5.4);
-        tv.add(mesh(new THREE.BoxGeometry(1.5, 1.15, 0.9), M.wood, 0, 1.1, 0));
-        const sc = mesh(new THREE.BoxGeometry(1.15, 0.85, 0.05), new THREE.MeshStandardMaterial({ color: 0x111111, emissive: tvCols[i], emissiveIntensity: 0.8 }), -0.08, 1.12, 0.46);
-        tv.add(sc); screens.push(sc);
-        tv.add(mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.3, 8), M.metal, 0.6, 1.4, 0.46));
-        if (!y) [-0.5, 0.5].forEach(lx => tv.add(mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.55, 6), M.metal, lx, 0.27, 0)));
-        else tv.add(mesh(new THREE.BoxGeometry(1.6, 0.9, 0.95), M.dark, 0, 0.1, 0));
-        r.add(tv);
-      });
-      r.tick(t => screens.forEach((sc, i) => { sc.material.emissiveIntensity = 0.55 + 0.35 * Math.abs(Math.sin(t * (1.3 + i * 0.4) + i)); }));
-      // idea board, one sticky note per real idea
-      const board = new THREE.Group(); board.position.set(5.2, 0, -2.6); board.rotation.y = -Math.PI * 0.3;
-      board.add(mesh(new THREE.BoxGeometry(2.6, 1.7, 0.08), M.light, 0, 1.8, 0));
-      board.add(mesh(new THREE.BoxGeometry(2.6, 0.22, 0.1), new THREE.MeshStandardMaterial({ color: RETRO.orange }), 0, 2.75, 0));
-      [-1.1, 1.1].forEach(x => board.add(mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.0, 6), M.metal, x, 0.5, 0)));
-      const noteCols = [RETRO.mustard, RETRO.magenta, RETRO.teal, RETRO.orange, RETRO.avocado];
-      for (let i = 0; i < Math.min(COUNTS.prospects, 12); i++) {
-        board.add(mesh(new THREE.BoxGeometry(0.4, 0.4, 0.02), new THREE.MeshStandardMaterial({ color: noteCols[i % 5] }), -0.95 + (i % 5) * 0.48, 2.25 - Math.floor(i / 5) * 0.5, 0.06));
-      }
-      r.add(board);
-      // pneumatic tube to the judges
-      const tube = new THREE.Group(); tube.position.set(5.6, 0, 2.4);
-      tube.add(mesh(new THREE.CylinderGeometry(0.45, 0.55, 0.3, 24), M.metal, 0, 0.15, 0));
-      tube.add(mesh(new THREE.CylinderGeometry(0.35, 0.35, 3.1, 24, 1, true), new THREE.MeshStandardMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.3, side: THREE.DoubleSide }), 0, 1.85, 0));
-      tube.add(mesh(new THREE.TorusGeometry(0.38, 0.05, 8, 24), M.metal, 0, 3.4, 0)).rotation.x = Math.PI / 2;
-      r.add(tube);
-      const pro = robot(AGENTS.prospector.status !== "planned", false, 0x7a4fd9); pro.position.set(0.6, 0, -2.8); pro.rotation.y = Math.PI; r.add(pro); r.worker(pro);
-      const w = workerTag("prospector");
-      r.label(w.text, 0.6, 2.35, -2.8, w.cls);
-      r.label("What people say on YouTube and Instagram", 0, 3.4, -5.4);
-      r.label(`Idea board: ${COUNTS.prospects} idea${COUNTS.prospects === 1 ? "" : "s"}`, 5.2, 3.2, -2.6);
-      r.label("Tube to the judges", 5.6, 3.8, 2.4);
-      r.label("Conversation pit", -1.2, 1.3, 1.2);
-    },
-    art(r, M) {
-      [[-3.2, -2.4, 0.35], [-0.4, -3.4, 0]].forEach(([x, z, ry]) => {
-        const e = new THREE.Group(); e.position.set(x, 0, z); e.rotation.y = ry;
-        [[-0.45, 0.15], [0.45, 0.15], [0, -0.35]].forEach(([lx, lz]) => {
-          const leg = mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.1, 6), M.wood, lx, 1.05, lz); leg.rotation.x = lz < 0 ? -0.18 : 0.05; e.add(leg);
-        });
-        e.add(mesh(new THREE.BoxGeometry(1.3, 1.0, 0.05), M.canvas, 0, 1.55, 0.2));
-        r.add(e);
-      });
-      const bench = new THREE.Group(); bench.position.set(3.4, 0, -2.6);
-      bench.add(mesh(new THREE.BoxGeometry(2.6, 0.1, 1.1), M.wood, 0, 0.9, 0));
-      [-1.1, 1.1].forEach(x => bench.add(mesh(new THREE.BoxGeometry(0.1, 0.9, 1), M.dark, x, 0.45, 0)));
-      bench.add(mesh(new THREE.BoxGeometry(0.5, 0.12, 0.35), M.metal, -0.6, 1.01, 0));
-      bench.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.3, 12), M.light, 0.5, 1.1, 0.1));
-      r.add(bench);
-      const artist = robot(AGENTS.artist.status !== "planned", false, RETRO.orange); artist.position.set(-1.8, 0, -1.1); artist.rotation.y = Math.PI * 0.85; r.add(artist); r.worker(artist);
-      const bd = bin(1.4, M); bd.position.set(-2.2, 0, 3); r.add(bd);
-      const bf = bin(1.4, M); bf.position.set(2.2, 0, 3); r.add(bf);
-      const w = workerTag("artist");
-      r.label(w.text, -1.8, 2.35, -1.1, w.cls);
-      r.label("Blank canvases", -1.8, 2.45, -3.6);
-      r.label(`Drafts: ${COUNTS.drafts}`, -2.2, 1.1, 3);
-      r.label(`Final: ${COUNTS.finals}`, 2.2, 1.1, 3);
-    },
-    media(r, M) {
-      r.add(mesh(new THREE.BoxGeometry(4.4, 3, 0.1), M.light, 0, 1.5, -5.2));
-      r.add(mesh(new THREE.BoxGeometry(4.4, 0.04, 2.2), M.light, 0, 0.02, -4.1));
-      const mug = new THREE.Group(); mug.position.set(0, 0.05, -4.2);
-      mug.add(mesh(new THREE.CylinderGeometry(0.26, 0.24, 0.48, 24), M.canvas, 0, 0.24, 0));
-      const handle = mesh(new THREE.TorusGeometry(0.13, 0.035, 8, 20), M.canvas, 0.3, 0.26, 0); mug.add(handle);
-      r.add(mug);
-      [-2.6, 2.6].forEach(x => {
-        const st = new THREE.Group(); st.position.set(x, 0, -2.8);
-        st.add(mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), M.dark, 0, 1.1, 0));
-        const box = mesh(new THREE.BoxGeometry(0.9, 0.9, 0.3), M.lampOff, 0, 2.3, 0); box.lookAt(-x * 0.4, 0.5, -4.2 + 2.8); st.add(box);
-        r.add(st);
-      });
-      const cam = new THREE.Group(); cam.position.set(0, 0, -0.2);
-      [-0.3, 0.3].forEach(x => { const l = mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4, 6), M.dark, x, 0.7, 0.15); l.rotation.z = x * 0.6; cam.add(l); });
-      const back = mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.4, 6), M.dark, 0, 0.7, -0.2); back.rotation.x = -0.3; cam.add(back);
-      cam.add(mesh(new THREE.BoxGeometry(0.55, 0.38, 0.32), M.dark, 0, 1.5, 0));
-      const lens = mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.3, 16), M.metal, 0, 1.5, -0.3); lens.rotation.x = Math.PI / 2; cam.add(lens);
-      r.add(cam);
-      const prod = robot(AGENTS.producer.status !== "planned", false, RETRO.teal); prod.position.set(1.2, 0, 0.5); prod.rotation.y = Math.PI * 1.15; r.add(prod); r.worker(prod);
-      const n = COUNTS.mediaDrafts + COUNTS.mediaFinals;
-      const belt = conveyor(5.5, n, n > 0, M); belt.position.set(0, 0, 3.6); r.add(belt);
-      if (belt.userData.update) r.tick(belt.userData.update);
-      const w = workerTag("producer");
-      r.label(w.text, 1.2, 2.35, 0.5, w.cls);
-      r.label("Photo stage (lights off)", 0, 3.3, -5.2);
-      r.label(`Mockup belt: ${n} item${n === 1 ? "" : "s"}`, 0, 1.35, 3.6);
-    },
-    sales(r, M) {
-      const belt = conveyor(7, 0, false, M); belt.position.set(0, 0, 0.6); r.add(belt);
-      for (let i = 0; i < 4; i++) r.add(mesh(new THREE.BoxGeometry(0.9, 0.7, 0.9), M.wood, -5 + (i % 2) * 1, 0.35 + Math.floor(i / 2) * 0.72, -2.6));
-      const pod = new THREE.Group(); pod.position.set(5.4, 0, -2.4);
-      pod.add(mesh(new THREE.CylinderGeometry(0.9, 0.9, 1.8, 16), M.metal, 0, 1.2, 0));
-      pod.add(mesh(new THREE.SphereGeometry(0.9, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), M.metal, 0, 2.1, 0));
-      pod.add(mesh(new THREE.ConeGeometry(0.9, 0.5, 16), M.metal, 0, 0.05, 0));
-      r.add(pod);
-      const seller = robot(false, true, RETRO.avocado); seller.position.set(0, 0, 2.2); seller.rotation.y = Math.PI; r.add(seller); r.worker(seller);
-      r.label("Seller: planned, powered down", 0, 2.35, 2.2, "off");
-      r.label("Packing line (not built)", 0, 1.35, 0.6, "off");
-      r.label("Shipping pod: Etsy and Amazon", 5.4, 3.4, -2.4, "off");
-      r.label("Under construction", 0, 3.6, -5, "off");
-    },
-    observatory(r, M) {
-      const ts = new THREE.Group(); ts.position.set(0, 0, -2.4);
-      ts.add(mesh(new THREE.CylinderGeometry(0.5, 0.8, 1.2, 16), M.metal, 0, 0.6, 0));
-      const tube = mesh(new THREE.CylinderGeometry(0.35, 0.45, 3.4, 16), M.metal, 0, 2.2, -0.6); tube.rotation.x = -0.75; ts.add(tube);
-      r.add(ts);
-      [-4, 4].forEach(x => {
-        const board = mesh(new THREE.BoxGeometry(2.6, 1.6, 0.08), M.metal, x, 1.8, -5.6); board.lookAt(0, 1.8, 0); r.add(board);
-      });
-      const an = robot(false, true, RETRO.magenta); an.position.set(2, 0, 0.4); an.rotation.y = -Math.PI * 0.8; r.add(an); r.worker(an);
-      r.label("Analyst: planned, powered down", 2, 2.35, 0.4, "off");
-      r.label("Market telescope", 0, 4.3, -3.4, "off");
-      r.label("Sales charts", -4, 3, -5.6, "off");
-      r.label("Under construction", 0, 0.3, 3.6, "off");
-    },
-    vault(r, M) {
-      r.add(mesh(new THREE.BoxGeometry(2.8, 2.8, 2), M.metal, 0, 1.4, -4));
-      const door = mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.12, 24), M.metal, 0, 1.4, -2.95); door.rotation.x = Math.PI / 2; r.add(door);
-      for (let i = 0; i < 5; i++) r.add(mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.2 + i * 0.12, 16), M.metal, 3 + (i % 3) * 0.6, (0.2 + i * 0.12) / 2, -0.8 + Math.floor(i / 3) * 0.6));
-      const tr = robot(false, true, RETRO.brown); tr.position.set(-2.2, 0, -0.4); tr.rotation.y = Math.PI * 0.8; r.add(tr); r.worker(tr);
-      r.label("Treasurer: planned, powered down", -2.2, 2.35, -0.4, "off");
-      r.label("Investment safe", 0, 3.3, -4, "off");
-      r.label("Profit counter", 3.6, 1.4, -0.5, "off");
-      r.label("Under construction", 0, 0.3, 3.6, "off");
-    },
-  };
-
-  const rooms = {};
-  function buildRoom(id) {
-    if (rooms[id]) return rooms[id];
-    const m = byId[id], bp = m.status === "planned";
-    const room = { scene: new THREE.Scene(), ticks: [], workers: [], labels: [] };
-    room.add = (...o) => room.scene.add(...o);
-    room.tick = f => room.ticks.push(f);
-    room.worker = w => room.workers.push(w);
-    room.label = (text, x, y, z, cls = "") => {
-      const el = document.createElement("div"); el.className = `label tag ${cls}`; el.textContent = text; el.hidden = true;
-      labelLayer.appendChild(el); room.labels.push({ el, pos: new THREE.Vector3(x, y, z) });
-    };
-    shell(room, bp);
-    ROOM_BUILDERS[id](room, mats(bp));
-    rooms[id] = room;
-    return room;
-  }
-
-  /* ===== Navigation ===== */
-  let current = null; // room object when inside, null when outside
-  let fly = null, selected = null;
-  const stationLimits = () => { controls.minDistance = 5; controls.maxDistance = 70; controls.maxPolarAngle = Math.PI; };
-  const roomLimits = () => { controls.minDistance = 3; controls.maxDistance = isPhone() ? 18 : 14; controls.maxPolarAngle = 1.45; };
-  stationLimits();
-
-  function overviewView() {
-    return isPhone() ? { target: new THREE.Vector3(0, -7, 0), cam: new THREE.Vector3(0, 24, 44) } : { target: new THREE.Vector3(6, 0, 0), cam: new THREE.Vector3(6, 17, 31) };
-  }
-  function roomView() {
-    return isPhone() ? { target: new THREE.Vector3(0, -2.5, 0), cam: new THREE.Vector3(0, 9, 14) } : { target: new THREE.Vector3(2.2, 0.8, 0), cam: new THREE.Vector3(2.2, 6, 10.5) };
-  }
-  function flyTo(view, done) {
-    if (reduceMotion) { controls.target.copy(view.target); camera.position.copy(view.cam); done && done(); return; }
-    fly = { t: 0, fromT: controls.target.clone(), toT: view.target, fromC: camera.position.clone(), toC: view.cam, done };
-  }
-  function fadeSwap(fn) {
-    if (reduceMotion) { fn(); return; }
-    fadeEl.classList.add("on");
-    setTimeout(() => { fn(); requestAnimationFrame(() => fadeEl.classList.remove("on")); }, 360);
-  }
-  function showRoomLabels(room, on) { if (room) room.labels.forEach(l => { l.el.hidden = !on; }); }
-
-  function enterRoom(id) {
-    const room = buildRoom(id);
-    fadeSwap(() => {
-      current = room; fly = null;
-      MODULES.forEach(m => { m.label.hidden = true; });
-      roomLimits();
-      const v = roomView(); controls.target.copy(v.target); camera.position.copy(v.cam);
-      showRoomLabels(room, true);
-      renderRoom(byId[id], true);
-    });
-  }
-
-  select = id => {
-    if (current) return;
-    if (selected) selected.label.classList.remove("selected");
-    selected = byId[id];
-    selected.label.classList.add("selected");
-    renderRoom(selected, false);
-    const w = new THREE.Vector3(); selected.group.getWorldPosition(w);
-    const out = id === "core" ? new THREE.Vector3(0, 0, 1) : w.clone().setY(0).normalize();
-    flyTo({ target: w.clone(), cam: w.clone().add(out.multiplyScalar(id === "core" ? 6 : 4.5)).add(new THREE.Vector3(0, 1.5, 0)) }, () => enterRoom(id));
-  };
-
-  leaveRoom = () => {
-    if (!current) {
-      if (selected) { selected.label.classList.remove("selected"); selected = null; }
-      renderOverview(); flyTo(overviewView()); return;
-    }
-    const leaving = current;
-    fadeSwap(() => {
-      showRoomLabels(leaving, false);
-      current = null; stationLimits();
-      if (selected) { selected.label.classList.remove("selected"); selected = null; }
-      const v = overviewView(); controls.target.copy(v.target); camera.position.copy(v.cam);
-      renderOverview();
-    });
-  };
-
-  const start = overviewView(); controls.target.copy(start.target); camera.position.copy(start.cam);
-
-  const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
-  let downAt = null;
-  function pick(e) {
-    if (current) return null;
-    const r = renderer.domElement.getBoundingClientRect();
-    ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-    ray.setFromCamera(ptr, camera);
-    const hit = ray.intersectObjects(hits, false)[0];
-    return hit ? hit.object.userData.id : null;
-  }
-  renderer.domElement.addEventListener("pointerdown", e => { downAt = [e.clientX, e.clientY]; });
-  renderer.domElement.addEventListener("pointerup", e => {
-    if (!downAt) return;
-    const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]); downAt = null;
-    if (moved < 6) { const id = pick(e); if (id) select(id); }
-  });
-  renderer.domElement.addEventListener("pointermove", e => {
-    if (e.pointerType === "mouse") renderer.domElement.style.cursor = pick(e) ? "pointer" : "grab";
-  });
-
-  function resize() {
-    const w = window.innerWidth, h = window.innerHeight;
-    renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
-  }
-  window.addEventListener("resize", resize); resize();
-
-  const clock = new THREE.Clock(), tmp = new THREE.Vector3();
-  const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  function placeLabel(el, v, w, h) {
-    tmp.copy(v).project(camera);
-    if (tmp.z > 1) { el.hidden = true; return; }
-    el.hidden = false;
-    el.style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * h}px) translate(-50%, -100%)`;
-  }
-  function frame() {
-    const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
-    if (!reduceMotion) {
-      if (!current) {
-        if (!selected && !fly) station.rotation.y += dt * 0.04;
-        coreRing.rotation.z += dt * 0.25;
-        drones.forEach(d => {
-          const a = t * 0.7 + d.phase;
-          d.obj.position.set(Math.cos(a) * 2.7, 1.3 + Math.sin(t * 1.6 + d.phase) * 0.35, Math.sin(a) * 2.7);
-          d.obj.rotation.y = t * 1.5;
-        });
-        beacons.forEach((b, i) => { b.material.opacity = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 3 + i)); });
-        tip.material.color.setHex(Math.sin(t * 2) > 0 ? LIVE : 0x2c6a80);
-      } else {
-        current.ticks.forEach(f => f(t));
-        current.workers.forEach((wk, i) => {
-          if (!wk.userData.powered) return;
-          wk.position.y = Math.sin(t * 2 + i) * 0.04;
-          wk.userData.head.rotation.y = Math.sin(t * 0.7 + i) * 0.35;
-          wk.userData.armR.rotation.x = Math.sin(t * 3 + i) * 0.35;
-        });
-      }
-    } else if (!current) {
-      drones.forEach(d => d.obj.position.set(Math.cos(d.phase) * 2.7, 1.3, Math.sin(d.phase) * 2.7));
-    }
-    if (fly) {
-      fly.t = Math.min(1, fly.t + dt / 1.1); const e = ease(fly.t);
-      controls.target.lerpVectors(fly.fromT, fly.toT, e);
-      camera.position.lerpVectors(fly.fromC, fly.toC, e);
-      if (fly.t === 1) { const done = fly.done; fly = null; done && done(); }
-    }
-    controls.update();
-    renderer.render(current ? current.scene : scene, camera);
-
-    const w = window.innerWidth, h = window.innerHeight;
-    if (current) current.labels.forEach(l => placeLabel(l.el, l.pos, w, h));
-    else MODULES.forEach(m => {
-      m.group.getWorldPosition(tmp); tmp.y += m.labelHeight;
-      placeLabel(m.label, tmp.clone(), w, h);
-    });
-    requestAnimationFrame(frame);
-  }
-  frame();
+function viewport() {
+  if (W < 700) return { x: 0, y: 100, w: W, h: H * 0.58 - 108 };
+  return { x: 0, y: 110, w: W - 396, h: H - 120 };
 }
+function fitRect(x, y, w, h, instant) {
+  const v = viewport(), pad = 28;
+  const z = Math.max(0.2, Math.min(2.6, Math.min((v.w - pad * 2) / w, (v.h - pad * 2) / h)));
+  const target = { x: x + w / 2, y: y + h / 2, z };
+  if (instant || reduceMotion) { Object.assign(cam, target); camTo = null; } else camTo = target;
+}
+function fitAll(instant) { fitRect(3 * T, 1 * T, 43 * T, 38 * T, instant); }
+function focusRoom(m, instant) { fitRect((m.x - 0.8) * T, (m.y - 1.6) * T, (m.w + 1.6) * T, (m.h + 2.6) * T, instant); }
+function vcenter() { const v = viewport(); return { x: v.x + v.w / 2, y: v.y + v.h / 2 }; }
+function toWorld(sx, sy) { const c = vcenter(); return { x: (sx - c.x) / cam.z + cam.x, y: (sy - c.y) / cam.z + cam.y }; }
+function toScreen(wx, wy) { const c = vcenter(); return { x: (wx - cam.x) * cam.z + c.x, y: (wy - cam.y) * cam.z + c.y }; }
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px";
+  if (selected) focusRoom(selected, true); else fitAll(true);
+}
+
+// Background stars in screen space
+const stars = Array.from({ length: 260 }, () => ({ x: Math.random(), y: Math.random(), r: Math.random() * 1.3 + 0.3, a: Math.random() * 0.6 + 0.2 }));
+
+/* drawing helpers, all in floor tiles */
+const P = v => v * T;
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+function dashed(fn) { ctx.save(); ctx.setLineDash([6, 4]); ctx.strokeStyle = C.plan; ctx.globalAlpha = 0.85; ctx.lineWidth = 1.6; fn(); ctx.restore(); }
+
+function box(bp, x, y, w, h, fill, edge) {
+  if (bp) return dashed(() => ctx.strokeRect(P(x), P(y), P(w), P(h)));
+  ctx.fillStyle = fill; ctx.fillRect(P(x), P(y), P(w), P(h));
+  if (edge) { ctx.strokeStyle = edge; ctx.lineWidth = 2; ctx.strokeRect(P(x) + 1, P(y) + 1, P(w) - 2, P(h) - 2); }
+}
+function circle(bp, x, y, r, fill, edge) {
+  ctx.beginPath(); ctx.arc(P(x), P(y), P(r), 0, Math.PI * 2);
+  if (bp) return dashed(() => ctx.stroke());
+  ctx.fillStyle = fill; ctx.fill();
+  if (edge) { ctx.strokeStyle = edge; ctx.lineWidth = 2; ctx.stroke(); }
+}
+function glow(bp, x, y, w, h, color, strength = 1) {
+  if (bp) return box(true, x, y, w, h);
+  ctx.save(); ctx.shadowColor = color; ctx.shadowBlur = 14 * strength; ctx.fillStyle = color; ctx.globalAlpha = 0.55 + 0.4 * strength;
+  ctx.fillRect(P(x), P(y), P(w), P(h)); ctx.restore();
+}
+function desk(bp, x, y, w, screens, color, t) {
+  box(bp, x, y, w, 1, "#5b636e", "#7b848f");
+  for (let i = 0; i < screens; i++) {
+    const flick = reduceMotion ? 1 : 0.75 + 0.25 * Math.sin(t * 3 + i * 2 + x);
+    glow(bp, x + 0.25 + i * ((w - 0.5) / screens), y + 0.18, (w - 0.5) / screens - 0.2, 0.42, color, flick);
+  }
+}
+function conveyor(bp, x, y, len, n, t) {
+  box(bp, x, y, len, 0.9, "#14171c");
+  if (bp) return;
+  ctx.fillStyle = "#8b949e"; ctx.fillRect(P(x), P(y) - 2, P(len), 3); ctx.fillRect(P(x), P(y + 0.9) - 1, P(len), 3);
+  ctx.strokeStyle = "#2b3038"; ctx.lineWidth = 2;
+  const off = n > 0 && !reduceMotion ? (t * 0.8) % 0.45 : 0;
+  for (let rx = x + off; rx < x + len; rx += 0.45) { ctx.beginPath(); ctx.moveTo(P(rx), P(y) + 3); ctx.lineTo(P(rx), P(y + 0.9) - 3); ctx.stroke(); }
+  for (let i = 0; i < Math.min(n, 8); i++) {
+    const p = ((n > 0 && !reduceMotion ? t * 0.1 : 0) + i / Math.min(n, 8)) % 1;
+    box(false, x + 0.15 + p * (len - 0.75), y + 0.18, 0.55, 0.55, C.mustard, "#b07d1c");
+  }
+}
+function bin(bp, x, y, w, h) { box(bp, x, y, w, h, "#2d333b", "#9aa3ae"); if (!bp) box(false, x + 0.2, y + 0.2, w - 0.4, h - 0.4, "#181b20"); }
+function rug(x, y, r) {
+  const cols = [C.orange, C.mustard, C.cream, C.pink, C.avocado];
+  ctx.save(); ctx.globalAlpha = 0.3;
+  for (let i = 5; i > 0; i--) { ctx.beginPath(); ctx.arc(P(x), P(y), P(r * i / 5), 0, Math.PI * 2); ctx.fillStyle = cols[i % cols.length]; ctx.fill(); }
+  ctx.restore();
+}
+function lavaLamp(x, y, color, blob, t) {
+  ctx.save(); ctx.shadowColor = color; ctx.shadowBlur = 18;
+  ctx.beginPath(); ctx.arc(P(x), P(y), P(0.32), 0, Math.PI * 2); ctx.fillStyle = color; ctx.globalAlpha = 0.7; ctx.fill(); ctx.restore();
+  for (let i = 0; i < 3; i++) {
+    const a = (reduceMotion ? 0 : t * 0.8) + i * 2.1;
+    ctx.beginPath(); ctx.arc(P(x + Math.cos(a) * 0.13), P(y + Math.sin(a * 1.3) * 0.13), P(0.08), 0, Math.PI * 2); ctx.fillStyle = blob; ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(P(x), P(y), P(0.36), 0, Math.PI * 2); ctx.strokeStyle = "#c9ced6"; ctx.lineWidth = 2; ctx.stroke();
+}
+
+/* ---------- Robots ---------- */
+const bots = [];
+function addBot(room, key, name, color, powered, pts, opts = {}) {
+  const bp = room.status === "planned";
+  const abs = pts.map(([px, py]) => ({ x: room.x + px, y: room.y + py }));
+  bots.push({ room, key, name, color, powered, bp, pts: abs, i: 0, x: abs[0].x, y: abs[0].y, wait: Math.random() * 1.5, bob: opts.bob, phase: Math.random() * 6, face: 1 });
+}
+function stepBots(dt) {
+  if (reduceMotion) return;
+  bots.forEach(b => {
+    if (!b.powered || b.pts.length < 2) return;
+    if (b.wait > 0) { b.wait -= dt; return; }
+    const nxt = b.pts[(b.i + 1) % b.pts.length], dx = nxt.x - b.x, dy = nxt.y - b.y, d = Math.hypot(dx, dy), sp = 1.3 * dt;
+    if (d <= sp) { b.x = nxt.x; b.y = nxt.y; b.i = (b.i + 1) % b.pts.length; b.wait = 1.2 + Math.random() * 1.6; }
+    else { b.x += dx / d * sp; b.y += dy / d * sp; if (Math.abs(dx) > 0.01) b.face = Math.sign(dx); }
+  });
+}
+function shade(hex, f) {
+  const n = parseInt(hex.slice(1), 16), r = Math.min(255, (n >> 16) * f), g = Math.min(255, ((n >> 8) & 255) * f), b = Math.min(255, (n & 255) * f);
+  return `rgb(${r | 0},${g | 0},${b | 0})`;
+}
+function drawBot(b, t) {
+  const bob = b.powered && !reduceMotion ? Math.sin(t * 3 + b.phase) * 0.04 : 0;
+  const x = P(b.x), y = P(b.y + bob), r = P(0.34);
+  if (b.bp) { ctx.save(); ctx.setLineDash([4, 3]); ctx.strokeStyle = C.plan; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y - r * 0.55, r * 0.6, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); return; }
+  ctx.fillStyle = "rgba(0,0,0,0.35)"; ctx.beginPath(); ctx.ellipse(x, P(b.y) + r * 0.85, r * 0.95, r * 0.35, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = b.color; ctx.fill(); ctx.strokeStyle = shade(b.color, 0.6); ctx.lineWidth = 2; ctx.stroke();
+  const hy = y - r * 0.6, hr = r * 0.62;
+  ctx.beginPath(); ctx.arc(x, hy, hr, 0, Math.PI * 2); ctx.fillStyle = C.cream; ctx.fill(); ctx.strokeStyle = "#b9ab8e"; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.save();
+  if (b.powered) { ctx.shadowColor = C.live; ctx.shadowBlur = 10; ctx.fillStyle = C.live; } else ctx.fillStyle = "#283040";
+  rrect(x - hr * 0.7 + b.face * hr * 0.12, hy - hr * 0.22, hr * 1.4, hr * 0.44, hr * 0.2); ctx.fill(); ctx.restore();
+  ctx.strokeStyle = "#8b949e"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, hy - hr); ctx.lineTo(x, hy - hr * 1.6); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x, hy - hr * 1.7, 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = b.powered ? (Math.sin(t * 4 + b.phase) > 0 ? C.live : "#2c6a80") : "#3a4458"; ctx.fill();
+  if (!b.powered && !reduceMotion) {
+    ctx.fillStyle = "rgba(200,210,225,0.7)"; ctx.font = `600 ${P(0.3)}px Inter, sans-serif`;
+    const zz = (t * 0.5 + b.phase) % 1;
+    ctx.globalAlpha = 1 - zz; ctx.fillText("z", x + r * 0.7, hy - hr - zz * P(0.5)); ctx.globalAlpha = 1;
+  }
+}
+
+/* ---------- Rooms ---------- */
+function drawShell(m, t) {
+  const X = P(m.x), Y = P(m.y), Wd = P(m.w), Ht = P(m.h), wall = 9;
+  if (m.status === "planned") {
+    ctx.fillStyle = "rgba(255,181,71,0.04)"; ctx.fillRect(X, Y, Wd, Ht);
+    ctx.save(); ctx.strokeStyle = "rgba(255,181,71,0.12)"; ctx.lineWidth = 1;
+    for (let gx = 1; gx < m.w; gx++) { ctx.beginPath(); ctx.moveTo(X + P(gx), Y); ctx.lineTo(X + P(gx), Y + Ht); ctx.stroke(); }
+    for (let gy = 1; gy < m.h; gy++) { ctx.beginPath(); ctx.moveTo(X, Y + P(gy)); ctx.lineTo(X + Wd, Y + P(gy)); ctx.stroke(); }
+    ctx.restore();
+    ctx.save(); ctx.setLineDash([10, 6]); ctx.strokeStyle = C.plan; ctx.lineWidth = 3; ctx.strokeRect(X - 4, Y - 4, Wd + 8, Ht + 8); ctx.restore();
+    // hazard corners
+    [[X - 6, Y - 6], [X + Wd - 18, Y - 6], [X - 6, Y + Ht - 18], [X + Wd - 18, Y + Ht - 18]].forEach(([cx, cy]) => hazard(cx, cy, 24, 24));
+    return;
+  }
+  // side of the wall (3/4 view), then top of the wall, then floor
+  ctx.fillStyle = C.wallSide; rrect(X - wall, Y - wall, Wd + wall * 2, Ht + wall * 2 + 8, 8); ctx.fill();
+  ctx.fillStyle = C.wallTop; rrect(X - wall, Y - wall, Wd + wall * 2, Ht + wall * 2, 8); ctx.fill();
+  ctx.strokeStyle = C.wallHi; ctx.lineWidth = 2; rrect(X - wall + 1, Y - wall + 1, Wd + wall * 2 - 2, Ht + wall * 2 - 2, 8); ctx.stroke();
+  ctx.fillStyle = C.floor; ctx.fillRect(X, Y, Wd, Ht);
+  ctx.fillStyle = C.wallDark; ctx.fillRect(X, Y, Wd, 10); // shadow under the top wall
+  ctx.strokeStyle = C.floorLine; ctx.lineWidth = 1;
+  for (let gx = 1; gx < m.w; gx++) { ctx.beginPath(); ctx.moveTo(X + P(gx), Y); ctx.lineTo(X + P(gx), Y + Ht); ctx.stroke(); }
+  for (let gy = 1; gy < m.h; gy++) { ctx.beginPath(); ctx.moveTo(X, Y + P(gy)); ctx.lineTo(X + Wd, Y + P(gy)); ctx.stroke(); }
+  // warm ceiling light
+  const g = ctx.createRadialGradient(X + Wd / 2, Y + Ht / 2, 0, X + Wd / 2, Y + Ht / 2, Math.max(Wd, Ht) * 0.65);
+  g.addColorStop(0, m.status === "active" ? "rgba(255,196,120,0.2)" : "rgba(255,196,120,0.1)"); g.addColorStop(1, "rgba(255,196,120,0)");
+  ctx.fillStyle = g; ctx.fillRect(X, Y, Wd, Ht);
+  // wall panels
+  ctx.fillStyle = "#7d8691";
+  for (let px = X + 12; px < X + Wd - 20; px += 46) ctx.fillRect(px, Y - wall + 3, 30, 3);
+}
+function hazard(x, y, w, h) {
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+  ctx.fillStyle = "#1a1a1a"; ctx.fillRect(x, y, w, h); ctx.strokeStyle = "#f2c230"; ctx.lineWidth = 4;
+  for (let i = -h; i < w + h; i += 9) { ctx.beginPath(); ctx.moveTo(x + i, y + h); ctx.lineTo(x + i + h, y); ctx.stroke(); }
+  ctx.restore();
+}
+function drawCorridor(c) {
+  const X = P(c.x), Y = P(c.y), Wd = P(c.w), Ht = P(c.h), horiz = c.w > c.h;
+  if (c.planned) {
+    ctx.save(); ctx.setLineDash([8, 6]); ctx.strokeStyle = C.plan; ctx.globalAlpha = 0.7; ctx.lineWidth = 2;
+    if (horiz) { [Y, Y + Ht].forEach(yy => { ctx.beginPath(); ctx.moveTo(X, yy); ctx.lineTo(X + Wd, yy); ctx.stroke(); }); }
+    else { [X, X + Wd].forEach(xx => { ctx.beginPath(); ctx.moveTo(xx, Y); ctx.lineTo(xx, Y + Ht); ctx.stroke(); }); }
+    ctx.restore(); return;
+  }
+  ctx.fillStyle = C.corridor; ctx.fillRect(X, Y, Wd, Ht);
+  ctx.strokeStyle = C.floorLine; ctx.lineWidth = 1;
+  if (horiz) {
+    for (let px = X + T; px < X + Wd; px += T) { ctx.beginPath(); ctx.moveTo(px, Y); ctx.lineTo(px, Y + Ht); ctx.stroke(); }
+    ctx.fillStyle = C.wallTop; ctx.fillRect(X, Y - 8, Wd, 8); ctx.fillStyle = C.wallSide; ctx.fillRect(X, Y + Ht, Wd, 9);
+    ctx.fillStyle = C.wallHi; ctx.fillRect(X, Y - 8, Wd, 2);
+    hazard(X + 2, Y + 2, 10, Ht - 4); hazard(X + Wd - 12, Y + 2, 10, Ht - 4);
+    ctx.fillStyle = "rgba(98,216,255,0.5)"; for (let px = X + 20; px < X + Wd - 20; px += 24) ctx.fillRect(px, Y + Ht / 2 - 1, 10, 2);
+  } else {
+    for (let py = Y + T; py < Y + Ht; py += T) { ctx.beginPath(); ctx.moveTo(X, py); ctx.lineTo(X + Wd, py); ctx.stroke(); }
+    ctx.fillStyle = C.wallTop; ctx.fillRect(X - 8, Y, 8, Ht); ctx.fillRect(X + Wd, Y, 8, Ht);
+    ctx.fillStyle = C.wallHi; ctx.fillRect(X - 8, Y, 2, Ht);
+    hazard(X + 2, Y + 2, Wd - 4, 10); hazard(X + 2, Y + Ht - 12, Wd - 4, 10);
+    ctx.fillStyle = "rgba(98,216,255,0.5)"; for (let py = Y + 20; py < Y + Ht - 20; py += 24) ctx.fillRect(X + Wd / 2 - 1, py, 2, 10);
+  }
+}
+
+// Furniture per room. (ox, oy) is the room's top-left tile. Labels are listed for zoomed-in view.
+const LABELS = [];
+function L(m, text, x, y, kind = "") { LABELS.push({ m, text, x: m.x + x, y: m.y + y, kind }); }
+const FURNITURE = {
+  core(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    rug(ox + 5, oy + 4.2, 2.2);
+    desk(bp, ox + 1.5, oy + 0.6, 7, 4, C.crt, t);
+    circle(bp, ox + 5, oy + 4.2, 1.1, "#3b4250", "#7b848f");
+    ctx.save(); ctx.strokeStyle = C.live; ctx.shadowColor = C.live; ctx.shadowBlur = 10; ctx.lineWidth = 2;
+    const a = reduceMotion ? 0 : t * 0.8;
+    ctx.beginPath(); ctx.ellipse(P(ox + 5), P(oy + 4.2), P(0.75), P(0.35), a, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(P(ox + 5), P(oy + 4.2), P(0.75), P(0.35), a + Math.PI / 2, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(P(ox + 5), P(oy + 4.2), P(0.18), 0, Math.PI * 2); ctx.fillStyle = C.live; ctx.fill(); ctx.restore();
+    lavaLamp(ox + 0.7, oy + 6.2, C.pink, C.orange, t); lavaLamp(ox + 9.3, oy + 6.2, C.teal, C.mustard, t);
+  },
+  rules(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    for (let i = 0; i < 4; i++) box(bp, ox + 0.4 + i * 1.9, oy + 0.4, 1.6, 0.8, "#4a3a2c", "#6b5440");
+    ["general.md", "working-with-me.md", "README.md"].forEach((f, i) => {
+      const x = ox + 1.3 + i * 2.4, y = oy + 3.2;
+      circle(bp, x + 0.4, y + 0.4, 0.6, "#3b4250", "#7b848f");
+      glow(bp, x + 0.1, y + 0.05, 0.6, 0.7, C.live, reduceMotion ? 1 : 0.7 + 0.3 * Math.sin(t * 2 + i));
+    });
+  },
+  research(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    desk(bp, ox + 0.6, oy + 0.6, 4.6, 3, C.crt, t);
+    lavaLamp(ox + 10.2, oy + 0.8, C.pink, C.orange, t);
+    conveyor(bp, ox + 1.2, oy + 5, 7.4, COUNTS.reports, t);
+    // scanner arch
+    ctx.save(); ctx.strokeStyle = C.pink; ctx.shadowColor = C.pink; ctx.shadowBlur = reduceMotion ? 8 : 8 + 6 * Math.sin(t * 3); ctx.lineWidth = 4;
+    ctx.strokeRect(P(ox + 2.2), P(oy + 4.6), P(0.5), P(1.7)); ctx.restore();
+    // judges' bench
+    box(bp, ox + 4.2, oy + 7.1, 5.6, 0.9, "#6b4a2e", "#8a6440");
+    ctx.fillStyle = C.orange; ctx.fillRect(P(ox + 4.2), P(oy + 7.9), P(5.6), 3);
+    ctx.fillStyle = C.mustard; ctx.fillRect(P(ox + 4.2), P(oy + 7.98), P(5.6), 3);
+    const judged = COUNTS.approved + COUNTS.denied > 0;
+    [0, 1, 2].forEach(i => {
+      const lx = ox + 5.2 + i * 1.8, ok = Math.sin(t * 1.5 + i * 1.7) > -0.3;
+      ctx.save(); ctx.beginPath(); ctx.arc(P(lx), P(oy + 7.5), 5, 0, Math.PI * 2);
+      if (judged) { ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle = ok ? "#3cff6a" : "#ff3b3b"; } else ctx.fillStyle = "#3a3f47";
+      ctx.fill(); ctx.restore();
+    });
+    // gavel
+    ctx.fillStyle = "#8a5a32"; ctx.fillRect(P(ox + 9.1), P(oy + 7.3), 10, 6); ctx.fillRect(P(ox + 9.1) + 3, P(oy + 7.3) + 6, 3, 10);
+    bin(bp, ox + 9.2, oy + 4.7, 1.4, 1.5);
+    bin(bp, ox + 0.5, oy + 9.2, 1.6, 1.4);
+    // tube from the Prospecting Hub
+    ctx.save(); ctx.strokeStyle = "rgba(159,232,255,0.6)"; ctx.lineWidth = 6; ctx.beginPath();
+    ctx.moveTo(P(ox + 5.3), P(oy)); ctx.lineTo(P(ox + 5.3), P(oy + 2.4)); ctx.lineTo(P(ox + 7.2), P(oy + 2.4)); ctx.lineTo(P(ox + 7.2), P(oy + 6.9)); ctx.stroke(); ctx.restore();
+  },
+  prospecting(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    const tv = [C.pink, "#c86bff", "#ff5a5a", C.mustard, C.live];
+    tv.forEach((col, i) => {
+      box(bp, ox + 0.5 + i * 1.65, oy + 0.4, 1.4, 1.1, "#7a5232", "#9a6c44");
+      glow(bp, ox + 0.65 + i * 1.65, oy + 0.55, 0.9, 0.75, col, reduceMotion ? 1 : 0.6 + 0.4 * Math.abs(Math.sin(t * (1.2 + i * 0.35) + i)));
+    });
+    rug(ox + 3.6, oy + 4, 1.8);
+    if (!bp) {
+      ctx.save(); ctx.lineCap = "round"; ctx.strokeStyle = C.orange; ctx.lineWidth = P(0.55);
+      ctx.beginPath(); ctx.arc(P(ox + 3.6), P(oy + 3.9), P(1.6), Math.PI * 0.05, Math.PI * 0.95); ctx.stroke();
+      ctx.strokeStyle = C.mustard; ctx.lineWidth = P(0.2);
+      ctx.beginPath(); ctx.arc(P(ox + 3.6), P(oy + 3.9), P(1.95), Math.PI * 0.05, Math.PI * 0.95); ctx.stroke(); ctx.restore();
+    }
+    circle(bp, ox + 3.6, oy + 3.9, 0.55, "#8a5a32", "#a5764a");
+    box(bp, ox + 7.2, oy + 2, 1.4, 2.6, C.cream, "#c9b893");
+    const notes = [C.mustard, C.pink, C.teal, C.orange, C.avocado];
+    for (let i = 0; i < Math.min(COUNTS.prospects, 10); i++) box(false, ox + 7.35 + (i % 2) * 0.6, oy + 2.15 + Math.floor(i / 2) * 0.48, 0.45, 0.4, notes[i % 5]);
+    circle(bp, ox + 4.3, oy + 5.4, 0.35, "rgba(159,232,255,0.35)", "#c9ced6");
+  },
+  art(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    [[1, 1], [3.4, 0.8]].forEach(([x, y]) => { box(bp, ox + x, oy + y, 1.6, 1.2, "#f2f0ea", "#8a5a32"); });
+    box(bp, ox + 6.4, oy + 0.6, 3, 1.2, "#8a5a32", "#a5764a");
+    if (!bp) { box(false, ox + 6.7, oy + 0.8, 0.6, 0.4, "#c9ced6"); circle(false, ox + 8.6, oy + 1.2, 0.2, C.pink); }
+    rug(ox + 5, oy + 4.3, 1.8);
+    bin(bp, ox + 1, oy + 6, 2, 1.4); bin(bp, ox + 7, oy + 6, 2, 1.4);
+    lavaLamp(ox + 9.3, oy + 4, C.mustard, C.orange, t);
+  },
+  media(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    box(bp, ox + 2.5, oy + 0.4, 5, 2.2, "#d8dde3", "#aab2bb");
+    circle(bp, ox + 5, oy + 1.6, 0.3, C.cream, "#b9ab8e");
+    [[1.4, 1.2], [8.1, 1.2]].forEach(([x, y]) => box(bp, ox + x, oy + y, 0.8, 0.8, "#e8ecef", "#9aa3ae"));
+    box(bp, ox + 4.6, oy + 3.4, 0.8, 0.6, "#2c3139", "#5b636e");
+    conveyor(bp, ox + 1.5, oy + 6, 7, COUNTS.mediaDrafts + COUNTS.mediaFinals, t);
+    lavaLamp(ox + 0.7, oy + 4.5, C.teal, C.mustard, t);
+  },
+  sales(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    conveyor(bp, ox + 1, oy + 3, 6.5, 0, t);
+    for (let i = 0; i < 4; i++) box(bp, ox + 0.6 + (i % 2) * 1.1, oy + 0.6 + Math.floor(i / 2) * 1.1, 0.9, 0.9);
+    circle(bp, ox + 8.6, oy + 3.4, 1);
+  },
+  observatory(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    circle(bp, ox + 4.5, oy + 3, 1.1);
+    box(bp, ox + 4.2, oy + 0.8, 0.6, 2.2);
+    box(bp, ox + 0.6, oy + 0.6, 2.2, 1.2); box(bp, ox + 6.2, oy + 0.6, 2.2, 1.2);
+  },
+  vault(m, bp, t) {
+    const ox = m.x, oy = m.y;
+    box(bp, ox + 3.5, oy + 0.6, 3, 2.4); circle(bp, ox + 5, oy + 1.8, 0.7);
+    for (let i = 0; i < 4; i++) circle(bp, ox + 7.6 + (i % 2) * 0.8, oy + 3.8 + Math.floor(i / 2) * 0.8, 0.3);
+  },
+};
+
+// Labels shown when zoomed in
+L(byId.core, "CLAUDE.md console", 5, 0.4); L(byId.core, "Station hologram", 5, 5.7);
+L(byId.rules, "general.md", 1.7, 4.7); L(byId.rules, "working-with-me.md", 4.1, 4.7); L(byId.rules, "README.md", 6.5, 4.7);
+L(byId.research, "Market screens", 2.9, 0.4); L(byId.research, "Scanner", 2.45, 4.4);
+L(byId.research, `Report belt: ${COUNTS.reports} report${COUNTS.reports === 1 ? "" : "s"}`, 5, 6.3);
+L(byId.research, `Approved: ${COUNTS.approved}`, 9.9, 4.5); L(byId.research, `Denied: ${COUNTS.denied}`, 1.3, 9);
+L(byId.research, "The judges decide for themselves", 7, 10.6, "worker");
+L(byId.prospecting, "What people say on YouTube and Instagram", 4.5, 0.25);
+L(byId.prospecting, `Idea board: ${COUNTS.prospects}`, 7.9, 1.8); L(byId.prospecting, "Tube to the judges", 4.3, 6.1);
+L(byId.art, "Blank canvases", 2.6, 0.6); L(byId.art, `Drafts: ${COUNTS.drafts}`, 2, 5.8); L(byId.art, `Final: ${COUNTS.finals}`, 8, 5.8);
+L(byId.media, "Photo stage (lights off)", 5, 0.25); L(byId.media, `Mockup belt: ${COUNTS.mediaDrafts + COUNTS.mediaFinals}`, 5, 7.3);
+L(byId.sales, "Packing line", 4.25, 2.8, "plan"); L(byId.sales, "Shipping pod: Etsy and Amazon", 8.6, 2.2, "plan");
+L(byId.observatory, "Market telescope", 4.5, 4.5, "plan"); L(byId.observatory, "Sales charts", 1.7, 0.45, "plan");
+L(byId.vault, "Investment safe", 5, 0.45, "plan"); L(byId.vault, "Profit counter", 8, 3.5, "plan");
+
+// Robots and their routes (room tiles)
+const on = k => AGENTS[k].status !== "planned";
+addBot(byId.research, "scout", "Scout", AGENTS.scout.color, on("scout"), [[2.9, 2.2], [3.1, 4.1], [6.5, 4.2], [8.6, 4.3], [6.5, 4.2], [3.1, 4.1]]);
+addBot(byId.research, null, "Demand", "#8a9a3b", on("scout"), [[5.2, 8.9]], { bob: true });
+addBot(byId.research, null, "Safety", "#d94f8a", on("scout"), [[7, 8.9]], { bob: true });
+addBot(byId.research, null, "Profit", "#2f9c95", on("scout"), [[8.8, 8.9]], { bob: true });
+addBot(byId.prospecting, "prospector", "Prospector", AGENTS.prospector.color, on("prospector"), [[2, 2.1], [4.6, 2.1], [6.6, 2.9], [6.6, 4.3], [4.6, 2.1]]);
+addBot(byId.art, "artist", "Artist", AGENTS.artist.color, on("artist"), [[2.4, 3]]);
+addBot(byId.media, "producer", "Producer", AGENTS.producer.color, on("producer"), [[5.9, 3.6]]);
+addBot(byId.sales, "seller", "Seller", AGENTS.seller.color, on("seller"), [[4.2, 5]]);
+addBot(byId.observatory, "analyst", "Analyst", AGENTS.analyst.color, on("analyst"), [[6.6, 3.6]]);
+addBot(byId.vault, "treasurer", "Treasurer", AGENTS.treasurer.color, on("treasurer"), [[2, 3.6]]);
+
+/* ---------- Screen-space labels ---------- */
+function pill(text, sx, sy, kind, size = 12) {
+  ctx.font = `${kind === "name" ? 600 : 500} ${size}px ${kind === "name" ? "Oxanium" : "Inter"}, system-ui, sans-serif`;
+  const w = ctx.measureText(text).width + 14, h = size + 9;
+  ctx.fillStyle = kind === "name-sel" ? C.live : "rgba(6,10,18,0.82)";
+  rrect(sx - w / 2, sy - h / 2, w, h, 4); ctx.fill();
+  ctx.strokeStyle = kind === "plan" || kind === "planname" ? C.plan : kind === "worker" ? "rgba(98,216,255,0.6)" : "rgba(150,165,186,0.45)";
+  ctx.lineWidth = 1; if (kind === "plan" || kind === "planname") ctx.setLineDash([4, 3]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = kind === "plan" || kind === "planname" ? C.plan : kind === "worker" ? C.live : kind === "off" ? "#c8b48a" : C.text;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(text, sx, sy + 0.5);
+}
+C.text = "#e7edf6";
+function drawLabels() {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const detail = cam.z > 0.85;
+  if (detail) {
+    LABELS.forEach(l => { const s = toScreen(P(l.x), P(l.y)); pill(l.text, s.x, s.y, l.kind, 11); });
+    bots.forEach(b => {
+      const s = toScreen(P(b.x), P(b.y + 0.75));
+      const a = b.key ? AGENTS[b.key] : null;
+      const text = b.bp ? `${b.name}: planned` : b.powered ? (a ? `${b.name}: ${a.status === "running" ? "working" : "ready"}` : b.name) : `${b.name}: powered down`;
+      pill(text, s.x, s.y, b.bp ? "plan" : b.powered ? "worker" : "off", 11);
+    });
+  }
+  MODULES.forEach(m => {
+    const s = toScreen(P(m.x + m.w / 2), P(m.y) - 9);
+    const kind = selected === m ? "name-sel" : m.status === "planned" ? "planname" : "name";
+    pill(m.name.toUpperCase(), s.x, s.y - 8, kind, 12);
+    if (selected === m) { ctx.fillStyle = "#05070d"; }
+  });
+}
+
+/* ---------- Frame ---------- */
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min((now - last) / 1000, 0.05); last = now;
+  const t = now / 1000;
+  if (camTo) {
+    const k = 1 - Math.exp(-dt * 6);
+    cam.x += (camTo.x - cam.x) * k; cam.y += (camTo.y - cam.y) * k; cam.z += (camTo.z - cam.z) * k;
+    if (Math.abs(camTo.z - cam.z) < 0.002 && Math.abs(camTo.x - cam.x) < 0.5) { Object.assign(cam, camTo); camTo = null; }
+  }
+  stepBots(dt);
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = "#05070d"; ctx.fillRect(0, 0, W, H);
+  stars.forEach(s => { ctx.globalAlpha = s.a; ctx.fillStyle = "#cfd8ff"; ctx.fillRect(s.x * W, s.y * H, s.r, s.r); }); ctx.globalAlpha = 1;
+
+  const c = vcenter();
+  ctx.setTransform(dpr * cam.z, 0, 0, dpr * cam.z, dpr * (c.x - cam.x * cam.z), dpr * (c.y - cam.y * cam.z));
+  // nebula glow behind the station
+  const neb = ctx.createRadialGradient(P(14), P(30), 0, P(14), P(30), P(22));
+  neb.addColorStop(0, "rgba(90,60,200,0.22)"); neb.addColorStop(1, "rgba(90,60,200,0)"); ctx.fillStyle = neb; ctx.fillRect(P(-10), P(5), P(50), P(50));
+  const neb2 = ctx.createRadialGradient(P(42), P(6), 0, P(42), P(6), P(18));
+  neb2.addColorStop(0, "rgba(40,120,200,0.18)"); neb2.addColorStop(1, "rgba(40,120,200,0)"); ctx.fillStyle = neb2; ctx.fillRect(P(20), P(-15), P(45), P(40));
+
+  MODULES.forEach(m => drawShell(m, t));
+  CORRIDORS.forEach(drawCorridor);
+  MODULES.forEach(m => FURNITURE[m.id](m, m.status === "planned", t));
+  bots.slice().sort((a, b) => a.y - b.y).forEach(b => drawBot(b, t));
+  if (selected) { ctx.save(); ctx.strokeStyle = selected.status === "planned" ? C.plan : C.live; ctx.lineWidth = 3 / cam.z; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 12; ctx.strokeRect(P(selected.x) - 14, P(selected.y) - 14, P(selected.w) + 28, P(selected.h) + 28); ctx.restore(); }
+
+  drawLabels();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Input: drag, zoom, pinch, tap ---------- */
+const pointers = new Map();
+let dragStart = null, pinchStart = null;
+cv.addEventListener("pointerdown", e => {
+  cv.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 1) dragStart = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y, moved: 0 };
+  if (pointers.size === 2) { const [a, b] = [...pointers.values()]; pinchStart = { d: Math.hypot(a.x - b.x, a.y - b.y), z: cam.z }; }
+  camTo = null;
+});
+cv.addEventListener("pointermove", e => {
+  if (!pointers.has(e.pointerId)) {
+    const w = toWorld(e.clientX, e.clientY);
+    cv.style.cursor = MODULES.some(m => w.x >= P(m.x) && w.x <= P(m.x + m.w) && w.y >= P(m.y) && w.y <= P(m.y + m.h)) ? "pointer" : "grab";
+    return;
+  }
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 2 && pinchStart) {
+    const [a, b] = [...pointers.values()];
+    cam.z = Math.max(0.2, Math.min(3, pinchStart.z * Math.hypot(a.x - b.x, a.y - b.y) / pinchStart.d));
+    if (dragStart) dragStart.moved = 99;
+  } else if (dragStart) {
+    const dx = e.clientX - dragStart.x, dy = e.clientY - dragStart.y;
+    dragStart.moved = Math.max(dragStart.moved, Math.hypot(dx, dy));
+    if (dragStart.moved > 4) { cv.classList.add("dragging"); cam.x = dragStart.cx - dx / cam.z; cam.y = dragStart.cy - dy / cam.z; }
+  }
+});
+function endPointer(e) {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) pinchStart = null;
+  if (pointers.size === 0) {
+    cv.classList.remove("dragging");
+    if (dragStart && dragStart.moved < 6 && e.type === "pointerup") {
+      const w = toWorld(e.clientX, e.clientY);
+      const hit = MODULES.find(m => w.x >= P(m.x) - 10 && w.x <= P(m.x + m.w) + 10 && w.y >= P(m.y) - 24 && w.y <= P(m.y + m.h) + 10);
+      if (hit) select(hit.id);
+    }
+    dragStart = null;
+  }
+}
+cv.addEventListener("pointerup", endPointer);
+cv.addEventListener("pointercancel", endPointer);
+cv.addEventListener("wheel", e => {
+  e.preventDefault(); camTo = null;
+  const before = toWorld(e.clientX, e.clientY);
+  cam.z = Math.max(0.2, Math.min(3, cam.z * Math.exp(-e.deltaY * 0.0015)));
+  const after = toWorld(e.clientX, e.clientY);
+  cam.x += before.x - after.x; cam.y += before.y - after.y;
+}, { passive: false });
+
+window.addEventListener("resize", resize);
+resize();
+requestAnimationFrame(frame);
 </script>
 
 </body>
