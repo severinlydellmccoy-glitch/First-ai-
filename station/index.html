@@ -157,7 +157,7 @@ const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/"
 const SNAPSHOT = "19 Nov 2026";
 
 // Real counts from the repository. Conveyor belts carry one item per real file.
-const COUNTS = { reports: 0, approved: 0, denied: 0, drafts: 0, finals: 0, mediaDrafts: 0, mediaFinals: 0 };
+const COUNTS = { reports: 0, approved: 0, denied: 0, prospects: 0, drafts: 0, finals: 0, mediaDrafts: 0, mediaFinals: 0 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
 const MODULES = [
@@ -180,6 +180,13 @@ const MODULES = [
     inside: "The Scout works at a wall of market screens. Each idea it finds rides the belt through a scanner to three robot judges: Demand, Safety and Profit. The judges decide for themselves. Only ideas all three approve go into the report bin, and the rest drop into the denied bin. The belt stays empty until the first report exists.",
     agent: "scout",
     next: "The Scout's first test report runs at 9 pm Central. If the data is good, it switches to a weekly schedule." },
+  { id: "prospecting", name: "Prospecting Hub", parent: "research", status: "empty", folder: "research/prospecting",
+    purpose: "Finds business ideas beyond merchandise: services Claude can help make and sell, like YouTube thumbnails, ads, or a grandma's dog photo printed on a shirt. Listens to what people ask for on YouTube and Instagram.",
+    contents: [["README.md", "How prospecting reports are named and written"]],
+    emptyNote: "No business ideas yet.",
+    inside: "A 70s conversation pit facing a wall of TVs showing what people talk about on YouTube and Instagram. The Prospector pins ideas to the board, and a tube sends each one to the Research Lab's three judges.",
+    agent: "prospector",
+    next: "Answer three quick questions, then the Prospector runs its first search." },
   { id: "art", name: "Art Studio", status: "empty", folder: "art",
     purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
     contents: [["README.md", "How drafts and finished designs are stored"], ["drafts/", "0 files"], ["final/", "0 files"]],
@@ -220,6 +227,7 @@ const MODULES = [
 // status: ready = set up but hasn't done any work yet, running = has produced work, planned = not set up
 const AGENTS = {
   scout:     { name: "Scout",     status: "ready",   home: "research",    job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "Set up and waiting for its first run." },
+  prospector:{ name: "Prospector", status: "ready", home: "prospecting", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "Set up and waiting for its first run." },
   artist:    { name: "Artist",    status: "planned", home: "art",         job: "Creates original designs." },
   producer:  { name: "Producer",  status: "planned", home: "media",       job: "Makes mockups, photos, posts and listing text." },
   seller:    { name: "Seller",    status: "planned", home: "sales",       job: "Lists products and keeps prices up to date." },
@@ -255,7 +263,7 @@ function renderOverview() {
     <h3>Modules</h3>
     <div class="rooms">${MODULES.map(m => `
       <button class="room-btn" type="button" data-room="${m.id}">
-        <span class="dot ${m.status}"></span><span>${m.name}</span><small>${m.status === "planned" ? "Planned" : m.status === "empty" ? "Empty" : "Active"}</small>
+        <span class="dot ${m.status}"></span><span>${m.parent ? "&#8627; " : ""}${m.name}</span><small>${m.status === "planned" ? "Planned" : m.status === "empty" ? "Empty" : "Active"}</small>
       </button>`).join("")}
     </div>
     <h3>Agents</h3>
@@ -401,12 +409,20 @@ if (!window.THREE || !THREE.OrbitControls) {
 
   const ring = new THREE.Mesh(new THREE.TorusGeometry(R, 0.14, 8, 160), darkMat); ring.rotation.x = Math.PI / 2; station.add(ring);
 
-  const outer = MODULES.filter(m => m.id !== "core");
-  outer.forEach((m, i) => {
-    const a = (i / outer.length) * Math.PI * 2 - Math.PI / 2;
-    const pos = new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R);
+  const outer = MODULES.filter(m => m.id !== "core" && !m.parent);
+  const subs = MODULES.filter(m => m.parent);
+  [...outer, ...subs].forEach((m, i) => {
+    let pos;
+    if (m.parent) {
+      const pp = byId[m.parent].group.position, a = Math.atan2(pp.z, pp.x) + 0.3;
+      pos = new THREE.Vector3(Math.cos(a) * (R + 6.5), 1.2, Math.sin(a) * (R + 6.5));
+    } else {
+      const a = (i / outer.length) * Math.PI * 2 - Math.PI / 2;
+      pos = new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R);
+    }
     const g = new THREE.Group(); g.position.copy(pos); station.add(g);
-    m.group = g; m.labelHeight = 2.9;
+    if (m.parent) g.scale.setScalar(0.8);
+    m.group = g; m.labelHeight = 2.6;
 
     if (m.status !== "planned") {
       g.add(mesh(new THREE.CylinderGeometry(1.5, 1.5, 2.2, 36), hullMat));
@@ -421,7 +437,8 @@ if (!window.THREE || !THREE.OrbitControls) {
       g.add(beacon); beacons.push(beacon);
     }
 
-    const start = pos.clone().normalize().multiplyScalar(3.4), end = pos.clone().normalize().multiplyScalar(R - 1.6);
+    const start = m.parent ? byId[m.parent].group.position.clone() : pos.clone().normalize().multiplyScalar(3.4);
+    const end = m.parent ? pos.clone() : pos.clone().normalize().multiplyScalar(R - 1.6);
     if (m.status !== "planned") {
       const len = start.distanceTo(end);
       const spoke = mesh(new THREE.CylinderGeometry(0.16, 0.16, len, 10), darkMat);
@@ -672,6 +689,53 @@ if (!window.THREE || !THREE.OrbitControls) {
       r.label(`Approved: ${COUNTS.approved}`, 5.4, 1.1, 2.4);
       r.label(`Denied: ${COUNTS.denied}`, 5.4, 1.0, 4.6);
       r.label("The judges decide for themselves", 1.8, 3.55, -0.1);
+    },
+    prospecting(r, M) {
+      // conversation pit: curved sofa and backrest
+      const sofa = new THREE.Group(); sofa.position.set(-1.2, 0, 1.2);
+      const seat = mesh(new THREE.TorusGeometry(2.3, 0.4, 14, 48, Math.PI * 1.25), new THREE.MeshStandardMaterial({ color: RETRO.orange, roughness: 0.9 }), 0, 0.4, 0);
+      seat.rotation.x = -Math.PI / 2; seat.rotation.z = Math.PI * 0.12; sofa.add(seat);
+      const backrest = mesh(new THREE.TorusGeometry(2.75, 0.22, 12, 48, Math.PI * 1.25), new THREE.MeshStandardMaterial({ color: RETRO.mustard, roughness: 0.9 }), 0, 0.85, 0);
+      backrest.rotation.x = -Math.PI / 2; backrest.rotation.z = Math.PI * 0.12; sofa.add(backrest);
+      sofa.add(mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.35, 32), M.wood, 0, 0.18, 0));
+      r.add(sofa);
+      // wall of retro TVs
+      const screens = [];
+      const tvCols = [0xff5a5a, 0xc86bff, 0xff7ab8, 0xffb35a, 0x7ad7ff];
+      [-3.6, -1.8, 0, 1.8, 3.6].forEach((x, i) => {
+        const tv = new THREE.Group(); const y = i % 2 ? 0.9 : 0; tv.position.set(x, y, -5.4);
+        tv.add(mesh(new THREE.BoxGeometry(1.5, 1.15, 0.9), M.wood, 0, 1.1, 0));
+        const sc = mesh(new THREE.BoxGeometry(1.15, 0.85, 0.05), new THREE.MeshStandardMaterial({ color: 0x111111, emissive: tvCols[i], emissiveIntensity: 0.8 }), -0.08, 1.12, 0.46);
+        tv.add(sc); screens.push(sc);
+        tv.add(mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.3, 8), M.metal, 0.6, 1.4, 0.46));
+        if (!y) [-0.5, 0.5].forEach(lx => tv.add(mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.55, 6), M.metal, lx, 0.27, 0)));
+        else tv.add(mesh(new THREE.BoxGeometry(1.6, 0.9, 0.95), M.dark, 0, 0.1, 0));
+        r.add(tv);
+      });
+      r.tick(t => screens.forEach((sc, i) => { sc.material.emissiveIntensity = 0.55 + 0.35 * Math.abs(Math.sin(t * (1.3 + i * 0.4) + i)); }));
+      // idea board, one sticky note per real idea
+      const board = new THREE.Group(); board.position.set(5.2, 0, -2.6); board.rotation.y = -Math.PI * 0.3;
+      board.add(mesh(new THREE.BoxGeometry(2.6, 1.7, 0.08), M.light, 0, 1.8, 0));
+      board.add(mesh(new THREE.BoxGeometry(2.6, 0.22, 0.1), new THREE.MeshStandardMaterial({ color: RETRO.orange }), 0, 2.75, 0));
+      [-1.1, 1.1].forEach(x => board.add(mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.0, 6), M.metal, x, 0.5, 0)));
+      const noteCols = [RETRO.mustard, RETRO.magenta, RETRO.teal, RETRO.orange, RETRO.avocado];
+      for (let i = 0; i < Math.min(COUNTS.prospects, 12); i++) {
+        board.add(mesh(new THREE.BoxGeometry(0.4, 0.4, 0.02), new THREE.MeshStandardMaterial({ color: noteCols[i % 5] }), -0.95 + (i % 5) * 0.48, 2.25 - Math.floor(i / 5) * 0.5, 0.06));
+      }
+      r.add(board);
+      // pneumatic tube to the judges
+      const tube = new THREE.Group(); tube.position.set(5.6, 0, 2.4);
+      tube.add(mesh(new THREE.CylinderGeometry(0.45, 0.55, 0.3, 24), M.metal, 0, 0.15, 0));
+      tube.add(mesh(new THREE.CylinderGeometry(0.35, 0.35, 3.1, 24, 1, true), new THREE.MeshStandardMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.3, side: THREE.DoubleSide }), 0, 1.85, 0));
+      tube.add(mesh(new THREE.TorusGeometry(0.38, 0.05, 8, 24), M.metal, 0, 3.4, 0)).rotation.x = Math.PI / 2;
+      r.add(tube);
+      const pro = robot(AGENTS.prospector.status !== "planned", false, 0x7a4fd9); pro.position.set(0.6, 0, -2.8); pro.rotation.y = Math.PI; r.add(pro); r.worker(pro);
+      const w = workerTag("prospector");
+      r.label(w.text, 0.6, 2.35, -2.8, w.cls);
+      r.label("What people say on YouTube and Instagram", 0, 3.4, -5.4);
+      r.label(`Idea board: ${COUNTS.prospects} idea${COUNTS.prospects === 1 ? "" : "s"}`, 5.2, 3.2, -2.6);
+      r.label("Tube to the judges", 5.6, 3.8, 2.4);
+      r.label("Conversation pit", -1.2, 1.3, 1.2);
     },
     art(r, M) {
       [[-3.2, -2.4, 0.35], [-0.4, -3.4, 0]].forEach(([x, z, ry]) => {

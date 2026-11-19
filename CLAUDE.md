@@ -16,7 +16,8 @@ Work usually moves in that order: research picks what to make, the art and media
 ## Layout
 
 - `rules/`: rules that apply to all work. Read every file in it before starting a task, and follow them.
-- `research/`: market research notes, one dated Markdown file per topic.
+- `research/`: market research notes, one dated Markdown file per topic. `research/scout/` holds the Scout's weekly merchandise reports, and `research/prospecting/` holds the Prospector's service-business ideas.
+- `.claude/agents/`: the AI agents (Scout, Prospector). Both send every idea past three judges (Demand, Safety, Profit), who decide for themselves.
 - `art/`: original designs. `drafts/` holds work in progress and `final/` holds finished designs.
 - `media/`: mockups, photos, video, social posts and listing copy, split the same way into `drafts/` and `final/`.
 
