@@ -154,35 +154,35 @@ a { color: var(--live); }
 
 <script>
 const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
-const SNAPSHOT = "18 Nov 2026, after the first daily run";
+const SNAPSHOT = "19 Nov 2026, after the nightly run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { conveyor: 8, lessons: 13, reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 6 };
+const COUNTS = { conveyor: 8, lessons: 16, reports: 2, approved: 5, denied: 16, prospects: 11, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 8 };
 
 // The Boss's to-do list for the owner (from decisions/owner-todo.md).
 const TODO = {
-  updated: "18 Nov 2026",
+  updated: "19 Nov 2026",
   next: [
     ["Check whether the Etsy shop charges shipping (tote and candle need it)", "this week"],
     ["Check Offsite Ads: the Finance Chief recommends opting out", "this week"],
-    ["Optional: order 2 sample sweatshirts (about $40)", "this week"],
+    ["Approve the new cat hoodie, and say yes or no to dark colors on the cat sweatshirt", "by Nov 23"],
   ],
-  done: ["All listings fixed and verified", "Finance team's first decisions", "Producer set up"],
+  done: ["10 Pinterest pins ready to post", "Cat hoodie drafted", "Stock screen covers about 3x more companies"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
 // Room managers' reports, rewritten by the nightly cycle from what really happened. doing / why / next / updated.
 const REPORTS = {
-  core: { manager: "Boss", doing: "The Boss is waiting on 3 hand-offs from the finance team before tomorrow's decisions: grow the hoodie and sweatshirts, keep the tote and candle without ads, and keep the sticker hidden.", why: "The finance numbers came in tonight, and the Boss makes the final call on what the station makes and promotes next.", next: "Next cycle: the Boss reads the hand-offs, updates the plan and your to-do list.", updated: "Nov 18, 11:30 pm" },
-  rules: { manager: "Rules Keeper", doing: "Holding 6 rules, including your standing permission (rule 6) and autopilot (rule 5). Nothing changed tonight.", why: "Every agent reads these rules before it works.", next: "Only you change the rules. Ask Claude to add any rule, anytime.", updated: "Nov 18, 11:30 pm" },
-  research: { manager: "Lab Manager", doing: "Resting tonight. The Scout and the judges ran this afternoon and approved 2 merch ideas (holiday cat, book lover).", why: "The Analyst skipped research because today's report is still fresh.", next: "The Scout runs again by Nov 20, with TikTok and Instagram trends for Black Friday.", updated: "Nov 18, 11:30 pm" },
-  prospecting: { manager: "Hub Manager", doing: "Resting tonight. This afternoon's 3 service ideas are on hold until January (they need a Fiverr or Upwork account).", why: "The plan is merchandise first; services wait until the shop is selling.", next: "The Prospector runs again by Nov 20.", updated: "Nov 18, 11:30 pm" },
-  art: { manager: "Studio Manager", doing: "Both designs the Boss picked are finished in light and dark versions and live on the shop.", why: "Designs were due Nov 24 and finished early, so nothing is waiting.", next: "The Artist starts again when the Boss picks new designs.", updated: "Nov 18, 11:30 pm" },
-  media: { manager: "Bay Manager", doing: "The Producer robot was set up tonight. Its first job is waiting on the conveyor: Pinterest pins for the two designs.", why: "Pinterest is free and sends gift shoppers to Etsy, and Black Friday is Nov 27.", next: "The Producer writes the pins next cycle. You post them (posting needs a Pinterest business account).", updated: "Nov 18, 11:30 pm" },
-  sales: { manager: "Dock Manager", doing: "5 listings live on Etsy, each checked tonight: our titles, 13 tags, the right design on every color. The sticker stays hidden. 0 orders so far.", why: "A new read-only check now verifies every listing each day, so mistakes get caught early.", next: "Waiting on the first sale. The Seller robot is the next one to build.", updated: "Nov 18, 11:30 pm" },
-  observatory: { manager: "Finance Chief", doing: "First decisions made: grow the hoodie ($18.01 a sale) and sweatshirts ($15.07); keep the tote and candle only if buyers pay shipping, and never advertise them; keep the sticker hidden.", why: "Real Printify costs show the sweatshirts and hoodie are strong, while free shipping or Offsite Ads would cut deeply into profit.", next: "You: check the shipping and Offsite Ads settings. From Nov 23, Etsy Ads at $3 a day on the 3 strong products, only if you approve.", updated: "Nov 18, 11:30 pm" },
-  fixit: { manager: "Division Manager", doing: "Shipped 2 fixes tonight: a daily listing checker (titles, tags and designs) and the new Producer robot.", why: "Both removed manual work: checking Etsy by hand, and writing pins and posts.", next: "Next: build the Seller robot so new designs go live without clicking.", updated: "Nov 18, 11:30 pm" },
-  vault: { manager: "Vault Manager", doing: "Getting ready for the first stock report, tomorrow at 7:45 am Central. Stock data is connected. The safe is locked at $0.", why: "You asked for daily reports on big companies with high volume, rising RSI and positive moving averages. Information only.", next: "After the report you decide everything yourself in Robinhood. No business money is invested until there are profits and you choose a share.", updated: "Nov 18, 11:30 pm" },
+  core: { manager: "Boss", doing: "Made tonight's decisions: every design gets a sweatshirt and a hoodie; no new products that make under $6 a sale; the tote and candle only with buyer-paid shipping and no ads; the sticker stays hidden.", why: "The finance team's numbers show sweatshirts and hoodies earn $15 to $18 a sale, while the cheap items barely pay.", next: "You approve the new cat hoodie and the dark colors for the cat sweatshirt by Nov 23. Then the Boss plans the Black Friday push.", updated: "Nov 19, 9:50 pm" },
+  rules: { manager: "Rules Keeper", doing: "Holding 6 rules. The Boss added 4 shop rules tonight (in the decisions file, not the rulebook): sweatshirt plus hoodie for every design, nothing under $6 a sale, no ads on thin products, and the sticker stays hidden.", why: "The rulebook is yours to change; the Boss's shop rules live in its decisions.", next: "Nothing to do. Ask Claude anytime to add a rule.", updated: "Nov 19, 9:50 pm" },
+  research: { manager: "Lab Manager", doing: "Resting tonight. The last research is from Nov 18.", why: "The Analyst's rule: research runs every 2 days while Black Friday is close, and it's been 1 day.", next: "The Scout and judges run tomorrow (Nov 20) with fresh TikTok and Instagram trends for Black Friday.", updated: "Nov 19, 9:50 pm" },
+  prospecting: { manager: "Hub Manager", doing: "Resting. The 3 service ideas wait until January.", why: "Merchandise comes first; services need a Fiverr or Upwork account.", next: "The Prospector runs tomorrow (Nov 20).", updated: "Nov 19, 9:50 pm" },
+  art: { manager: "Studio Manager", doing: "Both designs are live. A new request is waiting: a white-sweatshirt mockup of the cat for Pinterest.", why: "The cat sweatshirt is sold in white, but our previews only show sand and green.", next: "The Artist makes the white mockup on its next run.", updated: "Nov 19, 9:50 pm" },
+  media: { manager: "Bay Manager", doing: "The Producer wrote its first 10 Pinterest pins (5 per design), each with a title, description, picture and the real Etsy link. Next request: listing text for the cat hoodie.", why: "Pinterest is free and sends gift shoppers to Etsy, and Black Friday is in 8 days.", next: "You post 1 or 2 pins a day (steps are in the pin files). The Producer writes the cat hoodie text next.", updated: "Nov 19, 9:50 pm" },
+  sales: { manager: "Dock Manager", doing: "5 listings live and checked OK tonight, plus a cat hoodie saved as an unpublished draft in Printify. 0 orders so far.", why: "The Boss wants a hoodie for every design, but nothing goes live without your OK.", next: "You: approve the cat hoodie and the dark colors for the cat sweatshirt. Then Claude publishes them.", updated: "Nov 19, 9:50 pm" },
+  observatory: { manager: "Finance Chief", doing: "Quiet night: no orders, no new numbers. The Analyst checked all 6 products in Printify and found no problems.", why: "The finance team only runs when the numbers change, or on Mondays.", next: "Monday Nov 23: weekly money review. Waiting on your Etsy shipping and Offsite Ads answers.", updated: "Nov 19, 9:50 pm" },
+  fixit: { manager: "Division Manager", doing: "Shipped 3 fixes: drafted the cat hoodie in Printify (unpublished), made the stock screen skip companies the free data plan refuses (about 125 companies checked instead of 44), and found that Printify's shipping lookup changed.", why: "The Boss's new products and the investment team's coverage both needed work, and both can now run without you.", next: "A better free stock-data option (Massive, free sign-up) is on your to-do list, optional. Next: build the Seller robot.", updated: "Nov 19, 9:50 pm" },
+  vault: { manager: "Vault Manager", doing: "Today's report: Target and Disney passed all 3 tests after earnings, and UnitedHealth fell 10% on heavy volume. Tomorrow's screen checks about 3x more companies.", why: "You asked for daily facts on big companies. The safe stays at $0 until there are profits.", next: "7:45 am tomorrow: next report. You decide everything in Robinhood. Information only.", updated: "Nov 19, 9:50 pm" },
 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
@@ -227,7 +227,7 @@ const MODULES = [
     next: "Both designs are done, ahead of the 24 Nov deadline. Next: you create the products in Printify (see the Boss's to-do list)." },
   { id: "media", name: "Media Bay", status: "active", folder: "media", x: 35, y: 21, w: 10, h: 8,
     purpose: "Mockups, product photos, video, social posts and listing text that sell the products.",
-    contents: [["final/holiday-cat-ornament-remover-listing.md", "Etsy title, 13 tags, description and Amazon Merch text, with price and colors"], ["final/book-lover-snowed-in-listing.md", "The same for the book-lover sweatshirt"], ["final/mockups/", "4 sweatshirt previews"]],
+    contents: [["final/holiday-cat-ornament-remover-listing.md", "Etsy title, 13 tags, description and Amazon Merch text, with price and colors"], ["final/book-lover-snowed-in-listing.md", "The same for the book-lover sweatshirt"], ["final/mockups/", "4 sweatshirt previews"], ["final/pinterest/", "10 Pinterest pins (5 per design) with titles, descriptions and Etsy links, ready for you to post"]],
     inside: "A photo stage with lights and a camera, and a mockup belt. The Producer robot writes listing text, Pinterest pins and video scripts here (set up 2026-11-19).",
     agent: "producer",
     next: "Listing text is ready to copy into Etsy. Real product photos come from Printify mockups, or from samples if Etsy requires them." },
@@ -274,7 +274,7 @@ const AGENTS = {
   scout:      { name: "Scout", status: "running", color: "#e3a72f", job: "Finds which merchandise sells best on Amazon, Etsy and Temu. Three judges (Demand, Safety, Profit) vote on every idea, and only ideas all three approve make the report.", note: "First report 18 Nov: 2 approved, 8 denied." },
   prospector: { name: "Prospector", status: "running", color: "#8b5cf6", job: "Finds service ideas Claude can help make and sell, like thumbnails, ads and custom pet shirts, from what people ask for on YouTube and Instagram. The same three judges vote on every idea.", note: "First report 18 Nov: 3 approved, 8 denied." },
   artist:     { name: "Artist", status: "running", color: "#e8692c", job: "Creates original designs, drawn in code and rendered print-ready for light and dark shirts.", note: "First designs 18 Nov: holiday cat and book lover." },
-  producer:   { name: "Producer", status: "ready", color: "#2f9c95", job: "Makes mockups, photos, posts and listing text." },
+  producer:   { name: "Producer", status: "running", color: "#2f9c95", job: "Writes listing text, Pinterest pins and short-video scripts. You post them.", note: "First job Nov 19: 10 Pinterest pins with real Etsy links." },
   seller:     { name: "Seller", status: "planned", color: "#8a9a3b", job: "Lists products and keeps prices up to date." },
   finance:    { name: "Finance Operator", status: "ready", color: "#3cbf7a", job: "Breaks down sales, costs, fees, ad spend and profit, tracks the weekly budget, works out how much could be invested (never picks stocks), and writes a weekly sales report.", note: "Set up and waiting for the first sales." },
   chief:      { name: "Finance Chief", status: "running", color: "#d4a72c", job: "Manager of the Observatory and head of the financial management team. Decides what to keep, grow, fix or drop and where the weekly budget should go. Money decisions come to you as recommendations.", note: "First decisions Nov 18: grow the hoodie and sweatshirts; no ads on the tote or candle." },

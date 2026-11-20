@@ -2,6 +2,7 @@
 """Fix LiquidLav's Printify products: right design file per shirt color, our titles/tags/descriptions.
 
 Dark-colored variants get the *-for-dark-shirts.png design, light-colored variants get *-for-light-shirts.png.
+Products marked "draft": True are updated but never published (they wait for the owner's OK).
 Usage:  python3 tools/printify/fix_listings.py            # dry run: prints the plan
         python3 tools/printify/fix_listings.py --apply    # uploads designs, updates products, publishes to Etsy
 The Printify key is added by the network proxy. Prices are never changed by this script.
@@ -36,10 +37,24 @@ def listing(path):
     return title, tags, desc
 
 CAT = listing("media/final/holiday-cat-ornament-remover-listing.md")
+CAT_HOODIE_FILE = "media/final/holiday-cat-ornament-remover-hoodie-listing.md"
+
+def hoodie_copy():
+    """The Producer's cat hoodie copy once it's in media/final/; until then, the sweatshirt copy reworded for a hoodie."""
+    if os.path.exists(os.path.join(ROOT, CAT_HOODIE_FILE)): return listing(CAT_HOODIE_FILE)
+    tags = ["cat christmas hoodie", "funny cat hoodie", "cat lover gift", "christmas cat", "orange cat hoodie", "cat mom christmas", "cat dad gift",
+            "ugly sweater cat", "christmas tree cat", "christmas hoodie", "funny xmas hoodie", "cat owner gift", "ornament cat"]
+    desc = CAT[2].replace("this cozy crewneck sweatshirt", "this cozy hoodie").replace(
+        "Soft, warm unisex crewneck with a classic relaxed fit", "Soft, warm unisex hoodie with a roomy front pocket")
+    return ("Funny Christmas Cat Hoodie, Professional Ornament Remover, Orange Cat Holiday Hooded Sweatshirt, Cat Lover Gift, Cat Mom Christmas", tags, desc)
 BOOK = listing("media/final/book-lover-snowed-in-listing.md")
 book_desc = BOOK[2]
 
+HOODIE = hoodie_copy()
+
 PLAN = {
+    # Cat hoodie, created unpublished by create_drafts.py on 2026-11-20. Set "draft": False once the owner approves.
+    "6affbd9c13e72c2c980a0d76": {"design": "holiday-cat-ornament-remover", "draft": True, "title": HOODIE[0], "tags": HOODIE[1], "desc": HOODIE[2]},
     "6afe724a0ef5a611d100eb27": {"design": "holiday-cat-ornament-remover", "title": CAT[0], "tags": CAT[1], "desc": CAT[2]},
     "6afe7383e2d8ea21e80fa55f": {"design": "book-lover-snowed-in", "title": BOOK[0], "tags": BOOK[1], "desc": BOOK[2]},
     "6afe7383e4ef99a85e0e3703": {"design": "book-lover-snowed-in",
@@ -90,7 +105,7 @@ def main():
         dark_ids = [i for i in all_ids if i not in light_ids]
         en = {v["id"] for v in p["variants"] if v["is_enabled"]}
         print(f"\n{p['title'][:60]}  →  {cfg['title'][:60]}...")
-        print(f"  enabled variants: {len(en & light_ids)} light-color, {len(en - light_ids)} dark-color | tags {len(cfg['tags'])} | {'HIDE from Etsy' if cfg.get('hide') else 'publish'}")
+        print(f"  enabled variants: {len(en & light_ids)} light-color, {len(en - light_ids)} dark-color | tags {len(cfg['tags'])} | {'DRAFT, not published' if cfg.get('draft') else 'HIDE from Etsy' if cfg.get('hide') else 'publish'}")
         if color_opt is not None:
             lc = sorted({names[colour_of(v)] for v in p['variants'] if v['is_enabled'] and v['id'] in light_ids})
             dc = sorted({names[colour_of(v)] for v in p['variants'] if v['is_enabled'] and v['id'] not in light_ids})
@@ -110,6 +125,8 @@ def main():
         if not APPLY: continue
         call("PUT", f"/shops/{SHOP}/products/{pid}.json", body)
         print("  updated")
+        if cfg.get("draft"):
+            print("  draft: NOT published (waiting for the owner's OK)"); continue
         if cfg.get("hide"):
             call("PUT", f"/shops/{SHOP}/products/{pid}.json", {"visible": False})
         call("POST", f"/shops/{SHOP}/products/{pid}/publish.json",

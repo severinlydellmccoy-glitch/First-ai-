@@ -10,15 +10,22 @@ reads about a year of daily prices (Financial Modeling Prep, key added by the ne
 It flags stocks that pass all three owner-set tests and writes JSON plus a Markdown table.
 This is data, not advice: it never says buy or sell.
 
-Usage:  python3 tools/market/daily_screen.py [--min-cap 50e9] [--out investing/daily] [--limit N]
+Saving requests: FMP's free plan answers 402 for many big tickers. Those are remembered in
+investing/daily/fmp-not-free.json and skipped for 30 days, so the daily allowance (250) goes to
+companies it can check, including ones further down the size list. Other errors get one retry at the end.
+
+Usage:  python3 tools/market/daily_screen.py [--min-cap 50e9] [--out investing/daily] [--budget 240] [--limit N]
 """
 import argparse, csv, datetime as dt, io, json, os, sys, time, urllib.request, urllib.error
 
 UA = "LiquidLav-Station/1.0"
+SKIP_DAYS = 30  # re-try a known not-in-free-plan ticker after this many days
+CALLS = {"fmp": 0}
 MIN_VOL_RATIO, RSI_LOW, RSI_HIGH = 1.5, 50.0, 70.0
 
 def get(url, headers=None, tries=3):
     for i in range(tries):
+        if "financialmodelingprep" in url: CALLS["fmp"] += 1
         try:
             req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
             with urllib.request.urlopen(req, timeout=40) as r:
@@ -92,29 +99,48 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--min-cap", type=float, default=50e9)
     ap.add_argument("--out", default="investing/daily")
-    ap.add_argument("--limit", type=int, default=240, help="check only the largest N companies (the free FMP plan allows 250 requests a day)")
+    ap.add_argument("--budget", type=int, default=240, help="most FMP requests to use (the free plan allows 250 a day)")
+    ap.add_argument("--limit", type=int, default=0, help="only look at the largest N companies (0 = all)")
     a = ap.parse_args()
     uni = universe(a.min_cap)
     if a.limit: uni = uni[: a.limit]
-    results, errors = [], []
-    for c in uni:
+    os.makedirs(a.out, exist_ok=True)
+    skip_path = os.path.join(a.out, "fmp-not-free.json")
+    try: not_free = json.load(open(skip_path))
+    except (OSError, ValueError): not_free = {}
+    today = dt.date.today()
+    fresh = lambda s: s in not_free and (today - dt.date.fromisoformat(not_free[s])).days < SKIP_DAYS
+    results, errors, skipped, retry, unchecked = [], [], [], [], []
+    def run(c):
         try:
             m = analyse(history(c["symbol"]))
             if m: results.append({**c, **m})
             else: errors.append(f"{c['symbol']}: not enough price history")
+            not_free.pop(c["symbol"], None)
         except SystemExit: raise
         except LookupError as e:
-            errors.append(f"{c['symbol']} ({e})")
+            errors.append(f"{c['symbol']} ({e})"); not_free[c["symbol"]] = today.isoformat()
         except Exception as e:
-            errors.append(f"{c['symbol']}: {type(e).__name__}")
+            return f"{c['symbol']}: {type(e).__name__}"
         time.sleep(0.25)
-    os.makedirs(a.out, exist_ok=True)
+    for c in uni:
+        if fresh(c["symbol"]): skipped.append(c["symbol"]); continue
+        if CALLS["fmp"] >= a.budget: unchecked.append(c["symbol"]); continue
+        err = run(c)
+        if err: retry.append((c, err))
+    for c, err in retry:  # one more go for passing network errors
+        if CALLS["fmp"] >= a.budget: errors.append(err); continue
+        time.sleep(2)
+        err2 = run(c)
+        if err2: errors.append(err2)
+    json.dump(dict(sorted(not_free.items())), open(skip_path, "w"), indent=1)
     day = max((r["date"] for r in results), default=dt.date.today().isoformat())
     passing = sorted([r for r in results if r["passes_all"]], key=lambda r: -r["vol_ratio"])
     watch = sorted([r for r in results if r["high_volume"] and not r["passes_all"]], key=lambda r: -r["vol_ratio"])
     hot = sorted([r for r in results if r["rsi_overheated"]], key=lambda r: -r["rsi"])
     with open(os.path.join(a.out, f"{day}-screen.json"), "w") as f:
-        json.dump({"data_date": day, "checked": len(results), "universe": len(uni), "errors": errors,
+        json.dump({"data_date": day, "checked": len(results), "universe": len(uni), "fmp_requests": CALLS["fmp"],
+                   "skipped_not_in_free_plan": skipped, "unchecked_over_budget": unchecked, "errors": errors,
                    "passes_all": passing, "high_volume_other": watch, "overheated": hot}, f, indent=1)
     def row(r):
         return (f"| {r['symbol']} | {r['name']} | ${r['market_cap']/1e9:,.0f}B | ${r['close']:,} | {r['change_pct']:+}% | "
@@ -125,7 +151,10 @@ def main():
           "", "### Passed all three tests", head, *([row(r) for r in passing] or ["| none today | | | | | | | |"]),
           "", "### High volume only (didn't pass every test)", head, *([row(r) for r in watch[:15]] or ["| none | | | | | | | |"]),
           "", "### Overheated (RSI above 70)", ", ".join(f"{r['symbol']} ({r['rsi']})" for r in hot) or "none"]
+    if skipped: md += ["", f"Not in FMP's free plan (known, skipped to save requests): {len(skipped)} companies, for example {', '.join(skipped[:12])}."]
+    if unchecked: md += ["", f"Not checked today (daily request allowance used up): {len(unchecked)} companies: {', '.join(unchecked[:20])}{' …' if len(unchecked) > 20 else ''}"]
     if errors: md += ["", f"Couldn't check: {', '.join(errors[:20])}{' …' if len(errors) > 20 else ''}"]
+    md += ["", f"FMP requests used: {CALLS['fmp']} of {a.budget}."]
     with open(os.path.join(a.out, f"{day}-screen.md"), "w") as f:
         f.write("\n".join(md) + "\n")
     print("\n".join(md))

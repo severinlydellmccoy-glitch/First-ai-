@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-19 (problem-solver): This cloud only reaches allow-listed sites (FMP and companiesmarketcap work; Polygon/Massive, Tiingo, Twelve Data, Alpha Vantage and Yahoo get a 403 from the proxy). A new data source needs the owner to allow its address first, so test reachability before building on it.
 - 2026-11-19 (boss): Before picking "more of" a live design, check which products and colors it's really on. The cat is only on a white sweatshirt, so the quick win is adding the hoodie and dark colors from art we already have, not new art.
 - 2026-11-19 (producer): Before choosing a pin picture, check which colors are actually on sale in Printify (enabled variants); the cat mockups showed forest green and sand while the live cat sweatshirt is white only.
 - 2026-11-19 (problem-solver): Etsy can't be read from the cloud, but Printify's product record shows what it last sent to Etsy (title, tags, design file name per color, Etsy listing id). `tools/printify/check_listings.py` checks all of it read-only. Etsy web addresses keep the first title's words; ignore that.

@@ -24,6 +24,7 @@ PRINTIFY_WORDS = ("unisex heavy blend", "powered in witch", "kiss-cut", "heavy b
 def check(p):
     problems, notes = [], []
     cfg = PLAN.get(p["id"])
+    ext = p.get("external") or {}
     title = p["title"]
     if any(w in title.lower() for w in PRINTIFY_WORDS) and not (cfg and title == cfg["title"]):
         problems.append(f"title looks like Printify's own wording: {title[:70]}")
@@ -33,12 +34,14 @@ def check(p):
         if title != cfg["title"]: problems.append(f"title differs from plan: {title[:70]}")
         if sorted(p["tags"]) != sorted(cfg["tags"]): problems.append("tags differ from plan")
         if p["description"].strip() != cfg["desc"].strip(): notes.append("description differs from plan (Printify may reformat it; check if titles/tags also differ)")
-        if bool(p["visible"]) == bool(cfg.get("hide")):
+        if cfg.get("draft"):
+            if ext.get("id"): problems.append("planned as an unpublished draft but it is on Etsy")
+            else: notes.append("unpublished draft, waiting for the owner's OK")
+        elif bool(p["visible"]) == bool(cfg.get("hide")):
             problems.append("is " + ("shown on Etsy but planned hidden" if p["visible"] else "hidden but planned shown"))
     if len(p["tags"]) != 13: problems.append(f"{len(p['tags'])} tags (Etsy allows 13; use all 13)")
     if p.get("is_locked"): problems.append("stuck publishing (locked); check Printify > My products")
-    ext = p.get("external") or {}
-    if p["visible"] and not ext.get("id"): problems.append("not published to Etsy yet (no Etsy listing id)")
+    if p["visible"] and not ext.get("id") and not (cfg and cfg.get("draft")): problems.append("not published to Etsy yet (no Etsy listing id)")
 
     # Right design per color
     copt = next((i for i, o in enumerate(p["options"]) if o["type"] == "color"), None)
@@ -70,7 +73,7 @@ def main():
     for summary in products:
         p = call("GET", f"/shops/{SHOP}/products/{summary['id']}.json")
         problems, notes, etsy_id = check(p)
-        state = "hidden" if not p["visible"] else f"on Etsy #{etsy_id}" if etsy_id else "not on Etsy"
+        state = "draft" if PLAN.get(p["id"], {}).get("draft") and not (p.get("external") or {}).get("id") else "hidden" if not p["visible"] else f"on Etsy #{etsy_id}" if etsy_id else "not on Etsy"
         print(("OK   " if not problems else "FIX  ") + f"{p['title'][:70]}  [{state}]")
         for x in problems: print("       - " + x)
         for x in notes: print("       note: " + x)

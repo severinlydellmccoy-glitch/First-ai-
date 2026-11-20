@@ -26,6 +26,12 @@ def us_shipping(bp, pp):
     try:
         d = get(f"/catalog/blueprints/{bp}/print_providers/{pp}/shipping.json")
         firsts = [p["first_item"]["cost"] for p in d.get("profiles", []) if "US" in p.get("countries", [])]
+        if not firsts:  # v1 sometimes answers with no profiles; v2 has per-variant US standard rates
+            req = urllib.request.Request(f"https://api.printify.com/v2/catalog/blueprints/{bp}/print_providers/{pp}/shipping/standard.json",
+                                         headers={"User-Agent": "LiquidLav-Station/1.0"})
+            with urllib.request.urlopen(req, timeout=60) as r: d2 = json.loads(r.read().decode())
+            firsts = [x["attributes"]["shippingCost"]["firstItem"]["amount"] for x in d2.get("data", [])
+                      if x["attributes"].get("country", {}).get("code") == "US"]
         return min(firsts) / 100 if firsts else None
     except Exception:
         return None
@@ -47,7 +53,7 @@ def main():
         buyer_pays = price - cost - fees(price + s)
         free_ship = price - cost - s - fees(price)
         offsite = 0.15 * (price + s)
-        rows.append({"title": p["title"].split(",")[0], "visible": p["visible"], "price": price, "cost": cost, "ship": ship,
+        rows.append({"title": p["title"].split(",")[0], "visible": p["visible"], "draft": not (p.get("external") or {}).get("id"), "price": price, "cost": cost, "ship": ship,
                      "buyer_pays": buyer_pays, "free_ship": free_ship, "offsite": offsite,
                      "margin": buyer_pays / price if price else 0})
     rows.sort(key=lambda r: -r["buyer_pays"])
@@ -65,7 +71,7 @@ def main():
            "|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         sh = f"${r['ship']:.2f}" if r["ship"] is not None else "unknown"
-        out.append(f"| {r['title']} | {'yes' if r['visible'] else 'hidden'} | ${r['price']:.2f} | ${r['cost']:.2f} | {sh} | **${r['buyer_pays']:.2f}** ({r['margin']:.0%}) | ${r['free_ship']:.2f} | −${r['offsite']:.2f} | ${safe_ads(r):.2f} | {verdict(r)} |")
+        out.append(f"| {r['title']} | {'draft (not on Etsy)' if r['draft'] else 'yes' if r['visible'] else 'hidden'} | ${r['price']:.2f} | ${r['cost']:.2f} | {sh} | **${r['buyer_pays']:.2f}** ({r['margin']:.0%}) | ${r['free_ship']:.2f} | −${r['offsite']:.2f} | ${safe_ads(r):.2f} | {verdict(r)} |")
     out += ["", "**Verdict tiers** (profit if buyer pays shipping): strong $12+, OK $6 to $12, thin under $6, losing $0 or less.", "",
             "**Safe ad spend per sale** = half the profit in the worse shipping case, so a sale from an ad still clears profit even if the shop offers free shipping. The break-even ceiling is the full profit. $0 means no ads.",
             "", "Check the Etsy shipping settings: if the shop offers free shipping, use the free-shipping column. Etsy's US free-shipping guarantee usually applies to orders of $35 or more, so check it for the sweatshirts and hoodie too."]
