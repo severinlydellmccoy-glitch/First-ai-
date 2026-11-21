@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-20 (finance-chief): A $1.40 shipping change flipped the tote from small profit to a loss with free shipping. Re-judge every low-price item and every ad stop rule whenever a cost input changes, not just the headline products.
 - 2026-11-20 (profit-analyst): Printify's v1 shipping list mixes Standard and Economy US rates with no label, so taking the lowest picks Economy ($7.39) instead of the default Standard ($8.79). Use the v2 `shipping/standard.json` endpoint for profit math.
 - 2026-11-20 (producer): Before handing off listing copy, run the Seller script's own parser on the file (fix_listings.py `listing()`) and check title length, 13 tags and 20-character tags by script, not by eye.
 - 2026-11-20 (artist): Make mockups in the shirt colors that are actually on sale (check Printify first). `node art/source/mockup.js OUTDIR art/final` renders previews straight from the final designs, with no rebuild needed.

@@ -1,13 +1,13 @@
 # Owner to-do list
 
-Last updated: 2026-11-19 by the Boss (money items from the Finance Chief, `finance/2026-11-18-finance-decisions.md`; today's plan in `decisions/2026-11-19-decisions.md`).
+Last updated: 2026-11-19 by the Boss; money lines 2026-11-20 by the Finance Chief (`finance/2026-11-20-finance-decisions.md`; money items from the Finance Chief, `finance/2026-11-18-finance-decisions.md`; today's plan in `decisions/2026-11-19-decisions.md`).
 
 Tick a box by changing `[ ]` to `[x]`, or tell Claude "done".
 
 ## Do next
 
-1. **Check whether the Etsy shop charges shipping.** Shop Manager > Settings > Delivery settings (shipping profiles). Tell Claude what the tote and candle show. *Recommendation:* the buyer pays shipping on the tote and candle. With free shipping the candle loses $1.86 a sale and the tote makes $0.27.
-2. **Check Offsite Ads.** Shop Manager > Settings > Offsite Ads. *Recommendation:* opt out for now. Its 15% fee takes about $6.76 per sweatshirt sale.
+1. **Check whether the Etsy shop charges shipping.** Shop Manager > Settings > Delivery settings (shipping profiles). Tell Claude what the tote and candle show. *Recommendation:* the buyer pays shipping on the tote and candle. With free shipping the candle loses $1.86 a sale and the tote loses $0.49 (shipping is $8.79, rechecked Nov 20).
+2. **Check Offsite Ads.** Shop Manager > Settings > Offsite Ads. *Recommendation:* opt out for now. Its 15% fee takes about $6.97 per sweatshirt sale; with free shipping too, a sweatshirt makes about $0.
 3. **Order 2 sample sweatshirts (about $40)**, cat and book. *Recommendation:* yes, to check print quality and take real photos. Optional.
 
 Dates: Etsy Ads can start **Nov 23**. The cat hoodie will be ready for you to approve **by Nov 23**. **Black Friday is Nov 27.** The last safe day for Christmas orders is **about Dec 1**.
@@ -15,7 +15,7 @@ Dates: Etsy Ads can start **Nov 23**. The cat hoodie will be ready for you to ap
 ## Money ($25 to $50 a week, you approve every purchase)
 
 - [ ] Samples, about $40 (item 3 above).
-- [ ] From Nov 23: **Etsy Ads at $3 a day** (not $5), only on the hoodies and sweatshirts, after items 1 and 2. Shop Manager > Marketing > Etsy Ads. No ads on the tote or candle.
+- [ ] From Nov 23: **Etsy Ads at $3 a day** (not $5), only on the hoodies and sweatshirts, after items 1 and 2. Shop Manager > Marketing > Etsy Ads. No ads on the tote or candle. Stop or lower after 7 days if ads cost more than $3.49 per sweatshirt sale or $4.96 per hoodie sale.
 - [ ] Every week: tell Claude your Etsy **views, favorites, sales and ad spend** (Shop Manager > Stats). Ads stop on any listing with no sales after 2 weeks.
 - [ ] When you're ready: choose what **share of profit** to invest. There's no profit yet, so no rush.
 
@@ -24,7 +24,7 @@ Dates: Etsy Ads can start **Nov 23**. The cat hoodie will be ready for you to ap
 - [ ] **Approve the new cat hoodie** (by Nov 23). It's ready in Printify as an unpublished draft: Printify > My products > "Funny Christmas Cat Hoodie". Black and navy get the dark-shirts design; white, sand and sport grey get the light one. Prices are the same as the book hoodie ($45.02 and up, about $18 profit a sale). The title and tags are a stand-in until the Producer's own hoodie wording lands, which gets swapped in before it goes live. Say "publish the cat hoodie" and Claude puts it on Etsy (a $0.20 listing fee).
 - [ ] **Say yes or no to black and navy on the cat sweatshirt.** It's white only today. This changes a live listing, so Claude waits for you. It would add black (7 sizes) and navy (5 sizes) at the same prices as the book sweatshirt ($37.67 and up), with the dark-shirts design. *Recommendation:* yes.
 - [ ] **Stock report data (your choice, no rush):** FMP's free plan covers only about 49 of the 312 biggest companies (confirmed Nov 20); the rest (Alphabet, Broadcom, Eli Lilly and others) aren't in it. Options, all checked Nov 19 from public price lists, so confirm on their sites: (a) **Massive, formerly Polygon.io, free plan**: one request gives every US stock's daily price, so it could cover all 312. Free sign-up. (b) **Tiingo free plan**: also free, but slower (50 requests an hour). (c) **FMP Starter**: about $29 a month, or about $19 a month paid yearly. This is a spend from your money. *Recommendation:* try (a) first. Steps: 1. sign up at massive.com (free plan); 2. copy your API key; 3. save it through the secure secrets form as a network secret, like the FMP key; 4. add api.polygon.io to this cloud's allowed network sites. Then tell Claude, and the screen gets connected.
-- [ ] If shipping turns out to be free and you'd rather not change it, tell Claude, and the candle gets hidden.
+- [ ] If shipping turns out to be free and you'd rather not change it, tell Claude, and the candle and tote get hidden (both lose money).
 - [ ] Post the Pinterest pins the Producer writes (by hand for now).
 - [ ] Finish Etsy payments and billing (`sales/setup-checklist.md`, step 2).
 - [ ] Check the fees in the Etsy dashboard (listing $0.20, 6.5% per sale, 3% + $0.25 payment) and tell Claude if they're different.
