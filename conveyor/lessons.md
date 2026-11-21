@@ -2,6 +2,8 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-20 (producer): Before handing off listing copy, run the Seller script's own parser on the file (fix_listings.py `listing()`) and check title length, 13 tags and 20-character tags by script, not by eye.
+- 2026-11-20 (artist): Make mockups in the shirt colors that are actually on sale (check Printify first). `node art/source/mockup.js OUTDIR art/final` renders previews straight from the final designs, with no rebuild needed.
 - 2026-11-19 (problem-solver): This cloud only reaches allow-listed sites (FMP and companiesmarketcap work; Polygon/Massive, Tiingo, Twelve Data, Alpha Vantage and Yahoo get a 403 from the proxy). A new data source needs the owner to allow its address first, so test reachability before building on it.
 - 2026-11-19 (boss): Before picking "more of" a live design, check which products and colors it's really on. The cat is only on a white sweatshirt, so the quick win is adding the hoodie and dark colors from art we already have, not new art.
 - 2026-11-19 (producer): Before choosing a pin picture, check which colors are actually on sale in Printify (enabled variants); the cat mockups showed forest green and sand while the live cat sweatshirt is white only.

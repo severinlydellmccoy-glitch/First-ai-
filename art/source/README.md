@@ -11,3 +11,6 @@ To re-render (needs Node and Playwright), run from a working folder that holds `
 
     node build.js out          # designs go to out/
     node mockup.js mockups     # previews of the designs in out/
+    node mockup.js mockups ../final   # previews from another folder (missing designs are skipped)
+
+Shirt colors in `mockup.js`: white (#f7f7f5), sand, forest green and navy. White and sand use the light-shirts file.
