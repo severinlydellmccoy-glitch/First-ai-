@@ -1,46 +1,43 @@
 # Owner to-do list
 
-Last updated: 2026-11-19 by the Boss; money lines 2026-11-20 by the Finance Chief (`finance/2026-11-20-finance-decisions.md`; money items from the Finance Chief, `finance/2026-11-18-finance-decisions.md`; today's plan in `decisions/2026-11-19-decisions.md`).
+Last updated: 2026-11-20 by the Boss (today's plan: `decisions/2026-11-20-decisions.md`; money lines from the Finance Chief, `finance/2026-11-20-finance-decisions.md`).
 
 Tick a box by changing `[ ]` to `[x]`, or tell Claude "done".
 
 ## Do next
 
-1. **Check whether the Etsy shop charges shipping.** Shop Manager > Settings > Delivery settings (shipping profiles). Tell Claude what the tote and candle show. *Recommendation:* the buyer pays shipping on the tote and candle. With free shipping the candle loses $1.86 a sale and the tote loses $0.49 (shipping is $8.79, rechecked Nov 20).
-2. **Check Offsite Ads.** Shop Manager > Settings > Offsite Ads. *Recommendation:* opt out for now. Its 15% fee takes about $6.97 per sweatshirt sale; with free shipping too, a sweatshirt makes about $0.
-3. **Order 2 sample sweatshirts (about $40)**, cat and book. *Recommendation:* yes, to check print quality and take real photos. Optional.
+1. **Check two Etsy settings (5 minutes).** (a) Shop Manager > Settings > Delivery settings: is shipping free? *Recommendation:* the buyer pays shipping on the tote and candle. If you'd rather keep free shipping, tell Claude, and both get hidden (they lose money). (b) Shop Manager > Settings > Offsite Ads: *Recommendation:* opt out. With free shipping and Offsite Ads together, a sweatshirt makes about $0.
+2. **Say "publish the cat hoodie" and "yes to black and navy on the cat sweatshirt"** by **Nov 25**, so both are live for Black Friday. The hoodie is ready in Printify > My products > "Funny Christmas Cat Hoodie" (unpublished, $45.02 and up, about $18 a sale). Listing fees are $0.20 each.
+3. **From Nov 23, after item 1: Etsy Ads at $3 a day**, only on the hoodies and sweatshirts. Shop Manager > Marketing > Etsy Ads. No ads on the tote or candle.
 
-Dates: Etsy Ads can start **Nov 23**. The cat hoodie will be ready for you to approve **by Nov 23**. **Black Friday is Nov 27.** The last safe day for Christmas orders is **about Dec 1**.
+Dates: Ads **Nov 23**. Cat hoodie **by Nov 25**. **Black Friday Nov 27**, Cyber Monday Nov 30. New dachshund design ready for you **about Nov 29**. The last safe day for Christmas orders is **about Dec 1**.
 
 ## Money ($25 to $50 a week, you approve every purchase)
 
-- [ ] Samples, about $40 (item 3 above).
-- [ ] From Nov 23: **Etsy Ads at $3 a day** (not $5), only on the hoodies and sweatshirts, after items 1 and 2. Shop Manager > Marketing > Etsy Ads. No ads on the tote or candle. Stop or lower after 7 days if ads cost more than $3.49 per sweatshirt sale or $4.96 per hoodie sale.
-- [ ] Every week: tell Claude your Etsy **views, favorites, sales and ad spend** (Shop Manager > Stats). Ads stop on any listing with no sales after 2 weeks.
-- [ ] When you're ready: choose what **share of profit** to invest. There's no profit yet, so no rush.
+- [ ] Order 2 sample sweatshirts, cat and book (about $40). *Recommendation:* yes, to check print quality and take real photos.
+- [ ] Ads stop rule: after 7 days, lower or stop if ads cost more than $3.49 per sweatshirt sale or $4.96 per hoodie sale. No Black Friday discount for now.
+- [ ] Every week, tell Claude your Etsy **views, favorites, sales and ad spend** (Shop Manager > Stats).
+- [ ] Later: choose what **share of profit** to invest. There's no profit yet.
 
 ## Shop setup
 
-- [ ] **Approve the new cat hoodie** (by Nov 23). It's ready in Printify as an unpublished draft: Printify > My products > "Funny Christmas Cat Hoodie". Black and navy get the dark-shirts design; white, sand and sport grey get the light one. Prices are the same as the book hoodie ($45.02 and up, about $18 profit a sale). The Producer's own hoodie title, 13 tags and description are now on it (Nov 20). Say "publish the cat hoodie" and Claude puts it on Etsy (a $0.20 listing fee).
-- [ ] **Say yes or no to black and navy on the cat sweatshirt.** It's white only today. This changes a live listing, so Claude waits for you. It would add black (7 sizes) and navy (5 sizes) at the same prices as the book sweatshirt ($37.67 and up), with the dark-shirts design. *Recommendation:* yes.
-- [ ] **Stock report data (your choice, no rush):** FMP's free plan covers only about 49 of the 312 biggest companies (confirmed Nov 20); the rest (Alphabet, Broadcom, Eli Lilly and others) aren't in it. Options, all checked Nov 19 from public price lists, so confirm on their sites: (a) **Massive, formerly Polygon.io, free plan**: one request gives every US stock's daily price, so it could cover all 312. Free sign-up. (b) **Tiingo free plan**: also free, but slower (50 requests an hour). (c) **FMP Starter**: about $29 a month, or about $19 a month paid yearly. This is a spend from your money. *Recommendation:* try (a) first. Steps: 1. sign up at massive.com (free plan); 2. copy your API key; 3. save it through the secure secrets form as a network secret, like the FMP key; 4. add api.polygon.io to this cloud's allowed network sites. Then tell Claude, and the screen gets connected.
-- [ ] If shipping turns out to be free and you'd rather not change it, tell Claude, and the candle and tote get hidden (both lose money).
-- [ ] Post the Pinterest pins the Producer writes (by hand for now).
+- [ ] **Approve the dachshund Christmas sweatshirt and hoodie** (our own drawing). They'll be unpublished drafts in Printify by about Nov 29. Approve by Dec 1.
+- [ ] Post the Pinterest pins, 1 to 2 a day: `media/final/pinterest/` (10 pins, with steps).
 - [ ] Finish Etsy payments and billing (`sales/setup-checklist.md`, step 2).
-- [ ] Check the fees in the Etsy dashboard (listing $0.20, 6.5% per sale, 3% + $0.25 payment) and tell Claude if they're different.
 - [ ] Check Etsy's help pages: does every listing need a real, unedited photo? If yes, the samples become required.
-- [ ] Check Printify's holiday shipping cut-off date.
-- [ ] **Replace the Printify key** (two were pasted in chat). Printify > Connections > new token, delete the old ones, and give the new one to Claude through the secure form only.
+- [ ] Check Printify's holiday shipping cut-off date, and the Etsy fees in your dashboard (listing $0.20, 6.5% per sale, 3% + $0.25 payment).
+- [ ] **Replace the Printify key** (two were pasted in chat): Printify > Connections > new token, delete the old ones, and give the new one to Claude through the secure form only.
+- [ ] Stock data, no rush. FMP's free plan covers only about 49 of the 312 biggest companies. *Recommendation:* try the free Massive plan (formerly Polygon.io): 1. sign up at massive.com; 2. copy the API key; 3. save it through the secure secrets form as a network secret; 4. add api.polygon.io to this cloud's allowed sites. Then tell Claude.
 - [ ] Apply to Amazon Merch on Demand (merch.amazon.com). Etsy comes first.
 
 ## Done
 
-- [x] Shop name LiquidLav, Etsy account, Printify (free plan), Printify connected to Etsy and to Claude (Nov 18)
-- [x] Both sweatshirts live (cat and book), plus the book hoodie, tote and candle, each with the right design per color and our titles and tags. Sticker hidden (Nov 18)
-- [x] All 5 listings checked on Nov 19: titles, tags and designs are correct. A daily automatic check now watches them, so you no longer need to look yourself.
-- [x] Prices: kept Printify's ($37.67 and up for sweatshirts), not $34.99 (your choice, Nov 18)
-- [x] FMP stock-data key saved (Nov 18). First stock report Nov 19, 7:45 am Central
+- [x] Shop name LiquidLav, Etsy account, Printify connected to Etsy and Claude (Nov 18)
+- [x] 5 listings live with the right design per color and our titles and tags. Sticker hidden. Kept Printify's prices (Nov 18)
+- [x] Daily automatic listing check running (Nov 19). FMP stock key saved (Nov 18)
+- [x] Cat hoodie draft built with our title, tags and description (Nov 20)
+- [x] 10 Pinterest pins written, plus a white cat mockup that matches what's on sale (Nov 20 to 21)
 
 ## Not now
 
-- Fiverr / Upwork: January. Mugs and new low-price products: not until one makes $6 a sale. Printify Premium: not until sales are regular.
+- Fiverr / Upwork: January. Pet-name sweatshirt: profit check being redone. Mugs and new low-price products: not until one makes $6 a sale. Printify Economy shipping and Premium: January at the earliest.
