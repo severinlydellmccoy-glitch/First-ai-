@@ -5,6 +5,9 @@ Dark-colored variants get the *-for-dark-shirts.png design, light-colored varian
 Products marked "draft": True are updated but never published (they wait for the owner's OK).
 Usage:  python3 tools/printify/fix_listings.py            # dry run: prints the plan
         python3 tools/printify/fix_listings.py --apply    # uploads designs, updates products, publishes to Etsy
+        --only ID       work on that one product only (repeatable); every other product is left alone
+        --text-only     change only title, tags and description (no design uploads, design files untouched)
+  Example: python3 tools/printify/fix_listings.py --only 6affbd9c13e72c2c980a0d76 --text-only --apply
 The Printify key is added by the network proxy. Prices are never changed by this script.
 """
 import base64, json, os, sys, urllib.request, urllib.error
@@ -13,6 +16,8 @@ API = "https://api.printify.com/v1"
 SHOP = 29819127
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
 APPLY = "--apply" in sys.argv
+TEXT_ONLY = "--text-only" in sys.argv
+ONLY = [sys.argv[i + 1] for i, a in enumerate(sys.argv) if a == "--only" and i + 1 < len(sys.argv)]
 
 def call(method, path, body=None):
     req = urllib.request.Request(API + path, method=method, data=json.dumps(body).encode() if body is not None else None,
@@ -89,7 +94,10 @@ def main():
         r = call("POST", "/uploads/images.json", {"file_name": name, "contents": base64.b64encode(open(path, "rb").read()).decode()})
         uploaded[name] = r; print("  uploaded", name, r.get("id")); return r
 
+    unknown = [i for i in ONLY if i not in PLAN]
+    if unknown: raise SystemExit(f"--only: not in the plan: {unknown}")
     for pid, cfg in PLAN.items():
+        if ONLY and pid not in ONLY: continue
         p = call("GET", f"/shops/{SHOP}/products/{pid}.json")
         color_opt = next((i for i, o in enumerate(p["options"]) if o["type"] == "color"), None)
         light_ids = set()
@@ -119,9 +127,12 @@ def main():
             return {"variant_ids": ids, "placeholders": [{"position": "front", "images": [{"id": img["id"], "x": tmpl["x"], "y": tmpl["y"], "scale": tmpl["scale"], "angle": tmpl["angle"]}]}]
                     + [{"position": ph["position"], "images": [{k: im[k] for k in ("id", "x", "y", "scale", "angle")} for im in ph["images"]]} for ph in others]}
         areas = []
+        if TEXT_ONLY: dark_ids, light_ids = [], set()
         if dark_ids: areas.append(area(dark_ids, "dark"))
         if light_ids: areas.append(area(sorted(light_ids), "light"))
-        body = {"title": cfg["title"], "description": cfg["desc"], "tags": cfg["tags"], "print_areas": areas}
+        body = {"title": cfg["title"], "description": cfg["desc"], "tags": cfg["tags"]}
+        if TEXT_ONLY: print("  text only: design files left as they are")
+        else: body["print_areas"] = areas
         if not APPLY: continue
         call("PUT", f"/shops/{SHOP}/products/{pid}.json", body)
         print("  updated")

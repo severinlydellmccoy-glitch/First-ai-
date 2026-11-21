@@ -25,6 +25,7 @@ How close the business is to running itself. Update this whenever something gets
 - [ ] **Pinterest posting:** Pinterest has an official API, but it needs an owner-created Pinterest business account and app approval. Until then the owner posts the Producer's pins.
 - [ ] **New listing defaults:** `fix_listings.py` has a hand-written plan per product; the Seller agent should read titles and tags straight from `media/final/` listing files for new products.
 - [x] **Finance Operator agent** (Observatory): weekly sales report, profit breakdown, budget check and investment pool. It needs Printify access for orders and the owner's Etsy numbers.
+- [x] **Change one product at a time (Nov 20):** `fix_listings.py --only ID --text-only --apply` updates just that product's title, tags and description, with no design uploads and no republishing of the live listings. Used to put the Producer's hoodie copy on the cat hoodie draft.
 - [ ] **Analyst agent:** read Printify orders and profits each week, compare them with ad spend, and feed the results to the Scout.
 - [ ] **Weekly schedule:** one scheduled run that chains every agent, plus a report to the owner (phone notification).
 - [ ] **Order fulfillment:** turn on "auto-approve orders" in Printify (an owner setting).

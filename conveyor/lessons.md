@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-20 (problem-solver): `fix_listings.py --apply` on its own rewrites and republishes every live product. To change one product, use `--only ID` (add `--text-only` for wording only), then run `check_listings.py`.
 - 2026-11-20 (prospector): printify.com and findniche.com are also blocked here (as well as Fiverr and YouTube). Printify's help pages (help.printify.com) still show up in search snippets, so use those for feature details, and test any page once before relying on it.
 - 2026-11-20 (finance-chief): A $1.40 shipping change flipped the tote from small profit to a loss with free shipping. Re-judge every low-price item and every ad stop rule whenever a cost input changes, not just the headline products.
 - 2026-11-20 (profit-analyst): Printify's v1 shipping list mixes Standard and Economy US rates with no label, so taking the lowest picks Economy ($7.39) instead of the default Standard ($8.79). Use the v2 `shipping/standard.json` endpoint for profit math.
