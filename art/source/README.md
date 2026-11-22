@@ -13,4 +13,6 @@ To re-render (needs Node and Playwright), run from a working folder that holds `
     node mockup.js mockups     # previews of the designs in out/
     node mockup.js mockups ../final   # previews from another folder (missing designs are skipped)
 
-Shirt colors in `mockup.js`: white (#f7f7f5), sand, forest green and navy. White and sand use the light-shirts file.
+Shirt colors in `mockup.js`: white (#f7f7f5), sand, sport grey, forest green, navy and black. White, sand and sport grey use the light-shirts file.
+
+`node build.js out dachshund` renders only the designs whose name starts with `dachshund` (optional second argument). Run `python3` with Pillow afterwards to stamp 300 DPI into the PNGs: `Image.open(f).save(f, dpi=(300, 300))`.

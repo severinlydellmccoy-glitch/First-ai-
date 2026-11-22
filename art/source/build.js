@@ -133,7 +133,84 @@ function openBook(x, y) {
   </g>`;
 }
 
-/* ---------- The four designs ---------- */
+
+/* ---------- Dachshund character (our own) ---------- */
+// Side view facing right, ground at y = 0, body from about x = -460 to x = 720.
+const DOG = { coat: "#b5602f", coatDark: "#7e3c1b", belly: "#d98b52", nose: INK };
+function dogSilhouette(fill, grow) {
+  const g = grow || 0;
+  return `
+  <rect x="${-400 - g}" y="${-170 - g}" width="${80 + 2 * g}" height="${170 + 2 * g}" rx="${36 + g}" fill="${fill}"/>
+  <rect x="${-290 - g}" y="${-170 - g}" width="${80 + 2 * g}" height="${170 + 2 * g}" rx="${36 + g}" fill="${fill}"/>
+  <rect x="${200 - g}" y="${-170 - g}" width="${80 + 2 * g}" height="${170 + 2 * g}" rx="${36 + g}" fill="${fill}"/>
+  <rect x="${310 - g}" y="${-170 - g}" width="${80 + 2 * g}" height="${170 + 2 * g}" rx="${36 + g}" fill="${fill}"/>
+  <rect x="${-460 - g}" y="${-360 - g}" width="${880 + 2 * g}" height="${240 + 2 * g}" rx="${120 + g}" fill="${fill}"/>
+  <ellipse cx="350" cy="-270" rx="${125 + g}" ry="${140 + g}" fill="${fill}"/>
+  <path d="M 300 -330 Q 330 -470 430 -500 L 520 -380 Q 470 -300 420 -250 Z" fill="${fill}" stroke="${fill}" stroke-width="${2 * g}" stroke-linejoin="round"/>
+  <ellipse cx="480" cy="-470" rx="${125 + g}" ry="${110 + g}" fill="${fill}"/>
+  <path d="M 500 -540 Q 640 -520 700 -470 Q 735 -435 700 -405 Q 640 -380 520 -390 Z" fill="${fill}" stroke="${fill}" stroke-width="${2 * g}" stroke-linejoin="round"/>`;
+}
+function dachshund(opts = {}) {
+  const tail = "M -440 -300 Q -540 -360 -575 -470";
+  return `
+  <path d="${tail}" fill="none" stroke="${INK}" stroke-width="74" stroke-linecap="round"/>
+  <path d="${tail}" fill="none" stroke="${DOG.coat}" stroke-width="54" stroke-linecap="round"/>
+  ${dogSilhouette(INK, 10)}
+  ${dogSilhouette(DOG.coat, 0)}
+  <path d="M -380 -150 Q 0 -105 330 -160" fill="none" stroke="${DOG.belly}" stroke-width="34" stroke-linecap="round" opacity="0.8"/>
+  <path d="M -250 -350 q 40 30 90 10 M 0 -355 q 40 30 90 10" fill="none" stroke="${DOG.coatDark}" stroke-width="12" stroke-linecap="round" opacity="0.5"/>
+  ${[-360, -250, 240, 350].map(x => `<path d="M ${x - 18} -8 l 0 -22 M ${x + 2} -6 l 0 -24 M ${x + 22} -8 l 0 -22" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>`).join("")}
+  <path d="M 520 -395 Q 610 -392 690 -408" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 600 -398 q 22 30 50 6" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>
+  <ellipse cx="710" cy="-462" rx="34" ry="28" fill="${DOG.nose}"/>
+  <ellipse cx="700" cy="-472" rx="10" ry="7" fill="#fff" opacity="0.6"/>
+  <ellipse cx="545" cy="-505" rx="24" ry="28" fill="${INK}"/>
+  <circle cx="553" cy="-515" r="8" fill="#fff"/>
+  <path d="M 515 -548 q 30 -18 60 -4" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="575" cy="-440" rx="30" ry="16" fill="${P.pink}" opacity="0.7"/>
+  <path d="M 450 -545 Q 360 -560 350 -470 Q 340 -360 380 -320 Q 420 -300 445 -340 Q 470 -420 480 -500 Z" fill="${DOG.coatDark}" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>
+  ${opts.hat ? `
+  <path d="M 395 -555 Q 470 -610 600 -570 Q 560 -700 470 -740 Q 380 -770 300 -700" fill="${P.red}" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M 380 -560 Q 480 -640 615 -575" fill="none" stroke="${INK}" stroke-width="66" stroke-linecap="round"/>
+  <path d="M 380 -560 Q 480 -640 615 -575" fill="none" stroke="#fff" stroke-width="48" stroke-linecap="round"/>
+  <circle cx="295" cy="-690" r="48" fill="#fff" stroke="${INK}" stroke-width="9"/>` : ""}`;
+}
+// A scarf around the neck that is far too long: it trails along the back and piles up on the ground behind the dog.
+function longScarf(c1, c2) {
+  const trail = "M 330 -380 Q 100 -420 -150 -395 Q -420 -370 -560 -250 Q -660 -150 -640 -40 Q -620 20 -760 10";
+  return `
+  <path d="${trail}" fill="none" stroke="${INK}" stroke-width="86" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="${trail}" fill="none" stroke="${c1}" stroke-width="66" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="${trail}" fill="none" stroke="${c2}" stroke-width="66" stroke-dasharray="44 56" stroke-linejoin="round"/>
+  <g stroke="${c1}" stroke-width="12" stroke-linecap="round"><path d="M -770 -15 l -45 -20 M -775 5 l -50 0 M -770 25 l -45 20"/></g>
+  <path d="M 300 -440 Q 410 -500 500 -380 Q 430 -300 320 -320 Z" fill="${c1}" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M 335 -455 L 395 -330 M 420 -470 L 460 -350" stroke="${c2}" stroke-width="30"/>
+  <path d="M 300 -440 Q 410 -500 500 -380 Q 430 -300 320 -320 Z" fill="none" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>`;
+}
+// A string of colored lights through a list of points, with a bulb at each listed index.
+function lightString(pts, bulbAt) {
+  const d = pts.map((p, i) => {
+    if (i === 0) return `M ${p[0]} ${p[1]}`;
+    const a = pts[i - 1], b = p, pa = pts[i - 2] || a, nb = pts[i + 1] || b;
+    const c1 = [a[0] + (b[0] - pa[0]) / 6, a[1] + (b[1] - pa[1]) / 6], c2 = [b[0] - (nb[0] - a[0]) / 6, b[1] - (nb[1] - a[1]) / 6];
+    return `C ${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${b[0]} ${b[1]}`;
+  }).join(" ");
+  const cols = [P.red, P.gold, P.teal, "#4f9de0", P.pink];
+  return `<path d="${d}" fill="none" stroke="${INK}" stroke-width="12" stroke-linecap="round"/>
+  ${bulbAt.map((i, k) => { const [x, y] = pts[i]; const rot = (k % 2 ? 25 : -25); return `<g transform="translate(${x} ${y}) rotate(${rot})">
+    <rect x="-13" y="-6" width="26" height="24" rx="5" fill="#6b6b6b" stroke="${INK}" stroke-width="6"/>
+    <path d="M 0 16 C 30 22 34 70 0 92 C -34 70 -30 22 0 16 Z" fill="${cols[k % cols.length]}" stroke="${INK}" stroke-width="7" stroke-linejoin="round"/>
+    <ellipse cx="-8" cy="45" rx="6" ry="12" fill="#fff" opacity="0.55"/></g>`; }).join("")}`;
+}
+function present(x, y, w, h, color, ribbon) {
+  return `<g transform="translate(${x} ${y})">
+    <rect x="${-w / 2}" y="${-h}" width="${w}" height="${h}" rx="8" fill="${color}" stroke="${INK}" stroke-width="10"/>
+    <rect x="-14" y="${-h}" width="28" height="${h}" fill="${ribbon}" stroke="${INK}" stroke-width="6"/>
+    <path d="M 0 ${-h} q -60 -60 -70 -10 q 10 30 70 10 q 60 -60 70 -10 q -10 30 -70 10" fill="${ribbon}" stroke="${INK}" stroke-width="7" stroke-linejoin="round"/>
+  </g>`;
+}
+
+/* ---------- The designs ---------- */
 const text = (str, x, y, size, family, color, opts = {}) =>
   `<text x="${x}" y="${y}" text-anchor="middle" font-family="${family}" font-weight="${opts.weight || 700}" font-size="${size}" letter-spacing="${opts.ls || 0}" fill="${color}" ${opts.stroke ? `stroke="${opts.stroke}" stroke-width="${opts.sw || 10}" paint-order="stroke" stroke-linejoin="round"` : ""}>${str}</text>`;
 
@@ -184,7 +261,33 @@ const DESIGNS = {
     ${text("Blanket.", 750, 1150, 210, "DM Serif Display", c.book, { weight: 400 })}
     ${text("Cocoa.", 750, 1370, 210, "DM Serif Display", c.book, { weight: 400 })}
     ${text("chapter twelve.", 750, 1590, 200, "Caveat", c.bookAccent)}`,
+
+  "dachshund-extra-long-cheer": (c) => `
+    ${[[200, 560, 1.1], [1300, 520, 1.3], [330, 760, 0.7], [1180, 760, 0.8], [760, 520, 0.6]].map(([x, y, s]) => snowflake(x, y, s, c.snow)).join("")}
+    ${sparkle(560, 610, 0.7, P.gold)}${sparkle(910, 560, 0.55, P.gold)}
+    <g transform="translate(790 1230) scale(0.86)">
+      ${dachshund({ hat: true })}
+      ${longScarf(P.red, P.cream)}
+    </g>
+    ${present(1240, 1238, 150, 120, P.teal, P.gold)}
+    <path d="M 170 1250 L 1330 1250" stroke="${c.snow}" stroke-width="14" stroke-linecap="round"/>
+    ${text("EXTRA LONG", 750, 430, 190, "Fredoka", c.accent, { ls: 10, stroke: c.stroke, sw: 10 })}
+    ${text("CHRISTMAS", 750, 1500, 230, "Fredoka", c.main, { stroke: c.stroke, sw: 12 })}
+    ${text("CHEER", 750, 1720, 230, "Fredoka", c.main, { stroke: c.stroke, sw: 12 })}`,
+
+  "dachshund-in-charge-of-lights": (c) => `
+    ${tree(290, 420, 1080, 230)}
+    ${star(290, 415, 58)}
+    ${ornament(230, 760, 30, P.red)}${ornament(350, 980, 32, P.teal)}
+    <g transform="translate(900 1200) scale(0.72)">
+      ${dachshund({ hat: true })}
+      ${lightString([[-860, -560], [-700, -420], [-560, -380], [-380, -420], [-330, -250], [-260, -110], [-160, -230], [-60, -390], [60, -330], [120, -160], [200, -110], [300, -260], [420, -330], [560, -320], [640, -400]], [1, 3, 5, 7, 9, 11, 13])}
+    </g>
+    ${[[1300, 560, 1.0], [700, 520, 0.7], [1080, 640, 0.6]].map(([x, y, s]) => snowflake(x, y, s, c.snow)).join("")}
+    ${text("IN CHARGE OF", 750, 330, 150, "Fredoka", c.accent, { ls: 12, stroke: c.stroke, sw: 9 })}
+    ${text("THE LIGHTS", 750, 1530, 220, "Fredoka", c.main, { stroke: c.stroke, sw: 12 })}`,
 };
+
 
 const svg = (name, way) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1800" width="1500" height="1800">
 <defs><style>${FONTS}</style></defs>
@@ -192,11 +295,12 @@ ${DESIGNS[name](WAYS[way])}
 </svg>`;
 
 (async () => {
-  const out = process.argv[2];
+  const out = process.argv[2]; // optional 3rd argument: only render designs whose name starts with it
   fs.mkdirSync(out, { recursive: true });
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1500, height: 1800 }, deviceScaleFactor: 3 });
-  for (const name of Object.keys(DESIGNS)) for (const way of Object.keys(WAYS)) {
+  const only = process.argv[3];
+  for (const name of Object.keys(DESIGNS).filter(n => !only || n.startsWith(only))) for (const way of Object.keys(WAYS)) {
     const s = svg(name, way);
     const base = `${name}-for-${way}-shirts`;
     fs.writeFileSync(path.join(out, base + ".svg"), s);

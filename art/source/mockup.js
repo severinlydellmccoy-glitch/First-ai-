@@ -5,12 +5,13 @@ const SHIRT = (color, cuff) => `<svg viewBox="0 0 1000 1000" xmlns="http://www.w
   <path d="M 330 110 Q 500 200 670 110 Q 640 175 500 185 Q 360 175 330 110 Z" fill="${cuff}"/>
   <path d="M 210 905 L 790 905 M 40 750 L 165 755 M 960 750 L 835 755" stroke="${cuff}" stroke-width="30"/>
 </svg>`;
-const shirts = { white: ["#f7f7f5", "#e6e6e2", "White"], light: ["#ece3d3", "#ddd1bd", "Sand"], forest: ["#24412f", "#1b3324", "Forest green"], navy: ["#1f2a44", "#172036", "Navy"] };
+const shirts = { white: ["#f7f7f5", "#e6e6e2", "White"], light: ["#ece3d3", "#ddd1bd", "Sand"], forest: ["#24412f", "#1b3324", "Forest green"], navy: ["#1f2a44", "#172036", "Navy"], black: ["#1c1c1e", "#111113", "Black"], grey: ["#c9c9c7", "#b8b8b6", "Sport grey"] };
 const tiles = [
   ["holiday-cat-ornament-remover", "light"], ["holiday-cat-ornament-remover", "forest"], ["holiday-cat-ornament-remover", "white"],
   ["holiday-cat-tree-inspection", "light"], ["holiday-cat-tree-inspection", "forest"],
   ["book-lover-snowed-in", "light"], ["book-lover-snowed-in", "navy"],
   ["book-lover-blanket-cocoa-chapter", "light"], ["book-lover-blanket-cocoa-chapter", "navy"],
+  ...["dachshund-extra-long-cheer", "dachshund-in-charge-of-lights"].flatMap(n => ["black", "navy", "white", "light", "grey"].map(s => [n, s])),
 ];
 // Optional 2nd argument: folder holding the design PNGs (default out/ next to this file). Tiles whose design is missing are skipped.
 const srcDir = process.argv[3] ? path.resolve(process.argv[3]) : path.join(__dirname, "out");
@@ -20,7 +21,7 @@ const img = f => "data:image/png;base64," + fs.readFileSync(path.join(srcDir, f)
   const p = await b.newPage({ viewport: { width: 1000, height: 1000 }, deviceScaleFactor: 1 });
   const outDir = process.argv[2]; fs.mkdirSync(outDir, { recursive: true });
   for (const [name, shirt] of tiles) {
-    const way = (shirt === "light" || shirt === "white") ? "light" : "dark";
+    const way = ["light", "white", "grey"].includes(shirt) ? "light" : "dark";
     if (!fs.existsSync(path.join(srcDir, `${name}-for-${way}-shirts.png`))) continue;
     const [c, cuff] = shirts[shirt];
     const html = `<body style="margin:0;background:#f6f4f0;width:1000px;height:1000px;position:relative;overflow:hidden">

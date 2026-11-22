@@ -2,6 +2,37 @@ Judges: 4 approved, 11 denied
 
 # Prospecting report, 2026-11-20
 
+## Revote 2026-11-21: pet-name sweatshirt and hoodie (idea 1)
+
+**Result: still approved by all three judges, but only at our current prices.** The sweatshirt must stay at $37.67 or more and the hoodie at $45.02. At $35, the top of what other shops charge, a free-shipping sweatshirt makes only about $4.56, which is below the Boss's $6-a-sale floor. Adding personalization costs nothing extra on Printify or Etsy, as far as search can show.
+
+**Numbers used** (`finance/profitability.md`, Printify costs read 2026-11-21, $8.79 Standard shipping, Etsy fees of $0.20 listing + 6.5% + 3% + $0.25):
+
+| Product and price | Buyer pays shipping | Free shipping | Meets the $6 floor? |
+|---|---|---|---|
+| Sweatshirt at $37.67 (our price) | $14.94 | $6.98 | Yes, by $0.98 |
+| Hoodie at $45.02 (our price) | $17.88 | $9.92 | Yes |
+| Sweatshirt at $35 (market top) | about $12.52 | about $4.56 | No |
+
+The lowest sweatshirt price that clears $6 with free shipping is about **$36.60**, so it should never be listed below $36.99. If an Offsite Ads fee applies (15%), the free-shipping sweatshirt drops to about $0 and the hoodie to about $1.85, so Offsite Ads should stay off, as the Boss already recommends.
+
+**Does personalization add a cost?**
+- **Etsy:** No separate fee. Turning on the personalization box is free, and the listing fee stays $0.20. If we choose to charge extra for the name (Etsy now lets sellers add a charge from $0.20 to $500 for optional text), Etsy's normal 6.5% + 3% applies to that extra charge too ([Etsy fees policy](https://www.etsy.com/legal/fees), [Etsy help: personalized listings](https://help.etsy.com/hc/en-us/articles/360000344528-How-to-Offer-Personalized-Listings), [Etsy developer docs](https://developer.etsy.com/documentation/tutorials/personalization-addon-pricing), [Alura](https://www.alura.io/news/paid-personalization)). These figures leave out any name charge.
+- **Printify:** It calls its personalization feature free, and Etsy's own box now replaces Printify's old Personalization Hub ([Printify personalization](https://printify.com/personalization/), [Printify blog](https://printify.com/blog/etsy-personalization)). Search found no Printify fee for personalized orders. **Not confirmed:** whether the name counts as an extra print area. If it is printed inside the same front area as the design, it should cost the same, but no Printify page said so (see Gaps below).
+
+**New votes:**
+- **Demand: approve.** People clearly buy pet-name sweatshirts (an estimated 18,000-plus sales on one listing, read from search snippets), but our $37.67 is above most of the $9-to-$35 competition, so expect fewer sales per view than cheaper shops get.
+- **Safety: approve.** Nothing has changed: the art is ours and the buyer only types a name. We still need to disclose AI use, show one unedited photo of a real sample (Etsy rule from Oct 22, 2026), and refuse brand or character names.
+- **Profit: approve, narrowly, at $37.67 and up only.** Based on `finance/profitability.md`, the sweatshirt makes $14.94 if the buyer pays shipping and $6.98 with free shipping, and the hoodie makes $17.88 and $9.92, so both clear the $6 floor in both cases. Personalization adds no Etsy or Printify fee found in search. Three conditions: no price cut below $36.99, Offsite Ads off, and one name check per order.
+
+**Fixes to the original vote below:** the original Profit vote quoted "$16 to $23" and "$13 to $14 at $35" from old CLAUDE.md figures. Those are replaced by the table above. The hand-off to the Boss quoted "$13 to $16", which was the buyer-pays-shipping case only. The correct figures are $14.94 (sweatshirt) and $17.88 (hoodie), or $6.98 and $9.92 with free shipping.
+
+**Gaps in the revote:** printify.com can't be opened from here, so the Printify answer comes from search snippets only. Two things are still unchecked: whether a name text layer changes Printify's cost for our sweatshirt blueprint, and whether the shop offers free shipping (if it does, use the free-shipping column). The first could be checked by making an unpublished Printify draft with a text layer and comparing its cost.
+
+**Sources for the revote** (all seen 2026-11-21, as search-result snippets): https://www.etsy.com/legal/fees, https://help.etsy.com/hc/en-us/articles/360000344528-How-to-Offer-Personalized-Listings, https://developer.etsy.com/documentation/tutorials/personalization-addon-pricing, https://www.alura.io/news/paid-personalization, https://printify.com/personalization/, https://printify.com/blog/etsy-personalization, https://help.printify.com/hc/en-us/articles/23524849921169, plus `finance/profitability.md` (read 2026-11-21).
+
+---
+
 **Bottom line:** One new idea passed all three judges, and it needs no new account: a **personalized pet-name sweatshirt or hoodie**. The buyer types their cat's or dog's name into Etsy's personalization box, and Printify prints it under one of our own original designs. It runs on the Etsy shop and Printify account we already have, and Printify's personalization feature is free.
 
 The three service ideas approved on Nov 18 still pass (listing copy, social media packs, YouTube channel art). They stay **on hold until January**, as the Boss decided, because they need a Fiverr or Upwork account. Nothing seen today changes that.
@@ -31,10 +62,10 @@ The three service ideas approved on Nov 18 still pass (listing copy, social medi
   - FindNiche, a third-party estimate tool, shows a "custom dog sweatshirt, personalized dog ears with name" listing at about 18,256 total sales and about 96 a month, and a custom embroidered name sweatshirt at about 29,878 sales. These are estimates, read only from search snippets ([FindNiche dog](https://findniche.com/etsy-product/custom-dog-sweatshirt-personalized-dog-e-1523211157), [FindNiche name](https://findniche.com/etsy-product/custom-embroidered-sweatshirt-name-on-sl-1485282812)).
   - Many Etsy listings for the same idea, for example a "Custom Cat's Name Sweatshirt" ([Etsy](https://www.etsy.com/listing/1648401909/custom-cats-name-sweatshirt-cats-owner)), and FindNiche calls the niche crowded.
   - Printify calls its Etsy personalization "100% free", with up to 4 text fields per product. Etsy's own personalization box now replaces Printify's old "Personalization Hub" ([Printify](https://printify.com/personalization/), [Printify help](https://help.printify.com/hc/en-us/articles/40720228428433), [Teeinblue guide](https://teeinblue.com/blogs/en/printify-personalization)).
-- **Votes:**
+- **Votes** (original, 2026-11-20; the Profit vote is replaced by the Revote 2026-11-21 section at the top):
   - **Demand: approve.** An estimated 18,000-plus sales on one pet-name sweatshirt, and a crowded field of copies, show that people pay for this. But the numbers are third-party estimates.
   - **Safety: approve.** The art is ours and the buyer supplies only a name. AI use must be disclosed, the listing needs one unedited photo of a real sample (Etsy, Oct 22, 2026, [Value Added Resource](https://www.valueaddedresource.net/etsy-bans-ai-patterns/)), and orders that ask for brand or character names must be refused.
-  - **Profit: approve, narrowly.** At our current price ($37.67 and up), CLAUDE.md records about $16 to $23 profit after Etsy fees, and at about $35, the top of the market, roughly $13 to $14 would be left. This is an estimate scaled from those recorded figures, not a new Printify quote. That only holds if the shop doesn't offer free shipping and the sale didn't come through Offsite Ads (see the 2026-11-18 finance lesson). There's one manual step per order, checking the name.
+  - **Profit: approve, narrowly (superseded 2026-11-21).** At our current price ($37.67 and up), CLAUDE.md records about $16 to $23 profit after Etsy fees, and at about $35, the top of the market, roughly $13 to $14 would be left. This is an estimate scaled from those recorded figures, not a new Printify quote. That only holds if the shop doesn't offer free shipping and the sale didn't come through Offsite Ads (see the 2026-11-18 finance lesson). There's one manual step per order, checking the name.
 - **Before it goes live:** the owner's OK for a new listing, one sample to photograph, and the personalization set up in the Printify dashboard. Nobody has checked whether Printify's API can switch personalization on, so the owner might need to click one toggle.
 
 ### 2. Etsy and Amazon listing copy for other sellers (carried over, on hold until January)
@@ -141,14 +172,14 @@ The three service ideas approved on Nov 18 still pass (listing copy, social medi
 - **Fiverr starting prices:** still unconfirmed, as the Boss asked. "Up to $50" is very likely Fiverr's filter label.
 - **FindNiche numbers are estimates.** One snippet gives a $4.99 price for the dog-name sweatshirt, which doesn't fit a sweatshirt. The figure may be a starting variant or an error, so treat the sales count as a sign of demand, not a fact.
 - **Printify personalization:** two Printify pages disagree on whether live previews launched in June 2026. Nobody has checked whether Printify's API can set up personalization.
-- **Profit on idea 1** is scaled from the sweatshirt figures in CLAUDE.md, not from a fresh Printify cost check. It depends on the Etsy shipping and Offsite Ads settings, which aren't confirmed yet.
+- **Profit on idea 1** was first scaled from the sweatshirt figures in CLAUDE.md. That was fixed in the Revote 2026-11-21 section, which uses `finance/profitability.md`. It still depends on the Etsy shipping and Offsite Ads settings, which aren't confirmed yet.
 - **House rule on questions:** this was an owner-approved scheduled run, so I asked no questions. The question that matters most: will the owner allow a personalized listing, which means checking each order's name before it prints?
 
 ---
 
 ## 5. Sources
 
-All seen on 2026-11-20, as search-result snippets unless noted.
+All seen on 2026-11-20, as search-result snippets unless noted. Sources for the 2026-11-21 revote are listed in that section.
 
 - https://findniche.com/etsy-product/custom-dog-sweatshirt-personalized-dog-e-1523211157 (page couldn't be opened)
 - https://findniche.com/etsy-product/custom-embroidered-sweatshirt-name-on-sl-1485282812
