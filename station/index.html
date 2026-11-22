@@ -154,35 +154,35 @@ a { color: var(--live); }
 
 <script>
 const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
-const SNAPSHOT = "20 Nov 2026, after the nightly run";
+const SNAPSHOT = "21 Nov 2026, after the nightly run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { conveyor: 5, lessons: 25, reports: 4, approved: 12, denied: 36, prospects: 26, drafts: 8, finals: 4, mediaDrafts: 0, mediaFinals: 8 };
+const COUNTS = { conveyor: 7, lessons: 30, reports: 4, approved: 12, denied: 36, prospects: 26, drafts: 12, finals: 6, mediaDrafts: 0, mediaFinals: 8 };
 
 // The Boss's to-do list for the owner (from decisions/owner-todo.md).
 const TODO = {
-  updated: "20 Nov 2026",
+  updated: "21 Nov 2026",
   next: [
-    ["Check 2 Etsy settings: shipping (buyer pays on tote and candle) and Offsite Ads (opt out)", "this weekend"],
-    ["Say “publish the cat hoodie” and yes or no to black and navy on the cat sweatshirt", "by Nov 25"],
+    ["Check 2 Etsy settings: shipping (buyer pays on tote and candle) and Offsite Ads (opt out)", "5 minutes"],
+    ["By Nov 25, say: “publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie”", "by Nov 25"],
     ["Start Etsy Ads at $3 a day on the hoodies and sweatshirts, after step 1", "from Nov 23"],
   ],
-  done: ["Cat hoodie draft has its real listing text", "White cat mockup for pins", "Shipping cost settled at $8.79"],
+  done: ["Dachshund design finished 2 days early", "Dachshund listing text written", "Cat pins show the white sweatshirt"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
 // Room managers' reports, rewritten by the nightly cycle from what really happened. doing / why / next / updated.
 const REPORTS = {
-  core: { manager: "Boss", doing: "Picked the Black Friday plan: push the cat hoodie, add black and navy to the cat sweatshirt, Pinterest pins, and $3 a day of Etsy Ads on hoodies and sweatshirts, with no discounts. Added a new dachshund Christmas design for after Black Friday.", why: "The Scout found strong demand for funny cat and dachshund Christmas shirts, and the finance team says hoodies and sweatshirts earn $15 to $18 a sale.", next: "You: check shipping and Offsite Ads, approve the cat hoodie and dark colors by Nov 25, and start ads Nov 23 if you agree.", updated: "Nov 20, 10:40 pm" },
-  rules: { manager: "Rules Keeper", doing: "Holding 6 rules. CLAUDE.md now points every agent to the live profit table, after an agent used old profit numbers tonight.", why: "Stale numbers led to a wrong vote, and the Underboss caught it.", next: "Nothing to do.", updated: "Nov 20, 10:40 pm" },
-  research: { manager: "Lab Manager", doing: "The Scout ran for Black Friday. 3 ideas approved, 9 denied. New: an original dachshund Christmas sweatshirt and hoodie (similar Amazon items show 900+ bought a month). The holiday cat's evidence got stronger.", why: "Black Friday is a week away, so research runs every 2 days.", next: "The dachshund goes to the Artist on Nov 24. Next research on Nov 22.", updated: "Nov 20, 10:40 pm" },
-  prospecting: { manager: "Hub Manager", doing: "The Prospector found a pet-name sweatshirt idea (the buyer's pet's name on our design), but the Underboss sent it back: its profit vote used old numbers, and with free shipping it falls under the $6 floor.", why: "The Boss's rule: nothing that makes under $6 a sale.", next: "The Prospector redoes the math on real numbers next run.", updated: "Nov 20, 10:40 pm" },
-  art: { manager: "Studio Manager", doing: "Made a white-sweatshirt preview of the cat design, so the Pinterest pins match the shirt that's actually for sale.", why: "The cat sweatshirt is sold in white, but the pins showed sand.", next: "Nov 24: start the dachshund Christmas design (our own drawing, no song puns).", updated: "Nov 20, 10:40 pm" },
-  media: { manager: "Bay Manager", doing: "The Producer wrote the cat hoodie's listing: a 137-character title, 13 tags and a description. It's now on the unpublished draft.", why: "The Boss wants a hoodie for every design, ready for your OK before Black Friday.", next: "Switch the cat pins to the white preview, then write the dachshund listing by Nov 26.", updated: "Nov 20, 10:40 pm" },
-  sales: { manager: "Dock Manager", doing: "5 listings live and checked OK. The cat hoodie draft is complete and still unpublished. 0 orders so far.", why: "Nothing goes live without your OK, and Black Friday is Nov 27.", next: "Say “publish the cat hoodie” and yes or no to dark colors on the cat sweatshirt by Nov 25.", updated: "Nov 20, 10:40 pm" },
-  observatory: { manager: "Finance Chief", doing: "Settled the shipping cost at $8.79 (Printify's Standard rate). Profit per sale if the buyer pays shipping: hoodie $17.88, sweatshirt $14.94. The ad plan still holds at $3 a day, but ads stop if they cost more than $3.49 per sweatshirt sale or $4.96 per hoodie sale.", why: "With free shipping, the tote loses money and a sweatshirt drops to about $7, or about $0 if Offsite Ads is on too.", next: "You: check shipping and Offsite Ads. If the shop keeps free shipping, hide the tote and candle.", updated: "Nov 20, 10:40 pm" },
-  fixit: { manager: "Division Manager", doing: "Put the Producer's listing on the cat hoodie draft without publishing anything, and made the listing tool safer: it can now change one product, or only its wording, instead of republishing all 5 live listings.", why: "The old tool would have rewritten every live listing to fix one draft.", next: "On your OK: publish the cat hoodie and the dark colors, and set up the dachshund drafts on Nov 29.", updated: "Nov 20, 10:40 pm" },
-  vault: { manager: "Vault Manager", doing: "Today's report: only Sony passed all 3 tests on a down day; AMD fell 7.7% after a short-seller report. The free data plan covers about 49 of 312 big companies.", why: "You asked for daily facts on big companies. The safe stays at $0 until there are profits.", next: "No report on weekends; the Sunday week-ahead report comes Nov 22 at 7:43 pm. Optional: the free Massive sign-up for full coverage.", updated: "Nov 20, 10:40 pm" },
+  core: { manager: "Boss", doing: "Moved the dachshund design up so it can be live for Black Friday, and picked a third design (book lover \"Blanket. Cocoa. Chapter twelve.\") for about Nov 29. The pet-name idea waits until January.", why: "The dachshund art and text are done early. The pet-name idea needs a name check on every order and a sample photo that can't arrive before Dec 1.", next: "You: one message by Nov 25 to publish the cat hoodie, the cat sweatshirt's dark colors and the dachshund.", updated: "Nov 21, 10:30 pm" },
+  rules: { manager: "Rules Keeper", doing: "Holding 6 rules. 30 lessons are now shared on the conveyor.", why: "Every agent reads the rules and lessons before working.", next: "Nothing to do.", updated: "Nov 21, 10:30 pm" },
+  research: { manager: "Lab Manager", doing: "Quiet: the Scout rests. Its Nov 20 report found the dachshund idea, now designed.", why: "The research is 1 day old; the rule is every 2 days before Black Friday.", next: "The Scout runs again Nov 22.", updated: "Nov 21, 10:30 pm" },
+  prospecting: { manager: "Hub Manager", doing: "Redid the pet-name sweatshirt math on real numbers: it passes at our prices ($6.98 a sale even with free shipping). The Boss parked it until January.", why: "The Underboss caught old numbers in the first vote.", next: "January: a free test draft to check whether a name layer costs more.", updated: "Nov 21, 10:30 pm" },
+  art: { manager: "Studio Manager", doing: "Finished the dachshund design 2 days early: \"Extra Long Christmas Cheer\", our own dachshund in a Santa hat with a very long scarf, in light and dark versions, plus previews in 5 shirt colors.", why: "The Boss wants it live before Black Friday.", next: "Nov 25: start the third design (book lover).", updated: "Nov 21, 10:30 pm" },
+  media: { manager: "Bay Manager", doing: "Wrote the dachshund sweatshirt and hoodie listings (titles, 13 tags, descriptions) and switched the 5 cat pins to the white sweatshirt preview.", why: "The listings must be ready before the Problem Solver makes the drafts, and the pins must show the shirt that's actually for sale.", next: "The book-lover listing by Nov 27.", updated: "Nov 21, 10:30 pm" },
+  sales: { manager: "Dock Manager", doing: "5 listings live and checked OK, plus the cat hoodie draft. The dachshund drafts come Nov 24. 0 orders so far.", why: "Nothing goes live without your OK.", next: "You: one \"publish\" message by Nov 25. Black Friday is Nov 27.", updated: "Nov 21, 10:30 pm" },
+  observatory: { manager: "Finance Chief", doing: "Quiet night. The Analyst checked all 7 products: OK. The Underboss corrected one figure: with free shipping and Offsite Ads on, a sweatshirt makes about $1.33 a sale.", why: "Etsy settings decide most of the profit, so the shipping and Offsite Ads checks matter.", next: "Monday Nov 23: weekly money review, and ads start if you agree.", updated: "Nov 21, 10:30 pm" },
+  fixit: { manager: "Division Manager", doing: "Waiting: the dachshund listing text is ready for the Problem Solver to build the unpublished drafts.", why: "The Boss moved the dachshund drafts up to Nov 24.", next: "Nov 23: build the dachshund drafts, and confirm sport grey gets the light design.", updated: "Nov 21, 10:30 pm" },
+  vault: { manager: "Vault Manager", doing: "Weekend: no daily report. The Sunday week-ahead report comes Nov 22 at 7:43 pm.", why: "Markets are closed on weekends.", next: "Monday 7:45 am: the next daily report. Information only.", updated: "Nov 21, 10:30 pm" },
 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
@@ -221,7 +221,7 @@ const MODULES = [
     next: "Runs whenever the Analyst sends it work (open problems), or every 3rd day." },
   { id: "art", name: "Art Studio", status: "active", folder: "art", x: 35, y: 9, w: 10, h: 8,
     purpose: "Original artwork and designs that become products. Drafts and finished designs are kept apart.",
-    contents: [["final/holiday-cat-ornament-remover", "\"Professional Ornament Remover\": our orange cat swatting an ornament off the tree. Light- and dark-shirt versions, print-ready."], ["final/book-lover-snowed-in", "\"Snowed in with a good book\": cocoa on a stack of books under falling snow. Light- and dark-shirt versions."], ["drafts/", "4 designs, 8 print files (includes \"Head of Tree Inspection\" and \"Blanket. Cocoa. Chapter twelve.\")"]],
+    contents: [["final/holiday-cat-ornament-remover", "\"Professional Ornament Remover\": our orange cat swatting an ornament off the tree. Light- and dark-shirt versions, print-ready."], ["final/book-lover-snowed-in", "\"Snowed in with a good book\": cocoa on a stack of books under falling snow. Light- and dark-shirt versions."], ["final/dachshund-extra-long-cheer", "\"Extra Long Christmas Cheer\": our dachshund in a Santa hat with a very long scarf. Light- and dark-shirt versions (finished Nov 21)."], ["drafts/", "6 designs, including \"In Charge of the Lights\" and \"Blanket. Cocoa. Chapter twelve.\""]],
     inside: "Easels, a workbench, and two bins: drafts and final. The Artist walks between the easels and the bins.",
     agent: "artist",
     next: "Both designs are done, ahead of the 24 Nov deadline. Next: you create the products in Printify (see the Boss's to-do list)." },
