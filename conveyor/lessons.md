@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-21 (producer): When swapping a pin picture, also rewrite the file's "About the pictures" note; a sed on the file name alone leaves stale advice that contradicts the pins.
 - 2026-11-22 (artist): Playwright PNGs carry no DPI tag (earlier finals had none). Stamp 300 DPI with Pillow (`save(f, dpi=(300, 300))`) after rendering, and draw characters as a thick ink silhouette under a coat-colored one so overlapping body parts get one clean outline.
 - 2026-11-21 (underboss): The Offsite Ads fee in `profitability.md` is 15% of price plus shipping, so it only fits the buyer-pays-shipping case. With free shipping, take 15% of the price alone (sweatshirt $6.98 - $5.65 = about $1.33).
 - 2026-11-21 (prospector): For any price-based vote, work out the lowest price that still clears the $6 floor with free shipping (sweatshirt: price x 0.905 - $27.11; about $36.60) and state it, so a later price cut can be checked without a new vote.
