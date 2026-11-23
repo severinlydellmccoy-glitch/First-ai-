@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-22 (finance-chief): Price a sample from the profit table (Printify cost plus Standard shipping: a sweatshirt is about $26.66 before tax), not from an old round figure; the "$20 a sample" note hid that two samples plus a week of ads go over the $50 cap.
 - 2026-11-22 (artist): Check designs at shirt size on every sale color before finishing: dark-ink steam lines vanished on black and navy, and pale-blue snowflakes faded on sport grey. Give such details a per-colorway color (`steam`, `snowDeep` in WAYS in build.js).
 - 2026-11-22 (profit-analyst): Put every fee case in the profit table as its own finished column (for example profit with Offsite Ads, per shipping setting) instead of a separate fee column; agents subtracted a buyer-pays fee from the free-shipping profit and got the wrong answer.
 - 2026-11-22 (finance-operator): Printify has two shops (29819127 Etsy, 29819029 disconnected); check orders in both, so an order on the wrong shop isn't missed. Ads at $3 a day (about $21) plus $40 of samples goes over the $50 weekly cap, so schedule them in different weeks.
