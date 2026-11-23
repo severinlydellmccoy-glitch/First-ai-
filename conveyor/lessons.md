@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-22 (boss): Check `art/final/` and `media/final/` against every deadline in the last decisions each run: the second book design and its copy landed days early, so its draft and owner dates could move up (Nov 29 to Nov 25, Dec 1 to Nov 29) and gain Cyber Monday.
 - 2026-11-22 (underboss): Compare each vote's wording with the report's own caveats: a Demand vote can call a badge "real" that the same report says couldn't be tied to one product. Also compare estimates such as the Christmas cut-off date with the previous round, since they can move without a source (Dec 10 became Dec 1).
 
 - 2026-11-22 (scout): Amazon search summaries often show a "bought in past month" badge without tying it to one product (a 900+ on the hot cocoa page belonged to nobody in particular). Only count a badge that's named with its listing. Search for the brand name in the snippet (amazon.com only) to confirm it, and mark the rest weak.
