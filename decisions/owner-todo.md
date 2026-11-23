@@ -1,16 +1,16 @@
 # Owner to-do list
 
-Last updated: 2026-11-21 by the Boss (today's changes: `decisions/2026-11-21-decisions.md`; full plan: `decisions/2026-11-20-decisions.md`; money lines from the Finance Chief, `finance/2026-11-20-finance-decisions.md`).
+Last updated: 2026-11-22 by the Boss (today's changes: `decisions/2026-11-22-decisions.md`; money lines from the Finance Chief, `finance/2026-11-22-finance-decisions.md`).
 
 Tick a box by changing `[ ]` to `[x]`, or tell Claude "done".
 
 ## Do next
 
 1. **Check two Etsy settings (5 minutes).** (a) Shop Manager > Settings > Delivery settings: is shipping free? *Recommendation:* the buyer pays shipping on the tote and candle. If you'd rather keep free shipping, tell Claude, and both get hidden (they lose money). (b) Shop Manager > Settings > Offsite Ads: *Recommendation:* opt out.
-2. **By Nov 25, tell Claude: "publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie."** The cat hoodie is ready now (Printify > My products > "Funny Christmas Cat Hoodie", about $18 a sale). The dachshund sweatshirt and hoodie ("Extra Long Christmas Cheer") are ready now too, as unpublished drafts (Printify > My products > "Dachshund Christmas Sweatshirt" and "Dachshund Christmas Hoodie"; same colors and prices as the book sweatshirt and hoodie). Listing fees are $0.20 each.
+2. **By Nov 25, tell Claude: "publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie."** All of them are ready now as unpublished drafts. To look first: Printify > My products > "Funny Christmas Cat Hoodie", "Dachshund Christmas Sweatshirt" and "Dachshund Christmas Hoodie". Listing fees are $0.20 each.
 3. **From Nov 23, after item 1: Etsy Ads at $3 a day**, only on the hoodies and sweatshirts. Shop Manager > Marketing > Etsy Ads. No ads on the tote or candle.
 
-Dates: Ads **Nov 23**. Dachshund drafts **Nov 24**. Your OK **by Nov 25**. **Black Friday Nov 27**, Cyber Monday Nov 30. Second book design ready for you **about Nov 29**. Last safe day for Christmas orders **about Dec 1**.
+Dates: Ads **Nov 23**. Your publish OK **by Nov 25**. **Black Friday Nov 27.** Second book design drafts ready **Nov 25**, your OK **by Nov 29**. Cyber Monday **Nov 30**. Last safe day for Christmas orders **about Dec 1**. Everyday winter cat about **Dec 8**.
 
 ## Money ($25 to $50 a week, you approve every purchase; Finance Chief, `finance/2026-11-22-finance-decisions.md`)
 
@@ -21,7 +21,7 @@ Dates: Ads **Nov 23**. Dachshund drafts **Nov 24**. Your OK **by Nov 25**. **Bla
 
 ## Shop setup
 
-- [ ] Approve the second book design ("Blanket. Cocoa. chapter twelve.") by Dec 1. Drafts about Nov 29.
+- [ ] By Nov 29: approve the second book design ("Blanket. Cocoa. chapter twelve."), a separate "publish" message once Claude says the drafts are up (about Nov 25).
 - [ ] Post the Pinterest pins, 1 to 2 a day: `media/final/pinterest/` (10 pins, with steps).
 - [ ] Finish Etsy payments and billing (`sales/setup-checklist.md`, step 2).
 - [ ] Check Etsy's help pages: does every listing need a real, unedited photo? Also Printify's holiday shipping cut-off date.
@@ -30,12 +30,11 @@ Dates: Ads **Nov 23**. Dachshund drafts **Nov 24**. Your OK **by Nov 25**. **Bla
 
 ## Done
 
-- [x] Shop name LiquidLav, Etsy account, Printify connected (Nov 18). 5 listings live with the right designs, titles and tags; sticker hidden (Nov 18)
-- [x] Daily automatic listing check (Nov 19). FMP stock key saved (Nov 18)
-- [x] Cat hoodie draft built; 10 Pinterest pins written; white cat mockup (Nov 20 to 21)
-- [x] Dachshund design finished, our own drawing, with mockups in 5 colors (Nov 21)
-- [x] Pet-name sweatshirt profit re-checked: passes, but waits until January (Nov 21)
+- [x] Shop name LiquidLav, Etsy account, Printify connected; 5 listings live, sticker hidden (Nov 18). Daily listing check; FMP stock key (Nov 18 to 19)
+- [x] Cat hoodie draft, 10 Pinterest pins, white cat mockup (Nov 20 to 21)
+- [x] Dachshund design finished (Nov 21); dachshund sweatshirt and hoodie drafts built and checked (Nov 22)
+- [x] Second book design and its listing copy finished (Nov 22). Stock reports now skip market holidays (Nov 22)
 
 ## Not now
 
-- Pet-name sweatshirt: January (needs a sample and a name check by hand on every order). Fiverr / Upwork: January. Mugs and low-price products: not until one makes $6 a sale. Economy shipping: January.
+- Pet-name sweatshirt: January. Fiverr / Upwork: January. Mugs and low-price products: not until one makes $6 a sale. Economy shipping: January. Gingerbread design: next October.

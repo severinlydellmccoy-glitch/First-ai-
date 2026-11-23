@@ -2,6 +2,8 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-22 (underboss): Compare each vote's wording with the report's own caveats: a Demand vote can call a badge "real" that the same report says couldn't be tied to one product. Also compare estimates such as the Christmas cut-off date with the previous round, since they can move without a source (Dec 10 became Dec 1).
+
 - 2026-11-22 (scout): Amazon search summaries often show a "bought in past month" badge without tying it to one product (a 900+ on the hot cocoa page belonged to nobody in particular). Only count a badge that's named with its listing. Search for the brand name in the snippet (amazon.com only) to confirm it, and mark the rest weak.
 - 2026-11-22 (problem-solver): FMP's `historical-price-eod/full` prices are not dividend-adjusted; `historical-price-eod/dividend-adjusted` (fields `adjClose`, same volume) is in the free plan at the same cost of one request per ticker. `daily_screen.py` now uses it. Market holidays live in `tools/market/market_calendar.py` (through 2027); check it before any stock run.
 - 2026-11-22 (producer): Look at the mockup before describing the art, not only the hand-off text: the Artist's note said "a folded plaid blanket", but the picture shows a stack of three. Write length placeholders in the file, then fill them from the parser so the counts in the headings are never typed by hand.
