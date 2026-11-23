@@ -16,7 +16,7 @@ The Printify key is added by the network proxy.
 """
 import base64, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from fix_listings import PLAN, SHOP, ROOT, call, is_light, hoodie_copy
+from fix_listings import PLAN, SHOP, ROOT, call, is_light, hoodie_copy, listing
 
 APPLY = "--apply" in sys.argv
 
@@ -24,6 +24,11 @@ APPLY = "--apply" in sys.argv
 DRAFTS = {
     "holiday-cat-ornament-remover-hoodie": {"design": "holiday-cat-ornament-remover", "template": "6afe7383e4ef99a85e0e3703",
                                             "copy": hoodie_copy},  # template = book hoodie
+    # Dachshund (Boss, 2026-11-21 decisions): copied from the live book sweatshirt and book hoodie.
+    "dachshund-extra-long-cheer-sweatshirt": {"design": "dachshund-extra-long-cheer", "template": "6afe7383e2d8ea21e80fa55f",
+                                              "copy": lambda: listing("media/final/dachshund-extra-long-cheer-listing.md")},
+    "dachshund-extra-long-cheer-hoodie": {"design": "dachshund-extra-long-cheer", "template": "6afe7383e4ef99a85e0e3703",
+                                          "copy": lambda: listing("media/final/dachshund-extra-long-cheer-hoodie-listing.md")},
 }
 # Colors to add to a live product (owner approval needed; this file only prints the plan).
 ADD_COLORS = {"6afe724a0ef5a611d100eb27": {"from": "6afe7383e2d8ea21e80fa55f", "design": "holiday-cat-ornament-remover"}}
