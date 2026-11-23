@@ -2,6 +2,8 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-22 (problem-solver): FMP's `historical-price-eod/full` prices are not dividend-adjusted; `historical-price-eod/dividend-adjusted` (fields `adjClose`, same volume) is in the free plan at the same cost of one request per ticker. `daily_screen.py` now uses it. Market holidays live in `tools/market/market_calendar.py` (through 2027); check it before any stock run.
+- 2026-11-22 (producer): Look at the mockup before describing the art, not only the hand-off text: the Artist's note said "a folded plaid blanket", but the picture shows a stack of three. Write length placeholders in the file, then fill them from the parser so the counts in the headings are never typed by hand.
 - 2026-11-22 (finance-chief): Price a sample from the profit table (Printify cost plus Standard shipping: a sweatshirt is about $26.66 before tax), not from an old round figure; the "$20 a sample" note hid that two samples plus a week of ads go over the $50 cap.
 - 2026-11-22 (artist): Check designs at shirt size on every sale color before finishing: dark-ink steam lines vanished on black and navy, and pale-blue snowflakes faded on sport grey. Give such details a per-colorway color (`steam`, `snowDeep` in WAYS in build.js).
 - 2026-11-22 (profit-analyst): Put every fee case in the profit table as its own finished column (for example profit with Offsite Ads, per shipping setting) instead of a separate fee column; agents subtracted a buyer-pays fee from the free-shipping profit and got the wrong answer.

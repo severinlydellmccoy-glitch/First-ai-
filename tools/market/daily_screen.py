@@ -7,6 +7,7 @@ reads about a year of daily prices (Financial Modeling Prep, key added by the ne
   - volume ratio: latest volume / average of the 20 days before
   - RSI(14), Wilder's smoothing, and whether it rose since the day before
   - 50-day and 200-day simple moving averages
+Prices are dividend-adjusted (FMP's dividend-adjusted endpoint), so ex-dividend days don't look like drops.
 It flags stocks that pass all three owner-set tests and writes JSON plus a Markdown table.
 This is data, not advice: it never says buy or sell.
 
@@ -56,11 +57,15 @@ def universe(min_cap):
 
 def history(symbol, days=420):
     start = (dt.date.today() - dt.timedelta(days=days)).isoformat()
-    url = f"https://financialmodelingprep.com/stable/historical-price-eod/full?symbol={symbol}&from={start}"
+    # Dividend-adjusted closes (in the free plan; checked 2026-11-23 on COST), so a dividend's ex-date
+    # (for example Costco's $30 special dividend) doesn't show up as a price drop in RSI and moving averages.
+    # The latest close is the real close; only older days are scaled down. Same volume, same request count.
+    url = f"https://financialmodelingprep.com/stable/historical-price-eod/dividend-adjusted?symbol={symbol}&from={start}"
     data = json.loads(get(url, headers={"apikey": "proxy-injected"}))
     if isinstance(data, dict):
         data = data.get("historical") or []
-    bars = [(d["date"], float(d["close"]), float(d.get("volume") or 0)) for d in data if d.get("close") is not None]
+    close = lambda d: d.get("adjClose", d.get("close"))
+    bars = [(d["date"], float(close(d)), float(d.get("volume") or 0)) for d in data if close(d) is not None]
     bars.sort()
     return bars
 
@@ -161,7 +166,8 @@ def main():
     if skipped: md += ["", f"Not in FMP's free plan (known, skipped to save requests): {len(skipped)} companies, for example {', '.join(skipped[:12])}."]
     if unchecked: md += ["", f"Not checked today (daily request allowance used up): {len(unchecked)} companies: {', '.join(unchecked[:20])}{' …' if len(unchecked) > 20 else ''}"]
     if errors: md += ["", f"Couldn't check: {', '.join(errors[:20])}{' …' if len(errors) > 20 else ''}"]
-    md += ["", f"FMP requests used: {CALLS['fmp']} of {a.budget}."]
+    md += ["", "Prices are adjusted for dividends, so a dividend payout doesn't count as a price drop.",
+           f"FMP requests used: {CALLS['fmp']} of {a.budget}."]
     with open(os.path.join(a.out, f"{day}-screen.md"), "w") as f:
         f.write("\n".join(md) + "\n")
     print("\n".join(md))

@@ -7,7 +7,7 @@ Tick a box by changing `[ ]` to `[x]`, or tell Claude "done".
 ## Do next
 
 1. **Check two Etsy settings (5 minutes).** (a) Shop Manager > Settings > Delivery settings: is shipping free? *Recommendation:* the buyer pays shipping on the tote and candle. If you'd rather keep free shipping, tell Claude, and both get hidden (they lose money). (b) Shop Manager > Settings > Offsite Ads: *Recommendation:* opt out.
-2. **By Nov 25, tell Claude: "publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie."** The cat hoodie is ready now (Printify > My products > "Funny Christmas Cat Hoodie", about $18 a sale). The new dachshund design ("Extra Long Christmas Cheer") will be an unpublished draft by **Nov 24**. Listing fees are $0.20 each.
+2. **By Nov 25, tell Claude: "publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie."** The cat hoodie is ready now (Printify > My products > "Funny Christmas Cat Hoodie", about $18 a sale). The dachshund sweatshirt and hoodie ("Extra Long Christmas Cheer") are ready now too, as unpublished drafts (Printify > My products > "Dachshund Christmas Sweatshirt" and "Dachshund Christmas Hoodie"; same colors and prices as the book sweatshirt and hoodie). Listing fees are $0.20 each.
 3. **From Nov 23, after item 1: Etsy Ads at $3 a day**, only on the hoodies and sweatshirts. Shop Manager > Marketing > Etsy Ads. No ads on the tote or candle.
 
 Dates: Ads **Nov 23**. Dachshund drafts **Nov 24**. Your OK **by Nov 25**. **Black Friday Nov 27**, Cyber Monday Nov 30. Second book design ready for you **about Nov 29**. Last safe day for Christmas orders **about Dec 1**.
