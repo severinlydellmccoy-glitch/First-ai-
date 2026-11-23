@@ -1,0 +1,9 @@
+from: artist
+to: problem-solver
+type: handoff
+status: open
+created: 2026-11-23
+
+# Blanket-cocoa book design ready for a Printify draft
+
+art/final/book-lover-blanket-cocoa-chapter-for-light-shirts.png goes on white, sand, sport grey; ...-for-dark-shirts.png on black, navy (same colors as the live book sweatshirt). Set up as an unpublished draft (create_drafts.py) once the Producer's copy is in media/final/; publishing needs the owner's OK.

@@ -12,11 +12,12 @@ Tick a box by changing `[ ]` to `[x]`, or tell Claude "done".
 
 Dates: Ads **Nov 23**. Dachshund drafts **Nov 24**. Your OK **by Nov 25**. **Black Friday Nov 27**, Cyber Monday Nov 30. Second book design ready for you **about Nov 29**. Last safe day for Christmas orders **about Dec 1**.
 
-## Money ($25 to $50 a week, you approve every purchase)
+## Money ($25 to $50 a week, you approve every purchase; Finance Chief, `finance/2026-11-22-finance-decisions.md`)
 
-- [ ] Order 2 sample sweatshirts, cat and book (about $40). *Recommendation:* yes, for print quality and real photos. A dachshund sample (about $20) only if Etsy really requires real photos.
-- [ ] Ads stop rule: after 7 days, lower or stop if ads cost more than $3.49 per sweatshirt sale or $4.96 per hoodie sale. No Black Friday discount.
-- [ ] Every week, tell Claude your Etsy **views, favorites, sales and ad spend** (Shop Manager > Stats).
+- [ ] **This week (Nov 23 to 29): ads only, about $22** ($3 a day on hoodies and sweatshirts, plus up to $0.80 listing fees). *Recommendation:* yes, after the two settings in "Do next" item 1. No ads at all if shipping is free **and** Offsite Ads is on (a sweatshirt would make only $1.33).
+- [ ] **Week of Nov 30: one sample sweatshirt (about $27 with shipping, before tax)**, the design with the most sales or favorites (else the cat). *Recommendation:* yes; the second sample the week after. Two samples plus ads in one week would be about $66, over $50. If Etsy confirms the real-photo rule, the dachshund sample goes first.
+- [ ] Ads stop rules: never over $3 a day; on Nov 30, lower to $1 a day or stop if ads cost more than $3.49 per sweatshirt sale or $4.96 per hoodie sale; stop if no ad sales by Dec 6; stop ads on the Christmas designs after the Christmas cut-off. No Black Friday discount.
+- [ ] Every week, tell Claude your Etsy **views, favorites, sales, fees and ad spend** (Shop Manager > Stats, then Finances). Investing share: not set yet (no profit yet).
 
 ## Shop setup
 

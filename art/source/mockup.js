@@ -10,7 +10,7 @@ const tiles = [
   ["holiday-cat-ornament-remover", "light"], ["holiday-cat-ornament-remover", "forest"], ["holiday-cat-ornament-remover", "white"],
   ["holiday-cat-tree-inspection", "light"], ["holiday-cat-tree-inspection", "forest"],
   ["book-lover-snowed-in", "light"], ["book-lover-snowed-in", "navy"],
-  ["book-lover-blanket-cocoa-chapter", "light"], ["book-lover-blanket-cocoa-chapter", "navy"],
+  ...["black", "navy", "white", "light", "grey"].map(s => ["book-lover-blanket-cocoa-chapter", s]),
   ...["dachshund-extra-long-cheer", "dachshund-in-charge-of-lights"].flatMap(n => ["black", "navy", "white", "light", "grey"].map(s => [n, s])),
 ];
 // Optional 2nd argument: folder holding the design PNGs (default out/ next to this file). Tiles whose design is missing are skipped.

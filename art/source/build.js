@@ -18,8 +18,8 @@ const P = {
 };
 // Text colors per garment: light shirts get dark ink, dark shirts get light ink.
 const WAYS = {
-  light: { main: P.red, accent: P.treeDark, book: P.navy, bookAccent: P.burgundy, snow: P.snow, stroke: INK },
-  dark: { main: "#ffffff", accent: P.gold, book: P.cream, bookAccent: P.mustard, snow: "#ffffff", stroke: INK },
+  light: { main: P.red, accent: P.treeDark, book: P.navy, bookAccent: P.burgundy, snow: P.snow, stroke: INK, steam: INK, snowDeep: "#5f8fc4" },
+  dark: { main: "#ffffff", accent: P.gold, book: P.cream, bookAccent: P.mustard, snow: "#ffffff", stroke: INK, steam: "#ffffff", snowDeep: "#ffffff" },
 };
 
 /* ---------- Cat character (our own) ---------- */
@@ -101,10 +101,10 @@ function book(x, y, w, h, color, rot) {
     <rect x="${-w / 2 + 40}" y="${-h / 2 + 18}" width="${w * 0.45}" height="${h - 36}" rx="6" fill="none" stroke="${P.gold}" stroke-width="6"/>
   </g>`;
 }
-function mug(x, y, s, color) {
+function mug(x, y, s, color, steam = INK) {
   return `<g transform="translate(${x} ${y}) scale(${s})">
-    <path d="M -60 -380 q -40 -50 0 -100 q 40 -50 0 -100" fill="none" stroke="${INK}" stroke-width="12" stroke-linecap="round" opacity="0.8"/>
-    <path d="M 40 -370 q -40 -50 0 -100 q 40 -50 0 -100" fill="none" stroke="${INK}" stroke-width="12" stroke-linecap="round" opacity="0.8"/>
+    <path d="M -60 -380 q -40 -50 0 -100 q 40 -50 0 -100" fill="none" stroke="${steam}" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 40 -370 q -40 -50 0 -100 q 40 -50 0 -100" fill="none" stroke="${steam}" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
     <path d="M 160 -200 q 110 0 110 90 q 0 90 -110 90" fill="none" stroke="${INK}" stroke-width="58"/>
     <path d="M 160 -200 q 110 0 110 90 q 0 90 -110 90" fill="none" stroke="${color}" stroke-width="40"/>
     <path d="M -180 -260 L 180 -260 L 160 0 Q 155 30 120 30 L -120 30 Q -155 30 -160 0 Z" fill="${color}" stroke="${INK}" stroke-width="12" stroke-linejoin="round"/>
@@ -123,8 +123,20 @@ function blanket(x, y) {
     <path d="M -100 -60 l 0 80 M 0 -60 l 0 80 M 100 -60 l 0 80" stroke="${P.cream}" stroke-width="8" opacity="0.6"/>
   </g>`;
 }
-function openBook(x, y) {
-  return `<g transform="translate(${x} ${y})">
+// A folded, plaid blanket with a tassel fringe, so it reads as a blanket and not a book.
+function foldedBlanket(x, y, s) {
+  const layer = (yy, fill, line) => `
+    <rect x="-170" y="${yy}" width="340" height="95" rx="34" fill="${fill}" stroke="${INK}" stroke-width="10"/>
+    <path d="M -100 ${yy} l 0 95 M -30 ${yy} l 0 95 M 40 ${yy} l 0 95 M 110 ${yy} l 0 95 M -170 ${yy + 47} l 340 0" stroke="${line}" stroke-width="9" opacity="0.65"/>
+    <rect x="-170" y="${yy}" width="340" height="95" rx="34" fill="none" stroke="${INK}" stroke-width="10"/>`;
+  const fringe = (yy) => [12, 32, 52, 72].map(d => `<path d="M 168 ${yy + d} l 34 ${d % 40 ? 6 : -4}" stroke="${INK}" stroke-width="16" stroke-linecap="round"/><path d="M 168 ${yy + d} l 34 ${d % 40 ? 6 : -4}" stroke="${P.cream}" stroke-width="7" stroke-linecap="round"/>`).join("");
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+    ${fringe(-95)}${fringe(-190)}${fringe(-285)}
+    ${layer(-95, P.burgundy, P.cream)}${layer(-190, P.mustard, P.burgundy)}${layer(-285, P.teal, P.cream)}
+  </g>`;
+}
+function openBook(x, y, s = 1) {
+  return `<g transform="translate(${x} ${y}) scale(${s})">
     <path d="M 0 -120 Q -90 -170 -190 -140 L -190 30 Q -90 0 0 50 Z" fill="${P.cream}" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>
     <path d="M 0 -120 Q 90 -170 190 -140 L 190 30 Q 90 0 0 50 Z" fill="#fff" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>
     <path d="M -160 -100 q 70 -20 130 10 M -160 -60 q 70 -20 130 10 M -160 -20 q 70 -20 130 10 M 30 -90 q 60 -30 130 -10 M 30 -50 q 60 -30 130 -10 M 30 -10 q 60 -30 130 -10" fill="none" stroke="${INK}" stroke-width="5" opacity="0.5"/>
@@ -253,14 +265,25 @@ const DESIGNS = {
     ${text("A GOOD BOOK", 750, 1620, 196, "DM Serif Display", c.book, { weight: 400, ls: 6 })}
     <path d="M 330 1690 L 1170 1690" stroke="${c.bookAccent}" stroke-width="10" stroke-linecap="round"/>`,
 
+  // Option A (not picked): the three icons larger, in one row sitting right on top of the words.
+  "book-lover-blanket-cocoa-chapter-a": (c) => `
+    ${[[230, 470, 1.3], [1270, 450, 1.5], [470, 300, 0.8], [1000, 300, 0.9]].map(([x, y, s]) => snowflake(x, y, s, c.snowDeep)).join("")}
+    ${foldedBlanket(258, 960, 1.08)}
+    ${mug(680, 960, 1.2, P.red, c.steam)}
+    ${openBook(1255, 900, 1.05)}
+    ${text("Blanket.", 750, 1260, 245, "DM Serif Display", c.book, { weight: 400 })}
+    ${text("Cocoa.", 750, 1505, 245, "DM Serif Display", c.book, { weight: 400 })}
+    ${text("chapter twelve.", 750, 1720, 215, "Caveat", c.bookAccent)}`,
+
+  // Picked option (was option B, 2026-11-22): a big mug in the middle, the blanket and the open book tucked in low on each side.
   "book-lover-blanket-cocoa-chapter": (c) => `
-    ${blanket(330, 760)}
-    ${mug(750, 820, 0.85, P.teal)}
-    ${openBook(1170, 750)}
-    ${[[240, 420, 0.9], [1270, 430, 1.1], [760, 340, 0.7]].map(([x, y, s]) => snowflake(x, y, s, c.snow)).join("")}
-    ${text("Blanket.", 750, 1150, 210, "DM Serif Display", c.book, { weight: 400 })}
-    ${text("Cocoa.", 750, 1370, 210, "DM Serif Display", c.book, { weight: 400 })}
-    ${text("chapter twelve.", 750, 1590, 200, "Caveat", c.bookAccent)}`,
+    ${[[200, 380, 1.2], [1300, 360, 1.4], [330, 620, 0.8], [1180, 600, 0.9]].map(([x, y, s]) => snowflake(x, y, s, c.snowDeep)).join("")}
+    ${mug(720, 930, 1.45, P.teal, c.steam)}
+    ${foldedBlanket(268, 990, 0.95)}
+    ${openBook(1215, 990, 1.0)}
+    ${text("Blanket.", 750, 1270, 245, "DM Serif Display", c.book, { weight: 400 })}
+    ${text("Cocoa.", 750, 1510, 245, "DM Serif Display", c.book, { weight: 400 })}
+    ${text("chapter twelve.", 750, 1720, 215, "Caveat", c.bookAccent)}`,
 
   "dachshund-extra-long-cheer": (c) => `
     ${[[200, 560, 1.1], [1300, 520, 1.3], [330, 760, 0.7], [1180, 760, 0.8], [760, 520, 0.6]].map(([x, y, s]) => snowflake(x, y, s, c.snow)).join("")}

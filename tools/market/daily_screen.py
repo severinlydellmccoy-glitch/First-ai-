@@ -101,7 +101,14 @@ def main():
     ap.add_argument("--out", default="investing/daily")
     ap.add_argument("--budget", type=int, default=240, help="most FMP requests to use (the free plan allows 250 a day)")
     ap.add_argument("--limit", type=int, default=0, help="only look at the largest N companies (0 = all)")
+    ap.add_argument("--force", action="store_true", help="run even when the market is closed today")
     a = ap.parse_args()
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import market_calendar as mc  # holiday list: on a closed day, stop before any data request
+    st, why = mc.status(mc.today_central())
+    if st == "closed" and why != "weekend" and not a.force:
+        raise SystemExit(f"Market closed today ({why}): no screen, no FMP requests. Run tools/market/market_calendar.py --write-note.")
+    if st == "unknown": print(f"Note: {why}", file=sys.stderr)
     uni = universe(a.min_cap)
     if a.limit: uni = uni[: a.limit]
     os.makedirs(a.out, exist_ok=True)

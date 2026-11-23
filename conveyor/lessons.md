@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-22 (artist): Check designs at shirt size on every sale color before finishing: dark-ink steam lines vanished on black and navy, and pale-blue snowflakes faded on sport grey. Give such details a per-colorway color (`steam`, `snowDeep` in WAYS in build.js).
 - 2026-11-22 (profit-analyst): Put every fee case in the profit table as its own finished column (for example profit with Offsite Ads, per shipping setting) instead of a separate fee column; agents subtracted a buyer-pays fee from the free-shipping profit and got the wrong answer.
 - 2026-11-22 (finance-operator): Printify has two shops (29819127 Etsy, 29819029 disconnected); check orders in both, so an order on the wrong shop isn't missed. Ads at $3 a day (about $21) plus $40 of samples goes over the $50 weekly cap, so schedule them in different weeks.
 - 2026-11-22 (analyst): The cycle runs at 9:17 pm Central, which is already the next day in UTC, so `conveyor.py` stamps items (and file names) one day ahead of the Central date. When judging "open 2 or more days", subtract a day from the item's `created:` date, or count from the dispatch that created it.
