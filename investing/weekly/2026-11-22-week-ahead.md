@@ -77,6 +77,8 @@ Holiday hours are from the [NYSE holiday calendar](https://www.nyse.com/markets/
 5. **Health insurers are under pressure from a proposed Medicare audit rule.** UnitedHealth fell about 20% from Monday to Thursday after Medicare's agency (CMS) proposed the rule on Nov 16. It bounced 2.9% on Friday. The rule is a proposal, open for public comment until Jan 19, 2027 (see the Nov 19 and Nov 20 daily reports).
 6. **Anthropic's stock market debut.** Anthropic (ANT) listed on Nov 19, and reports say it gave back much of its first-day gain on Friday. It's outside FMP's free plan, so it isn't screened. This report is written by Claude, an Anthropic AI, so read that mention with that in mind.
 
+**Checked on Monday Nov 23** (see `investing/daily/2026-11-23-report.md`). Confirmed: the S&P 500's weekly fall (FMP's SPY prices show -8.56%, and SPY is 11.5% below its Oct 6 high, which counts as a correction) and Huang's resignation (reported by many separate outlets). The Friday NVIDIA report turned out to be from Reuters, and the SEC and NVIDIA still haven't confirmed it. Still unconfirmed: the chip index's -10.7% on Friday, the Nasdaq's -10.0% week, and the Dow's "worst week since March 2020".
+
 ## What the terms mean
 
 - **Volume** is how many shares changed hands; "1.5×" means half again as much as a normal day, which usually means news. **RSI** (0 to 100) measures how strongly the price has risen or fallen over 14 days; 50 to 70 is a steady rise, and above 70 is a very fast one ("overheated").
