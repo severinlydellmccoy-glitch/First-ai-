@@ -10,7 +10,7 @@ Tick a box by changing `[ ]` to `[x]`, or tell Claude "done".
 2. **By Nov 25, tell Claude: "publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie."** All of them are ready now as unpublished drafts. To look first: Printify > My products > "Funny Christmas Cat Hoodie", "Dachshund Christmas Sweatshirt" and "Dachshund Christmas Hoodie". Listing fees are $0.20 each.
 3. **From Nov 23, after item 1: Etsy Ads at $3 a day**, only on the hoodies and sweatshirts. Shop Manager > Marketing > Etsy Ads. No ads on the tote or candle.
 
-Dates: Ads **Nov 23**. Your publish OK **by Nov 25**. **Black Friday Nov 27.** Second book design drafts ready **Nov 25**, your OK **by Nov 29**. Cyber Monday **Nov 30**. Last safe day for Christmas orders **about Dec 1**. Everyday winter cat about **Dec 8**.
+Dates: Ads **Nov 23**. Your publish OK **by Nov 25**. **Black Friday Nov 27.** Second book design drafts ready (done Nov 23), your OK **by Nov 29**. Cyber Monday **Nov 30**. Last safe day for Christmas orders **about Dec 1**. Everyday winter cat about **Dec 8**.
 
 ## Money ($25 to $50 a week, you approve every purchase; Finance Chief, `finance/2026-11-22-finance-decisions.md`)
 
@@ -21,7 +21,7 @@ Dates: Ads **Nov 23**. Your publish OK **by Nov 25**. **Black Friday Nov 27.** S
 
 ## Shop setup
 
-- [ ] By Nov 29: approve the second book design ("Blanket. Cocoa. chapter twelve."), a separate "publish" message once Claude says the drafts are up (about Nov 25).
+- [ ] **By Nov 29: tell Claude "publish the blanket cocoa book sweatshirt and hoodie."** The drafts are up now (made Nov 23, unpublished). To look first: Printify > My products > "Book Lover Sweatshirt, Blanket Cocoa Chapter Twelve" and "Book Lover Hoodie, Blanket Cocoa Chapter Twelve". Listing fees are $0.20 each. This is a separate message from the Nov 25 one.
 - [ ] Post the Pinterest pins, 1 to 2 a day: `media/final/pinterest/` (10 pins, with steps).
 - [ ] Finish Etsy payments and billing (`sales/setup-checklist.md`, step 2).
 - [ ] Check Etsy's help pages: does every listing need a real, unedited photo? Also Printify's holiday shipping cut-off date.

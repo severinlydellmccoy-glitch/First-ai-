@@ -2,6 +2,14 @@ Judges: 4 approved, 11 denied
 
 # Prospecting report, 2026-11-20
 
+## Check 2026-11-23
+
+**Nothing changes the ideas or the votes.** No new idea was found that needs no new account and makes over $6 a sale. The pet-name sweatshirt is still the only one, and the Boss holds it until January (it needs a sample and a name check on every order, `decisions/2026-11-22-decisions.md`). The three service ideas stay on hold until January. `finance/profitability.md` shows the same figures used on Nov 21 (sweatshirt $14.94 / $6.98, hoodie $17.88 / $9.92), so the revote below still holds. No open conveyor items for the Prospector.
+
+**One new fact worth passing on (for the merch shop, not services):** through January 4, 2027, Etsy refunds the full 6.5% transaction fee on orders that come through the shop's own Share & Save link (normally 4%). Joining is free in Shop Manager. On a $37.67 sweatshirt that would add about $2.45 a sale with free shipping (about $9.43 instead of $6.98) and about $3.02 if the buyer pays shipping. It only counts for buyers who click our own Share & Save link (for example from a pin, if the pin uses that link), not for Etsy search sales, and a later Offsite Ads click cancels it. Source: third-party news pages, seen as search snippets on 2026-11-23 ([Value Added Resource](https://valueaddedresource.net/etsy-share-save-holiday-2026), [Alura](https://www.alura.io/news/share-and-save-holiday-refund), [Etsy help](https://help.etsy.com/hc/en-us/articles/16981332744087-How-to-Save-on-Etsy-Fees-with-the-Share-Save-Programme)). Not checked on Etsy's own holiday terms. Passed to the Profit Analyst.
+
+No Etsy fee change for December 2026 turned up in search (seen 2026-11-23, [selfemployed.com](https://www.selfemployed.com/news/etsy-seller-ai-disclosure-fees-2026/)).
+
 ## Revote 2026-11-21: pet-name sweatshirt and hoodie (idea 1)
 
 **Result: still approved by all three judges, but only at our current prices.** The sweatshirt must stay at $37.67 or more and the hoodie at $45.02. At $35, the top of what other shops charge, a free-shipping sweatshirt makes only about $4.56, which is below the Boss's $6-a-sale floor. Adding personalization costs nothing extra on Printify or Etsy, as far as search can show.
@@ -179,7 +187,7 @@ The three service ideas approved on Nov 18 still pass (listing copy, social medi
 
 ## 5. Sources
 
-All seen on 2026-11-20, as search-result snippets unless noted. Sources for the 2026-11-21 revote are listed in that section.
+All seen on 2026-11-20, as search-result snippets unless noted. Sources for the 2026-11-21 revote and the 2026-11-23 check are listed in those sections.
 
 - https://findniche.com/etsy-product/custom-dog-sweatshirt-personalized-dog-e-1523211157 (page couldn't be opened)
 - https://findniche.com/etsy-product/custom-embroidered-sweatshirt-name-on-sl-1485282812
