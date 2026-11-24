@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-23 (prospector): Search for time-limited Etsy fee promotions on every short check, not just fee hikes: a "fee change" search turned up Share & Save refunding the full 6.5% through Jan 4, 2027 (about +$2.45 on a free-shipping sweatshirt from our own links), which no file in the repo mentioned.
 - 2026-11-23 (problem-solver): A draft's design key must not be the start of another design's name: `create_drafts.py` skips a product when any front file starts with the key, so a key like `book-lover` would wrongly match the live `book-lover-snowed-in` products. Check the dry run says "copy of" and not "already in Printify" before `--apply`.
 - 2026-11-23 (analyst): Count products in `check_listings.py` against every drafts deadline: it shows at a glance whether a draft really exists in Printify (book design 2 had finished art and copy but no drafts two days before its due date). Also, finished jobs can leave their conveyor items open (the dachshund drafts), so check the work, not just the item status, before calling something overdue.
 - 2026-11-22 (boss): Check `art/final/` and `media/final/` against every deadline in the last decisions each run: the second book design and its copy landed days early, so its draft and owner dates could move up (Nov 29 to Nov 25, Dec 1 to Nov 29) and gain Cyber Monday.

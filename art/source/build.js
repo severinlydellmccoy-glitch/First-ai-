@@ -18,8 +18,8 @@ const P = {
 };
 // Text colors per garment: light shirts get dark ink, dark shirts get light ink.
 const WAYS = {
-  light: { main: P.red, accent: P.treeDark, book: P.navy, bookAccent: P.burgundy, snow: P.snow, stroke: INK, steam: INK, snowDeep: "#5f8fc4" },
-  dark: { main: "#ffffff", accent: P.gold, book: P.cream, bookAccent: P.mustard, snow: "#ffffff", stroke: INK, steam: "#ffffff", snowDeep: "#ffffff" },
+  light: { main: P.red, accent: P.treeDark, book: P.navy, bookAccent: P.burgundy, snow: P.snow, stroke: INK, steam: INK, snowDeep: "#5f8fc4", winter: "#1d3557", winterAccent: "#23706c" },
+  dark: { main: "#ffffff", accent: P.gold, book: P.cream, bookAccent: P.mustard, snow: "#ffffff", stroke: INK, steam: "#ffffff", snowDeep: "#ffffff", winter: "#ffffff", winterAccent: P.gold },
 };
 
 /* ---------- Cat character (our own) ---------- */
@@ -222,6 +222,63 @@ function present(x, y, w, h, color, ribbon) {
   </g>`;
 }
 
+
+/* ---------- Everyday winter pieces (no Christmas symbols) ---------- */
+// A knit hat that sits between the cat's ears (cat head coordinates), with a pompom.
+function knitHat(color, band, pom) {
+  return `
+  <path d="M -118 -672 Q -122 -800 -10 -808 Q 102 -800 98 -672 Z" fill="${color}" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M -70 -790 l 0 110 M -10 -805 l 0 125 M 50 -790 l 0 110" stroke="${INK}" stroke-width="5" opacity="0.35"/>
+  <rect x="-132" y="-702" width="244" height="58" rx="26" fill="${band}" stroke="${INK}" stroke-width="10"/>
+  <path d="M -95 -698 l 0 50 M -55 -698 l 0 50 M -15 -698 l 0 50 M 25 -698 l 0 50 M 65 -698 l 0 50" stroke="${INK}" stroke-width="5" opacity="0.35"/>
+  <circle cx="-10" cy="-838" r="44" fill="${pom}" stroke="${INK}" stroke-width="10"/>
+  <path d="M -30 -858 q 10 -8 22 -4" fill="none" stroke="${INK}" stroke-width="5" opacity="0.4" stroke-linecap="round"/>`;
+}
+// A striped scarf around the cat's neck (cat body coordinates), with one end hanging down the front.
+function catScarf(c1, c2) {
+  const wrap = "M -175 -395 Q -10 -320 160 -395";
+  return `
+  <path d="M 70 -375 Q 95 -290 85 -175" fill="none" stroke="${INK}" stroke-width="96" stroke-linecap="round"/>
+  <path d="M 70 -375 Q 95 -290 85 -175" fill="none" stroke="${c1}" stroke-width="76" stroke-linecap="round"/>
+  <path d="M 52 -300 l 76 0 M 50 -240 l 76 0" stroke="${c2}" stroke-width="22"/>
+  <g stroke="${INK}" stroke-width="16" stroke-linecap="round"><path d="M 60 -140 l -4 30 M 85 -138 l 0 32 M 110 -140 l 4 30"/></g>
+  <g stroke="${c1}" stroke-width="7" stroke-linecap="round"><path d="M 60 -140 l -4 30 M 85 -138 l 0 32 M 110 -140 l 4 30"/></g>
+  <path d="${wrap}" fill="none" stroke="${INK}" stroke-width="100" stroke-linecap="round"/>
+  <path d="${wrap}" fill="none" stroke="${c1}" stroke-width="80" stroke-linecap="round"/>
+  <path d="${wrap}" fill="none" stroke="${c2}" stroke-width="80" stroke-dasharray="26 74" stroke-dashoffset="-30"/>`;
+}
+// Grumpy eyebrows for the cat head.
+const grumpyBrows = () => `<path d="M -128 -632 L -40 -610 M 20 -610 L 108 -632" stroke="${INK}" stroke-width="14" stroke-linecap="round"/>`;
+// A snow drift the cat sits in (ground at y = 0, cat body coordinates).
+const snowDrift = () => `<path d="M -400 20 Q -360 -40 -270 -30 Q -200 -75 -110 -38 Q -20 -70 60 -36 Q 160 -80 250 -34 Q 350 -50 400 20 Q 0 50 -400 20 Z" fill="#ffffff" stroke="${INK}" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M -250 -5 q 40 -12 80 0 M 120 0 q 40 -12 80 0" fill="none" stroke="#8fb8de" stroke-width="8" stroke-linecap="round"/>`;
+// A plaid blanket pattern for SVG fills.
+const plaidDefs = (id) => `<defs><pattern id="${id}" patternUnits="userSpaceOnUse" width="140" height="140">
+  <rect width="140" height="140" fill="${P.mustard}"/>
+  <rect x="0" width="48" height="140" fill="${P.burgundy}" opacity="0.55"/><rect y="0" width="140" height="48" fill="${P.burgundy}" opacity="0.55"/>
+  <path d="M 96 0 l 0 140 M 0 96 l 140 0" stroke="${P.cream}" stroke-width="8" opacity="0.8"/></pattern></defs>`;
+// The cat wrapped in a blanket hood with only its face showing (cat head coordinates, ground at y = 0).
+function blanketHood(fillId) {
+  const outer = "M -440 0 C -455 -380 -330 -770 -10 -790 C 310 -770 435 -380 420 0 Q -10 40 -440 0 Z";
+  const hole = "M -212 -525 a 202 186 0 1 0 404 0 a 202 186 0 1 0 -404 0 Z";
+  return `
+  <path d="M -10 -330 C -200 -300 -330 -200 -350 0" fill="none" stroke="${INK}" stroke-width="10"/>
+  <path d="${outer} ${hole}" fill="url(#${fillId})" fill-rule="evenodd" stroke="${INK}" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M -10 -340 C -190 -300 -300 -200 -320 6" fill="none" stroke="${INK}" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="-10" cy="-525" rx="190" ry="174" fill="none" stroke="${INK}" stroke-width="50"/>
+  <ellipse cx="-10" cy="-525" rx="190" ry="174" fill="none" stroke="${P.cream}" stroke-width="30"/>`;
+}
+// A small handheld microphone with no markings (x, y = top of the mic head).
+function microphone(x, y, rot, s = 1) {
+  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">
+    <path d="M -22 70 L -14 230 Q 0 246 14 230 L 22 70 Z" fill="#3b3b40" stroke="${INK}" stroke-width="9" stroke-linejoin="round"/>
+    <rect x="-34" y="58" width="68" height="26" rx="8" fill="#6b6b72" stroke="${INK}" stroke-width="8"/>
+    <circle cx="0" cy="20" r="52" fill="#b9bec4" stroke="${INK}" stroke-width="10"/>
+    <path d="M -40 0 L 40 0 M -48 20 L 48 20 M -40 40 L 40 40 M -20 -26 L -20 66 M 0 -32 L 0 72 M 20 -26 L 20 66" stroke="${INK}" stroke-width="4" opacity="0.45"/>
+    <ellipse cx="-20" cy="0" rx="10" ry="16" fill="#fff" opacity="0.6"/>
+  </g>`;
+}
+
 /* ---------- The designs ---------- */
 const text = (str, x, y, size, family, color, opts = {}) =>
   `<text x="${x}" y="${y}" text-anchor="middle" font-family="${family}" font-weight="${opts.weight || 700}" font-size="${size}" letter-spacing="${opts.ls || 0}" fill="${color}" ${opts.stroke ? `stroke="${opts.stroke}" stroke-width="${opts.sw || 10}" paint-order="stroke" stroke-linejoin="round"` : ""}>${str}</text>`;
@@ -309,7 +366,40 @@ const DESIGNS = {
     ${[[1300, 560, 1.0], [700, 520, 0.7], [1080, 640, 0.6]].map(([x, y, s]) => snowflake(x, y, s, c.snow)).join("")}
     ${text("IN CHARGE OF", 750, 330, 150, "Fredoka", c.accent, { ls: 12, stroke: c.stroke, sw: 9 })}
     ${text("THE LIGHTS", 750, 1530, 220, "Fredoka", c.main, { stroke: c.stroke, sw: 12 })}`,
+
+  // Everyday winter cat, option A (2026-11-23): our cat in a knit hat and scarf, sitting grumpily in the snow. No Christmas words or symbols.
+  "winter-cat-snow-complaint": (c) => `
+    ${[[200, 470, 1.2], [1300, 450, 1.4], [330, 760, 0.8], [1180, 760, 0.9], [230, 1080, 1.0], [1290, 1080, 1.1], [520, 560, 0.6], [990, 540, 0.65]].map(([x, y, s]) => snowflake(x, y, s, c.snowDeep)).join("")}
+    <g transform="translate(750 1330) scale(0.95)">
+      ${catBody(false)}${catHead()}${grumpyBrows()}
+      ${knitHat(P.teal, P.cream, P.cream)}
+      ${catScarf(P.mustard, P.burgundy)}
+      ${snowDrift()}
+    </g>
+    ${text("I HAVE FILED A", 750, 300, 140, "Fredoka", c.winterAccent, { ls: 12, stroke: c.stroke, sw: 8 })}
+    ${text("COMPLAINT", 750, 1575, 236, "Fredoka", c.winter, { stroke: c.stroke, sw: 12 })}
+    ${text("about the snow", 750, 1755, 200, "Caveat", c.winterAccent)}`,
+
+  // Everyday winter cat, option B (2026-11-23): our cat wrapped in a plaid blanket hood, holding a microphone, cocoa beside it.
+  "winter-cat-under-the-blanket": (c) => `
+    ${plaidDefs("plaid")}
+    ${[[200, 520, 1.2], [1300, 500, 1.4], [300, 800, 0.8], [1220, 790, 0.9], [170, 1080, 0.9], [1340, 1040, 0.8]].map(([x, y, s]) => snowflake(x, y, s, c.snowDeep)).join("")}
+    <g transform="translate(740 1300)">
+      ${catHead()}
+      ${blanketHood("plaid")}
+      ${microphone(-150, -390, -18, 0.95)}
+      <circle cx="-200" cy="-180" r="50" fill="${P.cream}" stroke="${INK}" stroke-width="9"/>
+      <path d="M -225 -205 l 18 -6 M -232 -178 l 18 -2" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="-60" cy="-8" rx="56" ry="32" fill="${P.cream}" stroke="${INK}" stroke-width="9"/>
+      <ellipse cx="70" cy="-8" rx="56" ry="32" fill="${P.cream}" stroke="${INK}" stroke-width="9"/>
+      <path d="M -68 -8 l 0 -14 M -52 -8 l 0 -14 M 62 -8 l 0 -14 M 78 -8 l 0 -14" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    ${mug(1265, 1300, 0.6, P.teal, c.steam)}
+    ${text("reporting live", 750, 330, 210, "Caveat", c.winterAccent)}
+    ${text("FROM UNDER", 750, 1545, 210, "Fredoka", c.winter, { stroke: c.stroke, sw: 12 })}
+    ${text("THE BLANKET", 750, 1755, 210, "Fredoka", c.winter, { stroke: c.stroke, sw: 12 })}`,
 };
+
 
 
 const svg = (name, way) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1800" width="1500" height="1800">
