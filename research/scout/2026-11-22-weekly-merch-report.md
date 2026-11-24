@@ -6,11 +6,11 @@ A short recheck asked for by the Underboss. The judge count above is unchanged: 
 
 **1. Everyday winter cat (Idea 4): the 700+ badge did not hold.**
 
-- The same Lytiarul everyday cat sweatshirt now shows **100+ bought in past month** (and a separate "50+ bought in past week"), not 700+ ([Amazon, funny cat sweatshirts for women](https://www.amazon.com/Funny-Cat-Sweatshirts-Women/s?k=Funny+Cat+Sweatshirts+For+Women); [Lytiarul listing](https://www.amazon.com/clp/B0D9BP6KVZ), seen 2026-11-23). The FRYAID black-cat sweatshirt shows 50+ ([listing](https://www.amazon.com/FRYAID-Womens-Sweatshirt-Pullover-Lightweight/dp/B0BLSNNGK1)). Strength: **medium** (named with their listings).
+- The 700+ didn't come back. A search limited to Amazon now shows a Lytiarul everyday cat sweatshirt (same seller; the summary didn't say which variant, so it may not be the exact Nov 22 listing) at **100+ bought in past month**, and another Lytiarul listing at "50+ bought in past week" ([Amazon, funny cat sweatshirts for women](https://www.amazon.com/Funny-Cat-Sweatshirts-Women/s?k=Funny+Cat+Sweatshirts+For+Women); [Lytiarul lightweight listing](https://www.amazon.com/clp/B0D9BP6KVZ), seen 2026-11-23). The FRYAID black-cat sweatshirt shows 50+ ([listing](https://www.amazon.com/FRYAID-Womens-Sweatshirt-Pullover-Lightweight/dp/B0BLSNNGK1)). Strength: **medium** (named by seller).
 - The same search named two year-round sarcastic black-cat hoodies with higher badges: "Cat Judging You Silently" **300+** and "Retro Ew People" black cat **500+** ([Amazon, cat sweatshirts for women](https://www.amazon.com/cat-sweatshirts-women/s?k=cat+sweatshirts+for+women), seen 2026-11-23). A second search found the listings ([example](https://www.amazon.com/Cat-Judging-Silently-Funny-Pullover/dp/B0FTW6NBJ2); [example](https://www.amazon.com/People-Cat-Funny-Introvert-Pullover/dp/B0B4P734SC)), but it didn't show the counts again. Strength: **medium leaning weak**. Both slogans belong to other sellers, so we can't use them.
 - **What this means:** cat designs without Christmas words do sell all year, but the best-selling ones are **attitude jokes** (a cat judging people, a cat who doesn't like people), not winter scenes. Nothing found proves that a *winter* cat in particular sells. Advice for the Artist: keep our own cat, give it an attitude joke in our own words, and use winter as the setting, not the joke.
 - **Re-vote (all three judges, from scratch):**
-  - Demand: **approve.** Several Amazon cat listings without Christmas words, each shown next to its badge (100+, 50+, plus 300+ and 500+ that weren't confirmed twice), agree that cat designs sell outside Christmas; the 700+ is withdrawn and not counted.
+  - Demand: **approve.** Several Amazon cat listings without Christmas words, each named with its badge (100+, 50+, plus 300+ and 500+ that weren't confirmed twice), agree that cat designs sell outside Christmas; the 700+ is withdrawn and not counted.
   - Safety: **approve.** Our own cat and our own words; don't use "Judging You Silently", "Ew, People", "Grumpy Cat" or any other seller's slogan.
   - Profit: **approve.** From `finance/profitability.md` (read 2026-11-23): sweatshirt $14.94 if the buyer pays shipping or $6.98 with free shipping, hoodie $17.88 or $9.92. That's still $14.54/$6.58 and $17.48/$9.52 after Printify's $0.40 US holiday surcharge (below), all above the $6 floor (lowest safe free-shipping sweatshirt price about $36.60).
 - **Evidence strength:** **medium leaning weak** (same grade as before, on a lower and more honest base). The Boss's condition ("finals by Dec 3 only if the recheck holds") is met for the *theme*. The 700+ figure is not met.
@@ -26,7 +26,7 @@ A short recheck asked for by the Underboss. The judge count above is unchanged: 
 
 **4. The two vote fixes** (also corrected in place below):
 
-- Idea 1, Demand: now relies only on the Nov 20 badges (800+ and 600+), which were each shown with their listing. The untied 400+ is no longer counted.
+- Idea 1, Demand: no longer counts the untied 400+. It now rests on the Nov 20 badges (800+ and 600+, given for two separate sweatshirts but not named by listing, so medium), plus today's named everyday cat badges.
 - Idea 3, Profit: now gives both shipping cases.
 
 ---
@@ -69,7 +69,7 @@ The shop's floor is $6 a sale. The lowest sweatshirt price that still clears it 
   - A gingerbread cat sweater was featured on Woot on Nov 17, 2026 ([Woot](https://forums.woot.com/t/gingerbread-cat-sweater/2691244.md), seen 2026-11-22). That's one more sign, a weak one.
 - **Evidence strength:** **Medium.** Amazon purchase badges on several listings over two rounds, but this round's are lower and not tied to one product.
 - **Votes:**
-  - Demand: **approve** (corrected 2026-11-23). Two cat Christmas sweatshirts each showed their own badge on Nov 20 (800+ and 600+), and today's 400+ isn't counted because it couldn't be tied to one listing.
+  - Demand: **approve** (corrected 2026-11-23). On Nov 20, two separate cat Christmas sweatshirts showed 800+ and 600+ (not named by listing, so medium), and the named everyday cat badges on Nov 23 (100+ to 500+) back up cat demand; today's untied 400+ isn't counted.
   - Safety: **approve.** Our own cat and our own jokes. Don't use "Grumpy Cat" wording or the smoking-cat meme.
   - Profit: **approve.** $14.94 a sweatshirt and $17.88 a hoodie (buyer pays shipping), or $6.98 and $9.92 with free shipping, all above $6.
 
@@ -131,7 +131,7 @@ Amazon couldn't be opened directly. These come from search summaries (results li
 | Product type | Theme | Signal | Strength | Source (seen 2026-11-22) |
 | --- | --- | --- | --- | --- |
 | Hoodie (Best Sellers list) | Gingerbread "bakery" Christmas sweatshirt at #2 in Women's Novelty Hoodies; #1 a branded cartoon-dog hoodie; half-zip Christmas #12, vintage Santa #17 | Official ranking, snapshot date unknown | Medium | [Amazon Best Sellers](https://www.amazon.com/Best-Sellers-Women's-Novelty-Hoodies/zgbs/fashion/9056928011) |
-| Sweatshirt | Everyday women's cat graphic sweatshirt | 700+ bought in past month (100+ on the 2026-11-23 recheck) | Medium | [Amazon](https://www.amazon.com/Funny-Cat-Sweatshirts-Women/s?k=Funny+Cat+Sweatshirts+For+Women) |
+| Sweatshirt | Everyday women's cat graphic sweatshirt | 700+ bought in past month (not found again on the 2026-11-23 recheck; a Lytiarul listing showed 100+) | Medium | [Amazon](https://www.amazon.com/Funny-Cat-Sweatshirts-Women/s?k=Funny+Cat+Sweatshirts+For+Women) |
 | Sweatshirt | Funny cat Christmas sweater | 400+ on one listing, 50+ on others (not tied to a product) | Medium | [Amazon](https://www.amazon.com/funny-cat-christmas-sweater-women/s?k=funny+cat+christmas+sweater+women) |
 | Sweatshirt | Generic women's "ugly Christmas sweater" (not cat) | 300+ | Medium | same page |
 | Sweatshirt | Bookish Christmas | 200+ and 50+ (not tied to a product) | Medium | [Amazon](https://www.amazon.com/book-christmas-sweater/s?k=book+christmas+sweater) |
@@ -183,7 +183,7 @@ Amazon couldn't be opened directly. These come from search summaries (results li
 | --- | --- | --- | --- |
 | **Black Friday to Cyber Monday (Nov 27 to 30)** | Biggest weekend before the cut-off. Everything we can sell this season has to be live by Nov 25 to 26 | Calendar fact | [TikTok newsroom](https://newsroom.tiktok.com/whats-shaping-the-holiday-season-on-tiktok-shop?lang=en) |
 | **Christmas cut-off (about Dec 1, our estimate; Dec 8 per the 2026-11-23 recheck)** | After it, Christmas designs mostly stop selling. Winter designs without Christmas words keep going | Estimate (sourced on recheck) | [Printify status](https://printify.com/network-fulfillment-status/) |
-| **Everyday cat and book designs** | Non-holiday cat (700+, 100+ on recheck) and bookish (100+) sweatshirts sell alongside the holiday ones, so they're a way to keep selling in January | Medium | Amazon links above |
+| **Everyday cat and book designs** | Non-holiday cat (700+ on Nov 22; 100+ to 500+ on the recheck) and bookish (100+) sweatshirts sell alongside the holiday ones, so they're a way to keep selling in January | Medium | Amazon links above |
 | **Gingerbread** | #2 on Amazon's Women's Novelty Hoodies list, with many embroidered "bakery" versions on Amazon, Target and Walmart. Too late for us this year; worth planning for next October | Medium | [Amazon Best Sellers](https://www.amazon.com/Best-Sellers-Women's-Novelty-Hoodies/zgbs/fashion/9056928011); [Target](https://www.target.com/p/embroidered-gingerbread-man-women-s-graphic-hoodie/-/A-1006797670) |
 | **Books plus cocoa plus snow** | Competitors pair reading with cocoa and snow days, the same idea as our "Blanket. Cocoa." design | Medium | [Amazon](https://www.amazon.com/Reading-Cozy-Winter-Books-Sweatshirt/dp/B0HMCML6QP) |
 | **Dec 3 "sweater day" on TikTok** | Free chance for the Producer to post our sweatshirts | Weak (yearly pattern) | [Daily Dot](https://dailydot.com/memes/december-3rd-meme-tiktok/) |
