@@ -58,6 +58,8 @@ book_desc = BOOK[2]
 HOODIE = hoodie_copy()
 DOX = listing("media/final/dachshund-extra-long-cheer-listing.md")
 DOX_HOODIE = listing("media/final/dachshund-extra-long-cheer-hoodie-listing.md")
+COCOA = listing("media/final/book-lover-blanket-cocoa-chapter-listing.md")
+COCOA_HOODIE = listing("media/final/book-lover-blanket-cocoa-chapter-hoodie-listing.md")
 
 PLAN = {
     # Cat hoodie, created unpublished by create_drafts.py on 2026-11-20. Set "draft": False once the owner approves.
@@ -65,6 +67,9 @@ PLAN = {
     # Dachshund sweatshirt and hoodie, created unpublished by create_drafts.py on 2026-11-22 (copied from the book sweatshirt/hoodie).
     "6b03b109f84ecfe9f804563a": {"design": "dachshund-extra-long-cheer", "draft": True, "title": DOX[0], "tags": DOX[1], "desc": DOX[2]},
     "6b03b10b27b0f205c40d07ab": {"design": "dachshund-extra-long-cheer", "draft": True, "title": DOX_HOODIE[0], "tags": DOX_HOODIE[1], "desc": DOX_HOODIE[2]},
+    # Book design 2 sweatshirt and hoodie, created unpublished by create_drafts.py on 2026-11-23 (copied from the book sweatshirt/hoodie).
+    "6b050281dd767dcca50b4e2e": {"design": "book-lover-blanket-cocoa-chapter", "draft": True, "title": COCOA[0], "tags": COCOA[1], "desc": COCOA[2]},
+    "6b050284f05114a8960af366": {"design": "book-lover-blanket-cocoa-chapter", "draft": True, "title": COCOA_HOODIE[0], "tags": COCOA_HOODIE[1], "desc": COCOA_HOODIE[2]},
     "6afe724a0ef5a611d100eb27": {"design": "holiday-cat-ornament-remover", "title": CAT[0], "tags": CAT[1], "desc": CAT[2]},
     "6afe7383e2d8ea21e80fa55f": {"design": "book-lover-snowed-in", "title": BOOK[0], "tags": BOOK[1], "desc": BOOK[2]},
     "6afe7383e4ef99a85e0e3703": {"design": "book-lover-snowed-in",
