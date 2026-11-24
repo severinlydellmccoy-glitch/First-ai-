@@ -259,12 +259,11 @@ const plaidDefs = (id) => `<defs><pattern id="${id}" patternUnits="userSpaceOnUs
   <path d="M 96 0 l 0 140 M 0 96 l 140 0" stroke="${P.cream}" stroke-width="8" opacity="0.8"/></pattern></defs>`;
 // The cat wrapped in a blanket hood with only its face showing (cat head coordinates, ground at y = 0).
 function blanketHood(fillId) {
-  const outer = "M -440 0 C -455 -380 -330 -770 -10 -790 C 310 -770 435 -380 420 0 Q -10 40 -440 0 Z";
+  const outer = "M -440 0 C -455 -400 -340 -830 -10 -845 C 320 -830 435 -400 420 0 Q -10 40 -440 0 Z";
   const hole = "M -212 -525 a 202 186 0 1 0 404 0 a 202 186 0 1 0 -404 0 Z";
   return `
-  <path d="M -10 -330 C -200 -300 -330 -200 -350 0" fill="none" stroke="${INK}" stroke-width="10"/>
   <path d="${outer} ${hole}" fill="url(#${fillId})" fill-rule="evenodd" stroke="${INK}" stroke-width="12" stroke-linejoin="round"/>
-  <path d="M -10 -340 C -190 -300 -300 -200 -320 6" fill="none" stroke="${INK}" stroke-width="10" stroke-linecap="round"/>
+  <path d="M 150 -330 C 230 -250 260 -130 250 6" fill="none" stroke="${INK}" stroke-width="9" stroke-linecap="round" opacity="0.7"/>
   <ellipse cx="-10" cy="-525" rx="190" ry="174" fill="none" stroke="${INK}" stroke-width="50"/>
   <ellipse cx="-10" cy="-525" rx="190" ry="174" fill="none" stroke="${P.cream}" stroke-width="30"/>`;
 }
@@ -383,21 +382,21 @@ const DESIGNS = {
   // Everyday winter cat, option B (2026-11-23): our cat wrapped in a plaid blanket hood, holding a microphone, cocoa beside it.
   "winter-cat-under-the-blanket": (c) => `
     ${plaidDefs("plaid")}
-    ${[[200, 520, 1.2], [1300, 500, 1.4], [300, 800, 0.8], [1220, 790, 0.9], [170, 1080, 0.9], [1340, 1040, 0.8]].map(([x, y, s]) => snowflake(x, y, s, c.snowDeep)).join("")}
+    ${[[200, 520, 1.2], [1300, 500, 1.4], [300, 800, 0.8], [1220, 790, 0.9], [170, 1080, 0.9], [1330, 760, 0.6]].map(([x, y, s]) => snowflake(x, y, s, c.snowDeep)).join("")}
     <g transform="translate(740 1300)">
       ${catHead()}
       ${blanketHood("plaid")}
       ${microphone(-150, -390, -18, 0.95)}
-      <circle cx="-200" cy="-180" r="50" fill="${P.cream}" stroke="${INK}" stroke-width="9"/>
-      <path d="M -225 -205 l 18 -6 M -232 -178 l 18 -2" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="-108" cy="-232" r="50" fill="${P.cream}" stroke="${INK}" stroke-width="9"/>
+      <path d="M -150 -250 l 22 4 M -152 -222 l 22 0" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
       <ellipse cx="-60" cy="-8" rx="56" ry="32" fill="${P.cream}" stroke="${INK}" stroke-width="9"/>
       <ellipse cx="70" cy="-8" rx="56" ry="32" fill="${P.cream}" stroke="${INK}" stroke-width="9"/>
       <path d="M -68 -8 l 0 -14 M -52 -8 l 0 -14 M 62 -8 l 0 -14 M 78 -8 l 0 -14" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
     </g>
     ${mug(1265, 1300, 0.6, P.teal, c.steam)}
     ${text("reporting live", 750, 330, 210, "Caveat", c.winterAccent)}
-    ${text("FROM UNDER", 750, 1545, 210, "Fredoka", c.winter, { stroke: c.stroke, sw: 12 })}
-    ${text("THE BLANKET", 750, 1755, 210, "Fredoka", c.winter, { stroke: c.stroke, sw: 12 })}`,
+    ${text("FROM UNDER", 750, 1550, 190, "Fredoka", c.winter, { stroke: c.stroke, sw: 12 })}
+    ${text("THE BLANKET", 750, 1750, 190, "Fredoka", c.winter, { stroke: c.stroke, sw: 12 })}`,
 };
 
 
