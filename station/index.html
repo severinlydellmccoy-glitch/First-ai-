@@ -154,35 +154,35 @@ a { color: var(--live); }
 
 <script>
 const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
-const SNAPSHOT = "22 Nov 2026, after the nightly run";
+const SNAPSHOT = "23 Nov 2026, after the nightly run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { conveyor: 8, lessons: 41, reports: 6, approved: 12, denied: 36, prospects: 26, drafts: 14, finals: 8, mediaDrafts: 0, mediaFinals: 8 };
+const COUNTS = { conveyor: 9, lessons: 49, reports: 6, approved: 12, denied: 36, prospects: 26, drafts: 18, finals: 8, mediaDrafts: 0, mediaFinals: 8 };
 
 // The Boss's to-do list for the owner (from decisions/owner-todo.md).
 const TODO = {
-  updated: "22 Nov 2026",
+  updated: "23 Nov 2026",
   next: [
-    ["Check 2 Etsy settings: shipping (buyer pays on tote and candle) and Offsite Ads (opt out)", "5 minutes"],
     ["By Nov 25, say: “publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie”", "by Nov 25"],
-    ["Start Etsy Ads at $3 a day on the hoodies and sweatshirts, after step 1 (samples wait until Nov 30)", "from Nov 23"],
+    ["Etsy settings: buyer pays shipping on tote and candle, Offsite Ads off; then start Etsy Ads at $3 a day on hoodies and sweatshirts", "5 minutes"],
+    ["By Nov 29, say: “publish the blanket cocoa book sweatshirt and hoodie”", "by Nov 29"],
   ],
-  done: ["Dachshund drafts ready in Printify", "Book design #2 art and text done", "Weekly money review done"],
+  done: ["Book design #2 drafts ready in Printify", "Winter cat picked: “I have filed a complaint about the snow”", "11 products checked OK"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
 // Room managers' reports, rewritten by the nightly cycle from what really happened. doing / why / next / updated.
 const REPORTS = {
-  core: { manager: "Boss", doing: "Kept the Black Friday plan. Moved the second book design up (drafts Nov 25, your OK by Nov 29, in time for Cyber Monday) and added an everyday winter cat for January (sketches now, live about Dec 8 if the Scout's recheck holds).", why: "All 4 ideas passed the judges and the Underboss, and the book design's art and text are already done.", next: "You: one publish message by Nov 25, then the book design by Nov 29.", updated: "Nov 22, 11:00 pm" },
-  rules: { manager: "Rules Keeper", doing: "Holding 6 rules. The conveyor now has 41 shared lessons.", why: "Every agent reads them before working.", next: "Nothing to do.", updated: "Nov 22, 11:00 pm" },
-  research: { manager: "Lab Manager", doing: "The Scout ran: 4 approved, 5 denied. The holiday cat, dachshund and cozy book designs passed again. New: an everyday winter cat with no Christmas words, to sell through January.", why: "Black Friday is in 5 days, so research runs every 2 days.", next: "The Scout rechecks the winter cat's evidence on Nov 24.", updated: "Nov 22, 11:00 pm" },
-  prospecting: { manager: "Hub Manager", doing: "Resting. Service ideas wait until January.", why: "Nothing new changes Black Friday.", next: "The Prospector runs Monday night.", updated: "Nov 22, 11:00 pm" },
-  art: { manager: "Studio Manager", doing: "Finished book design #2, \"Blanket. Cocoa. Chapter twelve.\": a big mug with a plaid blanket and an open book, in light and dark versions, with previews in 5 colors.", why: "The Boss moved it up for Cyber Monday.", next: "Sketch the everyday winter cat. Finals by Dec 3.", updated: "Nov 22, 11:00 pm" },
-  media: { manager: "Bay Manager", doing: "Wrote the book design #2 sweatshirt and hoodie listings: winter wording, 13 tags each.", why: "They must be ready before the Problem Solver builds the drafts.", next: "The winter cat's listing after the art.", updated: "Nov 22, 11:00 pm" },
-  sales: { manager: "Dock Manager", doing: "9 products in Printify, all checked OK: 5 live, the sticker hidden, and 3 unpublished drafts (the cat hoodie, the dachshund sweatshirt and the dachshund hoodie). 0 orders so far.", why: "Nothing goes live without your OK, and Black Friday is Nov 27.", next: "You: say “publish” by Nov 25. The book design #2 drafts come Nov 25.", updated: "Nov 22, 11:00 pm" },
-  observatory: { manager: "Finance Chief", doing: "Weekly review: 0 orders, $0 spent. Plan: ads first ($3 a day from Nov 23, about $22 this week), and samples the week of Nov 30 (about $27 each, too late to help Black Friday). Profit now also shown with Offsite Ads on.", why: "Ads plus 2 samples in one week would be about $66, over your $50 cap.", next: "You: Etsy settings, then yes or no to ads. Stop rules: ads stop if they cost more than $3.49 per sweatshirt sale or $4.96 per hoodie sale.", updated: "Nov 22, 11:00 pm" },
-  fixit: { manager: "Division Manager", doing: "Built the dachshund drafts (unpublished), added a market-holiday calendar so the stock report skips Thanksgiving and Christmas, and switched the screen to dividend-adjusted prices so Costco's $30 dividend won't distort it.", why: "Each removes a manual step or a wrong signal.", next: "Build the book design #2 drafts by Nov 25. Publish everything once you OK it.", updated: "Nov 22, 11:00 pm" },
-  vault: { manager: "Vault Manager", doing: "Wrote the first week-ahead report: no stock passed the tests twice; Costco has a $30 special dividend. Markets are closed Thursday and close early Friday.", why: "You asked for weekly and daily market facts. The safe stays at $0.", next: "7:45 am Monday: the next daily report. Thursday: a short \"market closed\" note.", updated: "Nov 22, 11:00 pm" },
+  core: { manager: "Boss", doing: "Picked the everyday winter cat, option A: “I have filed a complaint about the snow”. It goes ahead but gets time only: no sample or ads until a cat design sells.", why: "The Scout's recheck found the strongest cat sellers are attitude jokes, and A is one. The evidence is medium leaning weak, above the hold line.", next: "Winter cat finals Nov 30, drafts Dec 4, your “publish” about Dec 6. You: two publish messages (Nov 25 and Nov 29).", updated: "Nov 23, 10:30 pm" },
+  rules: { manager: "Rules Keeper", doing: "Holding 6 rules. The conveyor now has 49 shared lessons.", why: "Every agent reads them before working.", next: "Nothing to do.", updated: "Nov 23, 10:30 pm" },
+  research: { manager: "Lab Manager", doing: "The Scout rechecked the winter cat: the 700+ badge didn't hold (100+ to 500+ now). The judges still approve, weakly. Third-party roundups put the Christmas order cut-off at Dec 8 (not confirmed with Printify).", why: "The Boss needed firmer evidence before spending art time.", next: "The Analyst decides the next Scout run; research runs about every 2 days before Black Friday.", updated: "Nov 23, 10:30 pm" },
+  prospecting: { manager: "Hub Manager", doing: "Short check: nothing changes. Found a news claim that Etsy refunds its fee on orders from the shop's own Share & Save links until Jan 4 (not confirmed).", why: "Service ideas wait until January.", next: "The Profit Analyst checks what Share & Save would be worth. Joining it needs your OK.", updated: "Nov 23, 10:30 pm" },
+  art: { manager: "Studio Manager", doing: "Drew 2 everyday winter cat options with our orange cat, no Christmas words: A “I have filed a complaint about the snow” and B “reporting live from under the blanket”. Previews on all 5 shirt colors.", why: "The Boss wants a cat design that keeps selling through January.", next: "Finish option A by Nov 30.", updated: "Nov 23, 10:30 pm" },
+  media: { manager: "Bay Manager", doing: "Resting tonight. Book design #2 listings are done.", why: "No new art was finished today.", next: "Winter cat listing text by Dec 2.", updated: "Nov 23, 10:30 pm" },
+  sales: { manager: "Dock Manager", doing: "11 products in Printify, all checked OK: 5 live, the sticker hidden, and 5 unpublished drafts (cat hoodie, dachshund sweatshirt and hoodie, book design #2 sweatshirt and hoodie). 0 orders so far.", why: "Nothing goes live without your OK, and Black Friday is Nov 27.", next: "You: say “publish” by Nov 25, and for the book design by Nov 29.", updated: "Nov 23, 10:30 pm" },
+  observatory: { manager: "Finance Chief", doing: "Resting tonight: no orders and nothing spent. Plan unchanged: ads at $3 a day once the Etsy settings are checked; samples the week of Nov 30.", why: "Nothing changed the numbers today.", next: "Profit Analyst: add a new $0.40 Printify surcharge (reported, not confirmed) and value Share & Save.", updated: "Nov 23, 10:30 pm" },
+  fixit: { manager: "Division Manager", doing: "Built book design #2 as unpublished Printify drafts (sweatshirt and hoodie), copied from the live book products, and closed 4 finished items.", why: "Ready for your OK before Cyber Monday.", next: "Build the winter cat drafts by Dec 4. Publish everything once you OK it.", updated: "Nov 23, 10:30 pm" },
+  vault: { manager: "Vault Manager", doing: "Monday's report: only Costco passed all three tests. The market fell hard Friday, led by chip stocks (NVIDIA −14% on an SEC report). Only 48 of 309 big companies are in the free data plan.", why: "You asked for daily market facts. The safe stays at $0.", next: "7:45 am Tuesday: the next daily report. Thursday: market closed for Thanksgiving.", updated: "Nov 23, 10:30 pm" },
 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
