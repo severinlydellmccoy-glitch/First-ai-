@@ -154,35 +154,35 @@ a { color: var(--live); }
 
 <script>
 const REPO = "https://github.com/severinlydellmccoy-glitch/First-ai-/tree/main/";
-const SNAPSHOT = "23 Nov 2026, after the nightly run";
+const SNAPSHOT = "24 Nov 2026, after the nightly run";
 
 // Real counts from the repository. Belts, bins and the idea board show these numbers.
-const COUNTS = { conveyor: 9, lessons: 49, reports: 6, approved: 12, denied: 36, prospects: 26, drafts: 18, finals: 8, mediaDrafts: 0, mediaFinals: 8 };
+const COUNTS = { conveyor: 6, lessons: 57, reports: 6, approved: 12, denied: 36, prospects: 26, drafts: 18, finals: 10, mediaDrafts: 0, mediaFinals: 8 };
 
 // The Boss's to-do list for the owner (from decisions/owner-todo.md).
 const TODO = {
-  updated: "23 Nov 2026",
+  updated: "24 Nov 2026",
   next: [
-    ["By Nov 25, say: “publish the cat hoodie, black and navy on the cat sweatshirt, and the dachshund sweatshirt and hoodie”", "by Nov 25"],
-    ["Etsy settings: buyer pays shipping on tote and candle, Offsite Ads off; then start Etsy Ads at $3 a day on hoodies and sweatshirts", "5 minutes"],
-    ["By Nov 29, say: “publish the blanket cocoa book sweatshirt and hoodie”", "by Nov 29"],
+    ["As soon as possible, before Black Friday (Nov 27), say: “publish the 5 drafts and the black and navy cat sweatshirt”", "before Nov 27"],
+    ["Check the tote and candle prices on Etsy, then say “restore the tote and candle prices” ($16.11 and $22.58) or “hide the tote and candle”", "5 minutes"],
+    ["Etsy settings: buyer pays shipping on tote and candle, Offsite Ads off; then Etsy Ads at $3 a day on hoodies and sweatshirts", "5 minutes"],
   ],
-  done: ["Book design #2 drafts ready in Printify", "Winter cat picked: “I have filed a complaint about the snow”", "11 products checked OK"],
+  done: ["Winter cat design finished, with listing text", "Print provider found: Printify Choice", "All 5 drafts priced: strong profit"],
   goal: "Both sweatshirts live by Black Friday, Nov 27. Last safe day for Christmas: about Dec 1.",
 };
 
 // Room managers' reports, rewritten by the nightly cycle from what really happened. doing / why / next / updated.
 const REPORTS = {
-  core: { manager: "Boss", doing: "Picked the everyday winter cat, option A: “I have filed a complaint about the snow”. It goes ahead but gets time only: no sample or ads until a cat design sells.", why: "The Scout's recheck found the strongest cat sellers are attitude jokes, and A is one. The evidence is medium leaning weak, above the hold line.", next: "Winter cat finals Nov 30, drafts Dec 4, your “publish” about Dec 6. You: two publish messages (Nov 25 and Nov 29).", updated: "Nov 23, 10:30 pm" },
-  rules: { manager: "Rules Keeper", doing: "Holding 6 rules. The conveyor now has 49 shared lessons.", why: "Every agent reads them before working.", next: "Nothing to do.", updated: "Nov 23, 10:30 pm" },
-  research: { manager: "Lab Manager", doing: "The Scout rechecked the winter cat: the 700+ badge didn't hold (100+ to 500+ now). The judges still approve, weakly. Third-party roundups put the Christmas order cut-off at Dec 8 (not confirmed with Printify).", why: "The Boss needed firmer evidence before spending art time.", next: "The Analyst decides the next Scout run; research runs about every 2 days before Black Friday.", updated: "Nov 23, 10:30 pm" },
-  prospecting: { manager: "Hub Manager", doing: "Short check: nothing changes. Found a news claim that Etsy refunds its fee on orders from the shop's own Share & Save links until Jan 4 (not confirmed).", why: "Service ideas wait until January.", next: "The Profit Analyst checks what Share & Save would be worth. Joining it needs your OK.", updated: "Nov 23, 10:30 pm" },
-  art: { manager: "Studio Manager", doing: "Drew 2 everyday winter cat options with our orange cat, no Christmas words: A “I have filed a complaint about the snow” and B “reporting live from under the blanket”. Previews on all 5 shirt colors.", why: "The Boss wants a cat design that keeps selling through January.", next: "Finish option A by Nov 30.", updated: "Nov 23, 10:30 pm" },
-  media: { manager: "Bay Manager", doing: "Resting tonight. Book design #2 listings are done.", why: "No new art was finished today.", next: "Winter cat listing text by Dec 2.", updated: "Nov 23, 10:30 pm" },
-  sales: { manager: "Dock Manager", doing: "11 products in Printify, all checked OK: 5 live, the sticker hidden, and 5 unpublished drafts (cat hoodie, dachshund sweatshirt and hoodie, book design #2 sweatshirt and hoodie). 0 orders so far.", why: "Nothing goes live without your OK, and Black Friday is Nov 27.", next: "You: say “publish” by Nov 25, and for the book design by Nov 29.", updated: "Nov 23, 10:30 pm" },
-  observatory: { manager: "Finance Chief", doing: "Resting tonight: no orders and nothing spent. Plan unchanged: ads at $3 a day once the Etsy settings are checked; samples the week of Nov 30.", why: "Nothing changed the numbers today.", next: "Profit Analyst: add a new $0.40 Printify surcharge (reported, not confirmed) and value Share & Save.", updated: "Nov 23, 10:30 pm" },
-  fixit: { manager: "Division Manager", doing: "Built book design #2 as unpublished Printify drafts (sweatshirt and hoodie), copied from the live book products, and closed 4 finished items.", why: "Ready for your OK before Cyber Monday.", next: "Build the winter cat drafts by Dec 4. Publish everything once you OK it.", updated: "Nov 23, 10:30 pm" },
-  vault: { manager: "Vault Manager", doing: "Monday's report: only Costco passed all three tests. The market fell hard Friday, led by chip stocks (NVIDIA −14% on an SEC report). Only 48 of 309 big companies are in the free data plan.", why: "You asked for daily market facts. The safe stays at $0.", next: "7:45 am Tuesday: the next daily report. Thursday: market closed for Thanksgiving.", updated: "Nov 23, 10:30 pm" },
+  core: { manager: "Boss", doing: "No new picks. Moved your “publish” to “as soon as possible, before Nov 27”, now one message for all 5 drafts plus the dark cat sweatshirt colors. Added the tote and candle price check to your list.", why: "The Nov 25 deadline passed without a “publish”, and the tote and candle prices dropped.", next: "Winter cat drafts by Dec 4. Christmas ads stop Dec 1.", updated: "Nov 24, 10:00 pm" },
+  rules: { manager: "Rules Keeper", doing: "Holding 6 rules. The conveyor now has 57 shared lessons.", why: "Every agent reads them before working.", next: "Nothing to do.", updated: "Nov 24, 10:00 pm" },
+  research: { manager: "Lab Manager", doing: "Resting tonight. Last week's research is still fresh (Nov 23 recheck).", why: "Nothing new was asked of the Scout.", next: "The Analyst decides the next Scout run.", updated: "Nov 24, 10:00 pm" },
+  prospecting: { manager: "Hub Manager", doing: "Resting. Service ideas wait until January.", why: "Nothing new changes Black Friday.", next: "Short checks only until January.", updated: "Nov 24, 10:00 pm" },
+  art: { manager: "Studio Manager", doing: "Finished the winter cat: “I have filed a complaint about the snow”, in light and dark versions, with 10 previews on sweatshirts and hoodies in all 5 colors.", why: "The Boss picked option A on Nov 23. No Christmas words, so it sells into January.", next: "Rest until the Boss picks the next design.", updated: "Nov 24, 10:00 pm" },
+  media: { manager: "Bay Manager", doing: "Wrote the winter cat sweatshirt and hoodie listings: titles, 13 tags each, no Christmas words.", why: "The art was finished tonight.", next: "The Problem Solver builds the drafts by Dec 4.", updated: "Nov 24, 10:00 pm" },
+  sales: { manager: "Dock Manager", doing: "11 products in Printify: 5 live, sticker hidden, 5 unpublished drafts. 0 orders. The tote now shows $12.08 and the candle $16.93 in Printify (were $16.11 and $22.58); the cause is unknown.", why: "Nothing goes live and no price changes without your OK.", next: "You: say “publish” before Nov 27, and check the tote and candle prices on Etsy.", updated: "Nov 24, 10:00 pm" },
+  observatory: { manager: "Finance Chief", doing: "All 5 drafts are profitable (sweatshirt $14.94, hoodie $17.88 if the buyer pays shipping). The tote and candle now make about $0.50 a sale. New ad stop limits: $3.29 per sweatshirt sale, $4.76 per hoodie sale.", why: "A possible $0.40 Printify holiday charge (not confirmed) is allowed for in the limits.", next: "You: restore the tote and candle prices or hide them. No ads on either.", updated: "Nov 24, 10:00 pm" },
+  fixit: { manager: "Division Manager", doing: "Found our printer for sweatshirts, hoodies, tote and sticker: Printify Choice (the candle uses Lumient). Its Christmas date isn't confirmed; outside sites say Dec 9, so the plan keeps Dec 8.", why: "Knowing the printer sets the real Christmas cut-off.", next: "Publish everything once you say “publish”. Winter cat drafts by Dec 4.", updated: "Nov 24, 10:00 pm" },
+  vault: { manager: "Vault Manager", doing: "Tuesday's report: NVIDIA +31.5% after Jensen Huang returned as CEO; the S&P 500 fund rose 4.7%. No checked stock passed all three tests.", why: "You asked for daily market facts. The safe stays at $0.", next: "7:45 am Wednesday: the next daily report. Thursday: market closed for Thanksgiving.", updated: "Nov 24, 10:00 pm" },
 };
 
 // status: active = built and has work in it, empty = built but nothing made yet, planned = not built yet
