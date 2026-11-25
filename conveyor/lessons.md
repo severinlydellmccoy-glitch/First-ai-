@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-24 (artist): `mockup.js` now draws hoodies too (`--hoodie`, with `--only=PREFIX` for one design); render into an empty scratch folder and copy only the `*-preview.png` files to `media/final/mockups/`, because the script also writes a contact sheet of everything in its output folder. Keep hoodie drawstrings short so they never touch the top line of text.
 - 2026-11-24 (analyst): When an owner deadline in `owner-todo.md` passes with no answer, put an item on the belt for the Boss that same night, so the list never shows the owner a date that's already gone. Order the run so the Boss goes last on nights when the finance team or Problem Solver may change its dates.
 - 2026-11-23 (boss): Write a hold rule as a grade line ("go ahead at medium leaning weak or better, hold at weak") plus what the idea may spend while unproven (time only, no sample or ads until a cat sells), so the next Boss can decide without reinterpreting it. And never move an ad stop date on an unverified source: the Dec 8 cut-off waits for our own print provider's date.
 - 2026-11-23 (underboss): When a recheck lowers an idea's evidence, set the new grade against the Boss's own hold condition (here, "on hold if the recheck is weak") and say clearly which side it falls on. A grade like "medium leaning weak" can quietly slip past a condition that was meant to stop it.

@@ -12,7 +12,7 @@ It also shows the most you can spend on ads per sale before it stops paying.
 Usage:  python3 tools/finance/profitability.py [--out finance/profitability.md]
 The Printify key is added by the network proxy. Read only.
 """
-import argparse, json, statistics, urllib.request, datetime as dt
+import argparse, json, os, re, statistics, urllib.request, datetime as dt
 
 SHOP = 29819127
 API = "https://api.printify.com/v1"
@@ -52,11 +52,32 @@ def us_shipping(bp, pp, variant_ids):
             std = None
     return std, eco
 
+# Fee items reported by other agents but not yet confirmed by Printify's or Etsy's own data. They are listed under
+# the table, never folded into the profit columns, until a first-party source (API, order, or the company's own page) confirms them.
+UNCONFIRMED = [
+    "**Printify $0.40 US holiday surcharge (reported Oct 15, 2026 to Jan 17, 2027): unconfirmed.** Seen only in search snippets of help.printify.com (Scout, 2026-11-24). Printify's API shipping rates (v1 and v2) show no surcharge, help.printify.com can't be opened from here, and there are no orders yet to check. If it applies, take $0.40 off every profit column.",
+    "**Etsy Share & Save (reported: full 6.5% transaction fee refunded through Jan 4, 2027, 9 am Eastern): unconfirmed.** Seen only in third-party news (Prospector, 2026-11-23); Etsy's help and fees pages can't be opened from here. It would only apply to buyers who arrive by the shop's own Share & Save link, and joining is an account setting (owner's OK). If confirmed, add 6.5% of the order total back to those sales.",
+]
+
+def previous_prices(path):
+    """Price per product title from the last table, so a price change between reads is flagged."""
+    if not os.path.exists(path): return {}, None
+    txt = open(path).read()
+    m = re.search(r"read (\d{4}-\d{2}-\d{2})", txt)
+    out = {}
+    for line in txt.splitlines():
+        c = [x.strip() for x in line.strip().strip("|").split("|")]
+        if len(c) > 3 and c[2].startswith("$"):
+            try: out[c[0]] = float(c[2][1:])
+            except ValueError: pass
+    return out, (m.group(1) if m else None)
+
 def fees(order_total):
     return 0.20 + 0.065 * order_total + 0.03 * order_total + 0.25
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--out", default="finance/profitability.md"); a = ap.parse_args()
+    old, old_date = previous_prices(a.out)
     prods = get(f"/shops/{SHOP}/products.json?limit=50")["data"]
     rows = []
     for p in prods:
@@ -96,6 +117,11 @@ def main():
             "", "**Offsite Ads** (Etsy's 15% fee on sales that come from its ads on other sites) is 15% of the order total: price plus shipping when the buyer pays shipping, the price alone with free shipping. The two Offsite Ads columns already subtract it, so don't subtract it again.",
             "", "**Shipping** is Printify's US Standard first-item rate, the one orders ship with by default. Economy (cheaper, slower) only applies if it is turned on in Printify's store settings; it adds back the difference per sale. Profit figures assume Standard.",
             "", "Check the Etsy shipping settings: if the shop offers free shipping, use the free-shipping column. Etsy's US free-shipping guarantee usually applies to orders of $35 or more, so check it for the sweatshirts and hoodie too."]
+    changed = [f"- {r['title']}: ${old[r['title']]:.2f} to ${r['price']:.2f}" for r in rows if r["title"] in old and abs(old[r["title"]] - r["price"]) >= 0.01]
+    if changed:
+        out += ["", f"## Price changes since the last read ({old_date})", "",
+                "Printify now reports a different price for these. Nobody on the team should change prices without the owner, so check the live Etsy listing and tell the Finance Chief:", ""] + changed
+    out += ["", "## Not in the figures yet (unconfirmed)", ""] + [f"- {u}" for u in UNCONFIRMED]
     open(a.out, "w").write("\n".join(out) + "\n")
     print("\n".join(out))
 

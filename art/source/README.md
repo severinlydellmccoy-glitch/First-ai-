@@ -12,6 +12,7 @@ To re-render (needs Node and Playwright), run from a working folder that holds `
     node build.js out          # designs go to out/
     node mockup.js mockups     # previews of the designs in out/
     node mockup.js mockups ../final   # previews from another folder (missing designs are skipped)
+    node mockup.js mockups ../final --only=winter-cat --hoodie   # hoodie previews of one design (files end -hoodie-preview.png)
 
 Shirt colors in `mockup.js`: white (#f7f7f5), sand, sport grey, forest green, navy and black. White, sand and sport grey use the light-shirts file.
 

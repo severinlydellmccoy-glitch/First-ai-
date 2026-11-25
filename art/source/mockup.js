@@ -5,6 +5,12 @@ const SHIRT = (color, cuff) => `<svg viewBox="0 0 1000 1000" xmlns="http://www.w
   <path d="M 330 110 Q 500 200 670 110 Q 640 175 500 185 Q 360 175 330 110 Z" fill="${cuff}"/>
   <path d="M 210 905 L 790 905 M 40 750 L 165 755 M 960 750 L 835 755" stroke="${cuff}" stroke-width="30"/>
 </svg>`;
+// Hoodie: the same body with a hood behind the neck, drawstrings and a front pocket below the print area.
+const HOODIE = (color, cuff) => SHIRT(color, cuff).replace('<path d="M 330 110 Q 500 200', `<path d="M 300 150 Q 300 20 500 15 Q 700 20 700 150 Q 600 95 500 100 Q 400 95 300 150 Z" fill="${color}" stroke="rgba(0,0,0,0.25)" stroke-width="4"/>
+  <path d="M 345 120 Q 500 40 655 120 Q 590 210 500 215 Q 410 210 345 120 Z" fill="${cuff}" stroke="rgba(0,0,0,0.25)" stroke-width="4"/>
+  <path d="M 455 205 L 452 268 M 545 205 L 548 268" stroke="${cuff}" stroke-width="9" stroke-linecap="round"/>
+  <path d="M 330 720 L 670 720 L 730 880 L 270 880 Z" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="5"/>
+  <path d="M 330 110 Q 500 200`);
 const shirts = { white: ["#f7f7f5", "#e6e6e2", "White"], light: ["#ece3d3", "#ddd1bd", "Sand"], forest: ["#24412f", "#1b3324", "Forest green"], navy: ["#1f2a44", "#172036", "Navy"], black: ["#1c1c1e", "#111113", "Black"], grey: ["#c9c9c7", "#b8b8b6", "Sport grey"] };
 const tiles = [
   ["holiday-cat-ornament-remover", "light"], ["holiday-cat-ornament-remover", "forest"], ["holiday-cat-ornament-remover", "white"],
@@ -14,6 +20,11 @@ const tiles = [
   ...["dachshund-extra-long-cheer", "dachshund-in-charge-of-lights"].flatMap(n => ["black", "navy", "white", "light", "grey"].map(s => [n, s])),
   ...["winter-cat-snow-complaint", "winter-cat-under-the-blanket"].flatMap(n => ["black", "navy", "white", "light", "grey"].map(s => [n, s])),
 ];
+// Options (anywhere after the output folder): --hoodie draws hoodies instead of sweatshirts; --only=PREFIX limits tiles to designs starting with PREFIX.
+const flags = process.argv.slice(2).filter(a => a.startsWith("--"));
+process.argv = process.argv.filter(a => !a.startsWith("--"));
+const garment = flags.includes("--hoodie") ? "hoodie" : "sweatshirt";
+const onlyFlag = (flags.find(f => f.startsWith("--only=")) || "").slice(7);
 // Optional 2nd argument: folder holding the design PNGs (default out/ next to this file). Tiles whose design is missing are skipped.
 const srcDir = process.argv[3] ? path.resolve(process.argv[3]) : path.join(__dirname, "out");
 const img = f => "data:image/png;base64," + fs.readFileSync(path.join(srcDir, f)).toString("base64");
@@ -22,16 +33,17 @@ const img = f => "data:image/png;base64," + fs.readFileSync(path.join(srcDir, f)
   const p = await b.newPage({ viewport: { width: 1000, height: 1000 }, deviceScaleFactor: 1 });
   const outDir = process.argv[2]; fs.mkdirSync(outDir, { recursive: true });
   for (const [name, shirt] of tiles) {
+    if (onlyFlag && !name.startsWith(onlyFlag)) continue;
     const way = ["light", "white", "grey"].includes(shirt) ? "light" : "dark";
     if (!fs.existsSync(path.join(srcDir, `${name}-for-${way}-shirts.png`))) continue;
     const [c, cuff] = shirts[shirt];
     const html = `<body style="margin:0;background:#f6f4f0;width:1000px;height:1000px;position:relative;overflow:hidden">
-      ${SHIRT(c, cuff)}
+      ${(garment === "hoodie" ? HOODIE : SHIRT)(c, cuff)}
       <img src="${img(`${name}-for-${way}-shirts.png`)}" style="position:absolute;left:325px;top:250px;width:350px;height:420px">
     </body>`;
     await p.setContent(html.replace("<svg ", '<svg style="position:absolute;inset:0;width:1000px;height:1000px" '));
     await p.waitForTimeout(100);
-    await p.screenshot({ path: path.join(outDir, `${name}-${shirts[shirt][2].toLowerCase().replace(" ", "-")}-sweatshirt-preview.png`) });
+    await p.screenshot({ path: path.join(outDir, `${name}-${shirts[shirt][2].toLowerCase().replace(" ", "-")}-${garment}-preview.png`) });
   }
   // contact sheet
   const files = fs.readdirSync(outDir).filter(f => f.endsWith("-preview.png")).sort();
