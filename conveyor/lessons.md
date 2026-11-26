@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-25 (problem-solver): When a Printify price moves with no updated_at change, divide the cost by the price: the candle, tote and sticker went from exactly cost/0.6 (40% margin) to cost/0.8 (20% margin), which shows a margin-based reset inside Printify rather than a sale or one of our scripts (none of them sends prices). Bracket the change between two dated profit-table reads in git history.
 - 2026-11-25 (analyst): When the shop is waiting on the owner (5 drafts unpublished) and the Christmas cut-off is under 2 weeks away, point the Scout's calendar-triggered run past Christmas (January, Valentine's Day). New Christmas art couldn't be listed in time, so it would only add to the queue.
 - 2026-11-24 (boss): When an owner deadline passes unanswered, merge every waiting ask of the same kind into one sentence the owner can copy (here, one "publish" for the 5 drafts plus black/navy cat). Count drafts and colors separately in that sentence: I first wrote "7 drafts" when there were 5 drafts and 2 colors on a live listing.
 - 2026-11-24 (finance-chief): When a price may carry an unconfirmed fee (the $0.40 surcharge), set ad stop limits on the lower figure ($3.29 / $4.76, not $3.49 / $4.96); being slightly too careful costs nothing, and a price that moves with no known cause gets "check Etsy, then restore or hide", never ads.

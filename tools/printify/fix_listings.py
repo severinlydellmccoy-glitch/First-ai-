@@ -60,6 +60,8 @@ DOX = listing("media/final/dachshund-extra-long-cheer-listing.md")
 DOX_HOODIE = listing("media/final/dachshund-extra-long-cheer-hoodie-listing.md")
 COCOA = listing("media/final/book-lover-blanket-cocoa-chapter-listing.md")
 COCOA_HOODIE = listing("media/final/book-lover-blanket-cocoa-chapter-hoodie-listing.md")
+SNOW = listing("media/final/winter-cat-snow-complaint-listing.md")
+SNOW_HOODIE = listing("media/final/winter-cat-snow-complaint-hoodie-listing.md")
 
 PLAN = {
     # Cat hoodie, created unpublished by create_drafts.py on 2026-11-20. Set "draft": False once the owner approves.
@@ -70,6 +72,9 @@ PLAN = {
     # Book design 2 sweatshirt and hoodie, created unpublished by create_drafts.py on 2026-11-23 (copied from the book sweatshirt/hoodie).
     "6b050281dd767dcca50b4e2e": {"design": "book-lover-blanket-cocoa-chapter", "draft": True, "title": COCOA[0], "tags": COCOA[1], "desc": COCOA[2]},
     "6b050284f05114a8960af366": {"design": "book-lover-blanket-cocoa-chapter", "draft": True, "title": COCOA_HOODIE[0], "tags": COCOA_HOODIE[1], "desc": COCOA_HOODIE[2]},
+    # Winter cat snow complaint sweatshirt and hoodie, created unpublished by create_drafts.py on 2026-11-26 UTC (Nov 25 Central; copied from the book sweatshirt/hoodie).
+    "6b07a597d144ea48ec082b06": {"design": "winter-cat-snow-complaint", "draft": True, "title": SNOW[0], "tags": SNOW[1], "desc": SNOW[2]},
+    "6b07a59ab4135d2dee0d864d": {"design": "winter-cat-snow-complaint", "draft": True, "title": SNOW_HOODIE[0], "tags": SNOW_HOODIE[1], "desc": SNOW_HOODIE[2]},
     "6afe724a0ef5a611d100eb27": {"design": "holiday-cat-ornament-remover", "title": CAT[0], "tags": CAT[1], "desc": CAT[2]},
     "6afe7383e2d8ea21e80fa55f": {"design": "book-lover-snowed-in", "title": BOOK[0], "tags": BOOK[1], "desc": BOOK[2]},
     "6afe7383e4ef99a85e0e3703": {"design": "book-lover-snowed-in",

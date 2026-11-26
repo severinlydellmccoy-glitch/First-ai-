@@ -34,6 +34,11 @@ DRAFTS = {
                                                     "copy": lambda: listing("media/final/book-lover-blanket-cocoa-chapter-listing.md")},
     "book-lover-blanket-cocoa-chapter-hoodie": {"design": "book-lover-blanket-cocoa-chapter", "template": "6afe7383e4ef99a85e0e3703",
                                                 "copy": lambda: listing("media/final/book-lover-blanket-cocoa-chapter-hoodie-listing.md")},
+    # Winter cat "filed a complaint about the snow" (Boss, 2026-11-24 decisions): copied from the live book sweatshirt and book hoodie.
+    "winter-cat-snow-complaint-sweatshirt": {"design": "winter-cat-snow-complaint", "template": "6afe7383e2d8ea21e80fa55f",
+                                             "copy": lambda: listing("media/final/winter-cat-snow-complaint-listing.md")},
+    "winter-cat-snow-complaint-hoodie": {"design": "winter-cat-snow-complaint", "template": "6afe7383e4ef99a85e0e3703",
+                                         "copy": lambda: listing("media/final/winter-cat-snow-complaint-hoodie-listing.md")},
 }
 # Colors to add to a live product (owner approval needed; this file only prints the plan).
 ADD_COLORS = {"6afe724a0ef5a611d100eb27": {"from": "6afe7383e2d8ea21e80fa55f", "design": "holiday-cat-ornament-remover"}}
