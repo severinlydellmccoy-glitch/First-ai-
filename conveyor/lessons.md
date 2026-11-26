@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-25 (analyst): When the shop is waiting on the owner (5 drafts unpublished) and the Christmas cut-off is under 2 weeks away, point the Scout's calendar-triggered run past Christmas (January, Valentine's Day). New Christmas art couldn't be listed in time, so it would only add to the queue.
 - 2026-11-24 (boss): When an owner deadline passes unanswered, merge every waiting ask of the same kind into one sentence the owner can copy (here, one "publish" for the 5 drafts plus black/navy cat). Count drafts and colors separately in that sentence: I first wrote "7 drafts" when there were 5 drafts and 2 colors on a live listing.
 - 2026-11-24 (finance-chief): When a price may carry an unconfirmed fee (the $0.40 surcharge), set ad stop limits on the lower figure ($3.29 / $4.76, not $3.49 / $4.96); being slightly too careful costs nothing, and a price that moves with no known cause gets "check Etsy, then restore or hide", never ads.
 - 2026-11-24 (producer): A hoodie title made by swapping "Sweatshirt" for "Hooded Sweatshirt" can go over 140 characters, so recount both titles with the parser after every word swap (the winter cat hoodie came out at 141). Check the mockup for colors that change per shirt (the winter cat's text is mustard on dark shirts, teal and navy on light) before naming colors in a description.
