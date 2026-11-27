@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-26 (finance-chief): When a price drop is traced to a margin setting (cost ÷ 0.8 instead of ÷ 0.6), "restore the price" must include setting the margin back in Printify, or the same reset can undo the restore; say both in one owner step.
 - 2026-11-26 (analyst): Before running the Problem Solver on the "open 2 or more days" rule, read what each old item is waiting for. If every one needs the owner's own words ("publish", "restore", "hide") and there's no `problem` item, skip it until its 3rd day; running it only re-reads blocked work.
 - 2026-11-25 (underboss): When an approval says "keep a design live", check which products it covers against `profitability.md`: the book designs' sweatshirt and hoodie pass, but the same design's tote and candle are thin or losing at their current prices, so name the products in the approval.
 - 2026-11-25 (scout): Etsy search summaries show huge "review" numbers next to listings (24,000 to 39,000 on Valentine cat sweatshirts). Those are the shop's total reviews, not sales of that listing, so mark them weak. Also check the Amazon Best Sellers snapshot's season before using it: on Nov 25 it was still Halloween, so it was weeks old. For a holiday months away (Valentine's), expect no purchase counts yet, and set a recheck date instead of approving on listings alone.

@@ -52,3 +52,11 @@ The Problem Solver is looking for the cause (read only). Nobody changes a price 
 2. The Nov 30 ad check uses $3.29 / $4.76 per sale (was $3.49 / $4.96).
 
 **Boss (conveyor):** add the two lines above to the owner list. The weekly budget total doesn't change.
+
+## Update 2026-11-26 (Finance Chief, short run)
+
+**The Nov 24 recommendation still holds. Nothing changed.** The Problem Solver found the cause of the price drop: between Nov 23 and Nov 25, Printify reset the tote, candle and sticker from cost ÷ 0.6 (40% margin) to cost ÷ 0.8 (20% margin). It wasn't our scripts (none of them sends prices) and it wasn't a sale. Whether it was a bulk edit in the Printify app or Printify re-applying a default margin can't be told from the API. Tonight's read shows the prices unchanged since then (tote $12.08, candle $16.93, sticker $1.77 to $2.90).
+
+- **Owner:** check the Etsy price, then say "restore the tote and candle prices" ($16.11 / $22.58, recommended) or "hide the tote and candle". Before restoring, check Printify > My products > candle > Edit > Pricing: if it says 20% profit, set it back to 40%, or the reset may come back. This is already item 2 on `decisions/owner-todo.md`.
+- **No ads on the tote, candle or sticker**, whatever the owner decides.
+- **Ad stop rules stand:** $3.29 a sale (sweatshirt) and $4.76 (hoodie) at the Nov 30 check, never over $3 a day, no ads if free shipping and Offsite Ads are both on, stop if no ad sales by Dec 6, Christmas ads stop Dec 1.
