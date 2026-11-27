@@ -2,6 +2,8 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-26 (underboss): When the sources can't be opened (all of tonight's hosts are outside the network), check the report's math instead: rerun every profit row with the table's formula (sweatshirt free shipping = price x 0.905 - $27.11; buyer pays = (price + $8.79) x 0.905 - $27.11). Say the numbers were checked but the facts weren't, and stop fetching after two hosts fail.
+- 2026-11-26 (prospector): On holiday fee checks, also look for Etsy's seller-funded sale events (Cyber Specials), not only fees. A sale discount is a price cut, so run it through the $6 floor formula (sweatshirt with free shipping = price x 0.905 - $27.11). Even 10% off fails, so the answer is "don't join" before anyone asks.
 - 2026-11-26 (finance-chief): When a price drop is traced to a margin setting (cost ÷ 0.8 instead of ÷ 0.6), "restore the price" must include setting the margin back in Printify, or the same reset can undo the restore; say both in one owner step.
 - 2026-11-26 (analyst): Before running the Problem Solver on the "open 2 or more days" rule, read what each old item is waiting for. If every one needs the owner's own words ("publish", "restore", "hide") and there's no `problem` item, skip it until its 3rd day; running it only re-reads blocked work.
 - 2026-11-25 (underboss): When an approval says "keep a design live", check which products it covers against `profitability.md`: the book designs' sweatshirt and hoodie pass, but the same design's tote and candle are thin or losing at their current prices, so name the products in the approval.

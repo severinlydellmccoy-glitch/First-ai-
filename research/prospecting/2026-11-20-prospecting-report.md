@@ -2,6 +2,33 @@ Judges: 4 approved, 11 denied
 
 # Prospecting report, 2026-11-20
 
+## Check 2026-11-26 (Cyber Week: Etsy fees and promotions)
+
+**Conclusion: no Etsy fee changed for Black Friday or Cyber Monday, so no number in `finance/profitability.md` changes tonight.** Share & Save is still reported at the full 6.5% refund through Jan 4, 2027, and Etsy's Cyber Specials sale is running now, but joining that sale would mean a discount our free-shipping sweatshirts can't afford. No new service votes (service ideas stay on hold until January). No open conveyor items for the Prospector.
+
+**Etsy's own pages couldn't be reached** (help.etsy.com and www.etsy.com don't resolve from this session), so everything below is **unconfirmed** and comes from search-result snippets seen 2026-11-26.
+
+1. **Share & Save holiday refund: still reported, unchanged.** Etsy announced on Oct 20, 2026 that it refunds the full 6.5% transaction fee (normally 4%) on orders from the shop's own Share & Save link, through Jan 4, 2027. Joining is free in Shop Manager (an account setting, so the owner's OK). Payment processing (3% + $0.25) and the $0.20 listing fee still apply. A buyer who later clicks an Etsy Offsite Ad loses the refund and pays the Offsite Ads fee. One new detail: Value Added Resource says both the click and the purchase must happen inside the promotion; Alura says the rule for a click before Jan 4 and an order after it isn't stated ([Value Added Resource](https://valueaddedresource.net/etsy-share-save-holiday-2026), [Alura](https://www.alura.io/news/share-and-save-holiday-refund), [Etsy Share & Save terms](https://www.etsy.com/legal/policy/etsys-share-save-terms-program-terms/1162874007996), [Etsy help](https://help.etsy.com/hc/en-us/articles/16981332744087-How-to-Save-on-Etsy-Fees-with-the-Share-Save-Programme)).
+2. **No Black Friday or Cyber Monday fee change.** Search found no 2026 change to the 6.5% transaction fee, payment processing or listing fee ([Value Added Resource](https://valueaddedresource.net/etsy-share-save-holiday-2026), [EcommerceBytes Cyber Week tag](https://www.ecommercebytes.com/tag/etsy-cyber-week-sale/)).
+3. **Etsy Cyber Specials sale, Nov 24 to Dec 2, 2026 (reported).** Sellers pay for their own discount; Etsy only promotes the listings. Seen only on a print-on-demand vendor's blog ([Gelato](https://www.gelato.com/au/blog/etsy-cyber-specials)); past years asked for 25% off or more to be featured, and that 2026 threshold is unconfirmed ([Glossy](https://www.glossy.co/fashion/etsy-is-pushing-sellers-to-offer-discounts-earlier-than-ever-this-holiday-season)).
+
+**Which numbers in `profitability.md` this would change** (same fee formula as the table, $8.79 Standard shipping):
+
+| Case | Sweatshirt ($37.67) buyer pays / free shipping | Hoodie ($45.02) buyer pays / free shipping |
+|---|---|---|
+| Today's table (no change) | $14.94 / $6.98 | $17.88 / $9.92 |
+| Share & Save order (if confirmed, link buyers only) | about $17.96 / $9.43 | about $21.38 / $12.85 |
+| Cyber Specials at 25% off ($28.25 / $33.77) | about $6.41 / **-$1.54** | about $7.69 / **-$0.26** |
+| 10% off ($33.90 sweatshirt) | about $11.53 / $3.57 (below the $6 floor) | not worked out |
+
+- **Share & Save:** fits the existing "Not in the figures yet" line; no edit needed until an Etsy page confirms it.
+- **Cyber Specials:** would change the Price column and every profit column. At 25% off, a free-shipping sale loses money and even 10% off misses the $6 floor, so don't join unless the buyer pays shipping. Any price change is the owner's call.
+- **Tote and candle:** no discount at all; they already make $0.53 or less at their current prices.
+
+**Gaps:** Etsy's fees page, help center and Shop Manager couldn't be opened; the Cyber Specials dates and discount rule come only from a vendor blog. The owner can check both in Shop Manager > Marketing.
+
+**Sources (all seen 2026-11-26, as search-result snippets):** https://valueaddedresource.net/etsy-share-save-holiday-2026, https://www.alura.io/news/share-and-save-holiday-refund, https://www.etsy.com/legal/policy/etsys-share-save-terms-program-terms/1162874007996 (couldn't be opened), https://help.etsy.com/hc/en-us/articles/16981332744087-How-to-Save-on-Etsy-Fees-with-the-Share-Save-Programme (couldn't be opened), https://www.etsy.com/legal/fees (couldn't be opened), https://www.gelato.com/au/blog/etsy-cyber-specials, https://www.glossy.co/fashion/etsy-is-pushing-sellers-to-offer-discounts-earlier-than-ever-this-holiday-season, https://www.ecommercebytes.com/tag/etsy-cyber-week-sale/, plus `finance/profitability.md` (read 2026-11-26, figures from 2026-11-25).
+
 ## Check 2026-11-23
 
 **Nothing changes the ideas or the votes.** No new idea was found that needs no new account and makes over $6 a sale. The pet-name sweatshirt is still the only one, and the Boss holds it until January (it needs a sample and a name check on every order, `decisions/2026-11-22-decisions.md`). The three service ideas stay on hold until January. `finance/profitability.md` shows the same figures used on Nov 21 (sweatshirt $14.94 / $6.98, hoodie $17.88 / $9.92), so the revote below still holds. No open conveyor items for the Prospector.
@@ -187,7 +214,7 @@ The three service ideas approved on Nov 18 still pass (listing copy, social medi
 
 ## 5. Sources
 
-All seen on 2026-11-20, as search-result snippets unless noted. Sources for the 2026-11-21 revote and the 2026-11-23 check are listed in those sections.
+All seen on 2026-11-20, as search-result snippets unless noted. Sources for the 2026-11-21 revote and the 2026-11-23 and 2026-11-26 checks are listed in those sections.
 
 - https://findniche.com/etsy-product/custom-dog-sweatshirt-personalized-dog-e-1523211157 (page couldn't be opened)
 - https://findniche.com/etsy-product/custom-embroidered-sweatshirt-name-on-sl-1485282812
