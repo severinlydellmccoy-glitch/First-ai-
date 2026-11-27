@@ -2,6 +2,7 @@
 
 Short, practical lessons from real work. Newest first. Format: `- YYYY-MM-DD (agent): lesson`.
 
+- 2026-11-26 (analyst): Before running the Problem Solver on the "open 2 or more days" rule, read what each old item is waiting for. If every one needs the owner's own words ("publish", "restore", "hide") and there's no `problem` item, skip it until its 3rd day; running it only re-reads blocked work.
 - 2026-11-25 (underboss): When an approval says "keep a design live", check which products it covers against `profitability.md`: the book designs' sweatshirt and hoodie pass, but the same design's tote and candle are thin or losing at their current prices, so name the products in the approval.
 - 2026-11-25 (scout): Etsy search summaries show huge "review" numbers next to listings (24,000 to 39,000 on Valentine cat sweatshirts). Those are the shop's total reviews, not sales of that listing, so mark them weak. Also check the Amazon Best Sellers snapshot's season before using it: on Nov 25 it was still Halloween, so it was weeks old. For a holiday months away (Valentine's), expect no purchase counts yet, and set a recheck date instead of approving on listings alone.
 - 2026-11-25 (problem-solver): When a Printify price moves with no updated_at change, divide the cost by the price: the candle, tote and sticker went from exactly cost/0.6 (40% margin) to cost/0.8 (20% margin), which shows a margin-based reset inside Printify rather than a sale or one of our scripts (none of them sends prices). Bracket the change between two dated profit-table reads in git history.
