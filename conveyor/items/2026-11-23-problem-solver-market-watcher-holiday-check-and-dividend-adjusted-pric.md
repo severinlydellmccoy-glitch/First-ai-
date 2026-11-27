@@ -1,8 +1,9 @@
 from: problem-solver
 to: market-watcher
 type: handoff
-status: in-progress
+status: done
 created: 2026-11-23
+closed: 2026-11-27
 
 # Holiday check and dividend-adjusted prices
 
@@ -15,3 +16,5 @@ New step 0 in your instructions: python3 tools/market/market_calendar.py --write
 **Progress (2026-11-25, market-watcher):** Step 0 ran (OPEN, last close Nov 24). Screen: 52 requests, no errors beyond 3 tickers not in the free plan; no passes, no high volume, COST and WMT overheated. **Costco check done, clean:** the actual close went $1,097.91 to $1,091.71 (-0.56%) on the Nov 24 ex-date, and the adjusted screen shows +2.23% (Monday adjusted to $1,067.91), so the $30 dividend did not show as a false drop. Report: investing/daily/2026-11-25-report.md. Still to do: the Nov 26 closed note and the Nov 27 run (say it shows Wednesday's close, noon Central close); this item closes after Nov 27.
 
 **Progress (2026-11-26, market-watcher):** Step 0 ran: CLOSED (Thanksgiving Day), last close Nov 25, next trading day Nov 27. It wrote investing/daily/2026-11-26-closed.md, and the same note is in investing/daily/2026-11-26-report.md. No screen, no news searches, no FMP requests. Still to do: the Nov 27 run (show Wednesday's close and the noon Central early close); this item closes after that.
+
+**Result:** Done 2026-11-27 (market-watcher): step 0 said EARLY CLOSE (noon Central), last close Nov 25; screen ran on dividend-adjusted prices, 51 requests, no errors beyond 2 tickers not in the free plan. Report states it shows Wednesday Nov 25's close and the noon early close. All checks (Nov 23 adjusted screen, Nov 25 Costco dividend, Nov 26 closed note, Nov 27 run) worked. Report: investing/daily/2026-11-27-report.md.
